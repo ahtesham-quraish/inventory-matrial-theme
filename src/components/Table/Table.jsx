@@ -1,27 +1,26 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react';
+import PropTypes from 'prop-types';
 // @material-ui/core components
-import withStyles from "@material-ui/core/styles/withStyles";
-import Table from "@material-ui/core/Table";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
+import withStyles from '@material-ui/core/styles/withStyles';
+import Table from '@material-ui/core/Table';
+import TableHead from '@material-ui/core/TableHead';
+import TableRow from '@material-ui/core/TableRow';
+import TableBody from '@material-ui/core/TableBody';
+import TableCell from '@material-ui/core/TableCell';
 // core components
-import tableStyle from "assets/jss/material-dashboard-react/components/tableStyle.jsx";
-
+import tableStyle from 'assets/jss/material-dashboard-react/components/tableStyle.jsx';
 function CustomTable({ ...props }) {
-  const { classes, tableHead, tableData, tableHeaderColor } = props;
+  const { classes, tableHead, tableData, tableHeaderColor, onClick } = props;
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
         {tableHead !== undefined ? (
-          <TableHead className={classes[tableHeaderColor + "TableHeader"]}>
+          <TableHead className={classes[tableHeaderColor + 'TableHeader']}>
             <TableRow>
               {tableHead.map((prop, key) => {
                 return (
                   <TableCell
-                    className={classes.tableCell + " " + classes.tableHeadCell}
+                    className={classes.tableCell + ' ' + classes.tableHeadCell}
                     key={key}
                   >
                     {prop}
@@ -34,7 +33,11 @@ function CustomTable({ ...props }) {
         <TableBody>
           {tableData.map((prop, key) => {
             return (
-              <TableRow key={key}>
+              <TableRow
+                hover={true}
+                onClick={(e) => onClick(e, prop, key)}
+                key={key}
+              >
                 {prop.map((prop, key) => {
                   return (
                     <TableCell className={classes.tableCell} key={key}>
@@ -52,22 +55,23 @@ function CustomTable({ ...props }) {
 }
 
 CustomTable.defaultProps = {
-  tableHeaderColor: "gray"
+  tableHeaderColor: 'gray',
+  OnCellClick: null,
 };
 
 CustomTable.propTypes = {
   classes: PropTypes.object.isRequired,
   tableHeaderColor: PropTypes.oneOf([
-    "warning",
-    "primary",
-    "danger",
-    "success",
-    "info",
-    "rose",
-    "gray"
+    'warning',
+    'primary',
+    'danger',
+    'success',
+    'info',
+    'rose',
+    'gray',
   ]),
   tableHead: PropTypes.arrayOf(PropTypes.string),
-  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string))
+  tableData: PropTypes.arrayOf(PropTypes.arrayOf(PropTypes.string)),
 };
 
 export default withStyles(tableStyle)(CustomTable);

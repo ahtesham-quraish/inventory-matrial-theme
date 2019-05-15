@@ -11,6 +11,7 @@ import CardHeader from 'components/Card/CardHeader.jsx';
 import CardBody from 'components/Card/CardBody.jsx';
 import getAllCustomers from './actions/getCustomers';
 import customersDataSelector from './selectors/customersListSelector';
+import setCustomerId from './actions/setCustomerId';
 const styles = {
   cardCategoryWhite: {
     '&,& a,& a:hover,& a:focus': {
@@ -45,10 +46,16 @@ class CustomerListContainer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {};
+    this.rowClickhandler = this.rowClickhandler.bind(this);
   }
   componentDidMount() {
     this.props.getAllCustomers();
   }
+  rowClickhandler = (e, value, key) => {
+    const { cusotmersRawData } = this.props;
+    this.props.setCustomerId(cusotmersRawData[key].id);
+    this.props.history.push(`/admin/user?id=${cusotmersRawData[key].id}`);
+  };
   render() {
     const { classes } = this.props;
     return (
@@ -64,8 +71,9 @@ class CustomerListContainer extends React.Component {
             <CardBody>
               <Table
                 tableHeaderColor="primary"
-                tableHead={['Name', 'Address', 'Phone#', 'Country']}
+                tableHead={['Name', 'Address', 'Phone#', 'Email']}
                 tableData={this.props.customers}
+                onClick={this.rowClickhandler}
               />
             </CardBody>
           </Card>
@@ -78,12 +86,13 @@ class CustomerListContainer extends React.Component {
 const mapStateToProps = (state) => {
   return {
     customers: customersDataSelector(state),
-    product: state,
+    cusotmersRawData: state.CustomerState.customers,
   };
 };
 const mapDispatchToProps = (dispatch) => {
   return {
     getAllCustomers: () => dispatch(getAllCustomers()),
+    setCustomerId: (id) => dispatch(setCustomerId(id)),
   };
 };
 CustomerListContainer = withStyles(styles)(CustomerListContainer);

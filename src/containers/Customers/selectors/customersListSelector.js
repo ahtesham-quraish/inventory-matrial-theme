@@ -14,7 +14,7 @@ const customersDataSelector = createSelector(
           `${val.fName} ${val.lName}`,
           val.Address1,
           phone,
-          val.country,
+          val.email,
         ]);
       }, 0);
     }
