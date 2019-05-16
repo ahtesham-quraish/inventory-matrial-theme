@@ -40,6 +40,9 @@ const styles = {
       lineHeight: '1',
     },
   },
+  pointer: {
+    cursor: 'pointer',
+  },
 };
 
 class CustomerListContainer extends React.Component {
@@ -74,6 +77,7 @@ class CustomerListContainer extends React.Component {
                 tableHead={['Name', 'Address', 'Phone#', 'Email']}
                 tableData={this.props.customers}
                 onClick={this.rowClickhandler}
+                pointer={classes.pointer}
               />
             </CardBody>
           </Card>
