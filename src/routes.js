@@ -18,6 +18,7 @@ import NotificationsPage from 'views/Notifications/Notifications.jsx';
 import UpgradeToPro from 'views/UpgradeToPro/UpgradeToPro.jsx';
 // core components/views for RTL layout
 import RTLPage from 'views/RTLPage/RTLPage.jsx';
+import ProductList from './views/Products/productList';
 
 const dashboardRoutes = [
   {
@@ -34,6 +35,14 @@ const dashboardRoutes = [
     rtlName: 'ملف تعريفي للمستخدم',
     icon: Person,
     component: ProfileDetailContainer,
+    layout: '/admin',
+  },
+  {
+    path: '/products',
+    name: 'Products',
+    rtlName: 'ملف تعريفي للمستخدم',
+    icon: Person,
+    component: ProductList,
     layout: '/admin',
   },
   {
