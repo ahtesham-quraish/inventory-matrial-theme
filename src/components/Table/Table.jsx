@@ -10,7 +10,14 @@ import TableCell from '@material-ui/core/TableCell';
 // core components
 import tableStyle from 'assets/jss/material-dashboard-react/components/tableStyle.jsx';
 function CustomTable({ ...props }) {
-  const { classes, tableHead, tableData, tableHeaderColor, onClick } = props;
+  const {
+    pointer,
+    classes,
+    tableHead,
+    tableData,
+    tableHeaderColor,
+    onClick,
+  } = props;
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
@@ -37,6 +44,7 @@ function CustomTable({ ...props }) {
                 hover={true}
                 onClick={(e) => onClick(e, prop, key)}
                 key={key}
+                className={pointer}
               >
                 {prop.map((prop, key) => {
                   return (

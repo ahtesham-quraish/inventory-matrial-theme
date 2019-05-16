@@ -12,7 +12,12 @@ import CardHeader from 'components/Card/CardHeader.jsx';
 import CardAvatar from 'components/Card/CardAvatar.jsx';
 import CardBody from 'components/Card/CardBody.jsx';
 import CardFooter from 'components/Card/CardFooter.jsx';
-
+import addCustomer from './actions/addCustomer';
+import updateCustomer from './actions/updateCustomer';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import getCustomer from '../Customers/actions/getCustomer';
+import { setCustomer } from '../Customers/actions/getCustomer';
 import avatar from 'assets/img/faces/marc.jpg';
 const styles = {
   cardCategoryWhite: {
@@ -31,61 +36,124 @@ const styles = {
     marginBottom: '3px',
     textDecoration: 'none',
   },
+  pointer: {
+    cursor: 'pointer',
+  },
 };
 class ProfileDetailContainer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = { customer: {}, id: null, disabled: true };
   }
   componentDidMount() {
-    const { selectedCustomerId, customers } = this.props;
-    const customer = customers.filter((x) => x.id === selectedCustomerId)[0];
-    if (customer) {
-      this.setState({ customer: customer });
+    const urlParams = new URLSearchParams(window.location.search);
+    const id = urlParams.get('id');
+    if (id) {
+      this.props.getCustomer(id).then(
+        function() {
+          const { customer } = this.props;
+
+          this.setState({ customer: customer, id: id });
+        }.bind(this),
+      );
     }
   }
+  onChangeHandler = (e) => {
+    const { customer } = this.state;
+    customer[e.target.id] = e.target.value;
+    this.setState({ customer: customer });
+  };
+  addCustomer = () => {
+    const { customer } = this.state;
+    this.props.addCustomer(customer).then(
+      function() {
+        this.setState({ customer: {} });
+        this.notify();
+      }.bind(this),
+    );
+  };
+  updateCustomer = () => {
+    const { customer } = this.state;
+    this.props.updateCustomer(customer.id, customer).then(
+      function() {
+        this.notify();
+      }.bind(this),
+    );
+  };
+  notify = () => toast.success('Operation has been done successfully');
+  enableEditing = () => {
+    const { disabled } = this.state;
+    this.setState({ disabled: !disabled });
+  };
   render() {
     const { classes } = this.props;
+    const { customer, id } = this.state;
+
+    const disabled = id ? this.state.disabled : false;
     return (
       <div>
+        <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={4000} />
         <GridContainer>
           <GridItem xs={12} sm={12} md={8}>
             <Card>
               <CardHeader color="primary">
-                <h4 className={classes.cardTitleWhite}>Edit Profile</h4>
+                {id && (
+                  <h4 className={classes.cardTitleWhite}>
+                    Edit Profile{' '}
+                    {disabled && (
+                      <i
+                        onClick={this.enableEditing}
+                        className={`material-icons ${classes.pointer}`}
+                      >
+                        edit
+                      </i>
+                    )}
+                    {!disabled && id && (
+                      <i
+                        onClick={this.enableEditing}
+                        className={`material-icons ${classes.pointer}`}
+                      >
+                        cancel
+                      </i>
+                    )}
+                  </h4>
+                )}
+                {!id && (
+                  <h4 className={classes.cardTitleWhite}>Create Profile</h4>
+                )}
                 <p className={classes.cardCategoryWhite}>
                   Complete your profile
                 </p>
               </CardHeader>
               <CardBody>
                 <GridContainer>
-                  <GridItem xs={12} sm={12} md={5}>
+                  <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText="Company (disabled)"
-                      id="company-disabled"
+                      labelText={!customer.company_name ? 'Company Name' : null}
+                      id="company_name"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
-                        disabled: true,
+                        onChange: this.onChangeHandler,
+                        value: customer.company_name,
+                        readOnly: disabled,
+                        required: true,
                       }}
                     />
                   </GridItem>
-                  <GridItem xs={12} sm={12} md={3}>
+
+                  <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText="Username"
-                      id="username"
+                      labelText={!customer.email ? 'Email address' : null}
+                      id="email"
                       formControlProps={{
                         fullWidth: true,
                       }}
-                    />
-                  </GridItem>
-                  <GridItem xs={12} sm={12} md={4}>
-                    <CustomInput
-                      labelText="Email address"
-                      id="email-address"
-                      formControlProps={{
-                        fullWidth: true,
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.email,
+                        readOnly: disabled,
                       }}
                     />
                   </GridItem>
@@ -93,48 +161,121 @@ class ProfileDetailContainer extends React.Component {
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText="First Name"
-                      id="first-name"
+                      labelText={!customer.fName ? 'First Name' : ''}
+                      id="fName"
                       formControlProps={{
                         fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.fName,
+                        readOnly: disabled,
                       }}
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText="Last Name"
-                      id="last-name"
+                      labelText={!customer.lName ? 'Last Name' : null}
+                      id="lName"
                       formControlProps={{
                         fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.lName,
+                        readOnly: disabled,
                       }}
                     />
                   </GridItem>
                 </GridContainer>
                 <GridContainer>
-                  <GridItem xs={12} sm={12} md={4}>
+                  <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText="City"
+                      labelText={!customer.Address1 ? 'Address 1' : null}
+                      id="Address1"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.Address1,
+                        readOnly: disabled,
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText={!customer.Address2 ? 'Address 2' : null}
+                      id="Address2"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.Address2,
+                        readOnly: disabled,
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
+
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText={!customer.city ? 'City' : null}
                       id="city"
                       formControlProps={{
                         fullWidth: true,
                       }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.city,
+                        readOnly: disabled,
+                      }}
                     />
                   </GridItem>
-                  <GridItem xs={12} sm={12} md={4}>
+                  <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText="Country"
+                      labelText={!customer.country ? 'Country' : null}
                       id="country"
                       formControlProps={{
                         fullWidth: true,
                       }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.country,
+                        readOnly: disabled,
+                      }}
                     />
                   </GridItem>
-                  <GridItem xs={12} sm={12} md={4}>
+                </GridContainer>
+
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText="Postal Code"
-                      id="postal-code"
+                      labelText={!customer.postal_code ? 'Postal Code' : null}
+                      id="postal_code"
                       formControlProps={{
                         fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.postal_code,
+                        readOnly: disabled,
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText={!customer.Phone ? 'Phone#' : null}
+                      id="Phone"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.Phone,
+                        readOnly: disabled,
                       }}
                     />
                   </GridItem>
@@ -145,21 +286,41 @@ class ProfileDetailContainer extends React.Component {
                       About me
                     </InputLabel>
                     <CustomInput
-                      labelText="Lamborghini Mercy, Your chick she so thirsty, I'm in that two seat Lambo."
-                      id="about-me"
+                      labelText={!customer.description ? 'Description' : null}
+                      id="description"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
                         multiline: true,
                         rows: 5,
+                        onChange: this.onChangeHandler,
+                        value: customer.description,
+                        readOnly: disabled,
                       }}
                     />
                   </GridItem>
                 </GridContainer>
               </CardBody>
               <CardFooter>
-                <Button color="primary">Update Profile</Button>
+                {id && (
+                  <Button
+                    disabled={disabled}
+                    onClick={this.updateCustomer}
+                    color="primary"
+                  >
+                    Update Customer
+                  </Button>
+                )}
+                {!id && (
+                  <Button
+                    disabled={true}
+                    onClick={this.addCustomer}
+                    color="primary"
+                  >
+                    Add Customer
+                  </Button>
+                )}
               </CardFooter>
             </Card>
           </GridItem>
@@ -194,10 +355,19 @@ const mapStateToProps = (state) => {
   return {
     customers: state.CustomerState.customers,
     selectedCustomerId: state.CustomerState.customerId,
+    customer: state.CustomerState.customer,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addCustomer: (data) => dispatch(addCustomer(data)),
+    updateCustomer: (id, data) => dispatch(updateCustomer(id, data)),
+    getCustomer: (id) => dispatch(getCustomer(id)),
+    setCustomer: (data) => dispatch(setCustomer(data)),
   };
 };
 ProfileDetailContainer = withStyles(styles)(ProfileDetailContainer);
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(ProfileDetailContainer);
