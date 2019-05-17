@@ -13,8 +13,15 @@ import CardAvatar from 'components/Card/CardAvatar.jsx';
 import CardBody from 'components/Card/CardBody.jsx';
 import CardFooter from 'components/Card/CardFooter.jsx';
 import { ToastContainer, toast } from 'react-toastify';
+import Loader from 'react-loader-spinner';
 import 'react-toastify/dist/ReactToastify.css';
 import avatar from 'assets/img/faces/marc.jpg';
+import {
+  addProduct,
+  postProduct,
+  togglePostSuccess,
+  togglePostError,
+} from './actions/actions';
 const styles = {
   cardCategoryWhite: {
     color: 'rgba(255,255,255,.62)',
@@ -39,14 +46,74 @@ const styles = {
 class AddProduct extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { customer: {}, id: null, disabled: true };
+    this.state = {
+      product: {
+        title: '',
+        titleError: false,
+        description: '',
+        descriptionError: false,
+        size: '',
+        sizeError: false,
+        brand: '',
+        brandError: false,
+        unit: '',
+        unitError: '',
+      },
+      waiting: false,
+    };
   }
+
+  ComponentDidUpdate = () => {
+    if (this.props.success === true) {
+      toast.success('Product added successfully');
+      this.props.togglePostSuccess();
+    }
+    if (this.props.error === true) {
+      toast.error('Could not add product');
+      this.props.togglePostError();
+    }
+  };
+
+  onChangeHandler = (e) => {
+    const { product } = this.state;
+    let errorVar = e.target.id + 'Error';
+    product[e.target.id] = e.target.value;
+    product[errorVar] = false;
+    this.setState({ product: product });
+  };
+
+  validateProductData = () => {
+    const { product } = this.state;
+    var isInvalid = true;
+    for (var key in product) {
+      console.log(key);
+      if (product[key] === '') {
+        product[key + 'Error'] = true;
+        isInvalid = false;
+      }
+    }
+    this.setState({
+      product: product,
+    });
+
+    return isInvalid;
+  };
+
+  handleAddPoductClick = () => {
+    if (this.validateProductData() === false) {
+      return;
+    }
+    this.setState({
+      waiting: true,
+    });
+    this.props.postProduct(this.state.product);
+  };
 
   render() {
     const { classes } = this.props;
-    const { customer, id } = this.state;
+    const { product } = this.state;
 
-    const disabled = id ? this.state.disabled : false;
+    // const disabled = id ? this.state.disabled : false;
     return (
       <div>
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={4000} />
@@ -58,32 +125,113 @@ class AddProduct extends React.Component {
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText={!customer.fName ? 'First Name' : ''}
-                      id="fName"
+                      labelText="Product Title"
+                      id="title"
+                      error={this.state.product.titleError}
+                      helpText="Title is required"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
                         onChange: this.onChangeHandler,
-                        value: customer.fName,
+                        value: product.title,
                       }}
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText={!customer.lName ? 'Last Name' : null}
-                      id="lName"
+                      labelText="Product Size"
+                      id="size"
+                      type="number"
+                      error={this.state.product.sizeError}
+                      helpText="Size is required"
                       formControlProps={{
                         fullWidth: true,
                       }}
                       inputProps={{
                         onChange: this.onChangeHandler,
-                        value: customer.lName,
+                        value: product.size,
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
+
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Product Brand"
+                      id="brand"
+                      error={this.state.product.brandError}
+                      helpText="Brand is required"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: product.brand,
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Product Units"
+                      id="unit"
+                      type="number"
+                      error={this.state.product.unitError}
+                      helpText="Units are required"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: product.unit,
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
+                <GridContainer>
+                  <GridItem xs={24} sm={24} md={12}>
+                    <CustomInput
+                      labelText="Product Description"
+                      id="description"
+                      type="textarea"
+                      error={this.state.product.descriptionError}
+                      helpText="Description is required"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: product.description,
                       }}
                     />
                   </GridItem>
                 </GridContainer>
               </CardBody>
+              <CardFooter>
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <Button
+                      onClick={this.handleAddPoductClick}
+                      color="primary"
+                      size="sm"
+                    >
+                      {!this.props.loading ? (
+                        'ADD Product'
+                      ) : (
+                        <div style={{ width: '75px' }}>
+                          <Loader
+                            type="ThreeDots"
+                            color="white"
+                            height={1000}
+                            width={1000}
+                          />
+                        </div>
+                      )}
+                    </Button>
+                  </GridItem>
+                </GridContainer>
+              </CardFooter>
             </Card>
           </GridItem>
         </GridContainer>
@@ -92,5 +240,27 @@ class AddProduct extends React.Component {
   }
 }
 
+const mapStateToProps = (state) => {
+  return {
+    product: state.productReducer.product,
+    loading: state.productReducer.loading,
+    success: state.productReducer.success,
+    error: state.productReducer.error,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    addProduct: (payload) => dispatch(addProduct(payload)),
+    postProduct: (payload) => dispatch(postProduct(payload)),
+    togglePostSuccess: () => dispatch(togglePostSuccess()),
+    togglePostError: () => dispatch(togglePostError()),
+  };
+};
+
 // ProfileDetailContainer = withStyles(styles)(ProfileDetailContainer);
-export default withStyles(styles)(AddProduct);
+AddProduct = withStyles(styles)(AddProduct);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(AddProduct);
