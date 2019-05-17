@@ -14,6 +14,7 @@ import Typography from 'views/Typography/Typography.jsx';
 import Icons from 'views/Icons/Icons.jsx';
 import Maps from 'views/Maps/Maps.jsx';
 import NotificationsPage from 'views/Notifications/Notifications.jsx';
+import Quotation from './containers/quotation/index.jsx';
 // core components/views for RTL layout
 import RTLPage from 'views/RTLPage/RTLPage.jsx';
 
@@ -28,10 +29,18 @@ const dashboardRoutes = [
   },
   {
     path: '/user',
-    name: 'User Profile',
+    name: 'Create Profile',
     rtlName: 'ملف تعريفي للمستخدم',
     icon: Person,
     component: ProfileDetailContainer,
+    layout: '/admin',
+  },
+  {
+    path: '/qoutation',
+    name: 'Qoutation',
+    rtlName: 'قائمة الجدول',
+    icon: 'content_paste',
+    component: Quotation,
     layout: '/admin',
   },
   {

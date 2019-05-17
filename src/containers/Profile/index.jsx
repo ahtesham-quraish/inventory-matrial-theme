@@ -313,11 +313,7 @@ class ProfileDetailContainer extends React.Component {
                   </Button>
                 )}
                 {!id && (
-                  <Button
-                    disabled={true}
-                    onClick={this.addCustomer}
-                    color="primary"
-                  >
+                  <Button onClick={this.addCustomer} color="primary">
                     Add Customer
                   </Button>
                 )}
