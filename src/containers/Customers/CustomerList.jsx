@@ -61,6 +61,7 @@ class CustomerListContainer extends React.Component {
   };
   render() {
     const { classes } = this.props;
+    console.log(this.props);
     return (
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
