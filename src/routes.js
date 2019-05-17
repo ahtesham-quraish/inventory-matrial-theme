@@ -17,6 +17,7 @@ import NotificationsPage from 'views/Notifications/Notifications.jsx';
 // core components/views for RTL layout
 import RTLPage from 'views/RTLPage/RTLPage.jsx';
 import ProductList from './views/Products/productList';
+import AddProduct from './views/Products/addProduct';
 
 const dashboardRoutes = [
   {
@@ -26,6 +27,7 @@ const dashboardRoutes = [
     icon: Dashboard,
     component: DashboardPage,
     layout: '/admin',
+    isSideBarLink: true,
   },
   {
     path: '/user',
@@ -34,6 +36,7 @@ const dashboardRoutes = [
     icon: Person,
     component: ProfileDetailContainer,
     layout: '/admin',
+    isSideBarLink: true,
   },
   {
     path: '/products',
@@ -42,6 +45,16 @@ const dashboardRoutes = [
     icon: Person,
     component: ProductList,
     layout: '/admin',
+    isSideBarLink: true,
+  },
+  {
+    path: '/add-products',
+    name: 'Add Products',
+    rtlName: 'ملف تعريفي للمستخدم',
+    icon: Person,
+    component: AddProduct,
+    layout: '/admin',
+    isSideBarLink: false,
   },
   {
     path: '/table',
@@ -52,6 +65,7 @@ const dashboardRoutes = [
     icon: 'content_paste',
     component: CustomerListContainer,
     layout: '/admin',
+    isSideBarLink: true,
   },
   {
     path: '/typography',
@@ -60,6 +74,7 @@ const dashboardRoutes = [
     icon: LibraryBooks,
     component: Typography,
     layout: '/admin',
+    isSideBarLink: true,
   },
   {
     path: '/icons',
@@ -68,6 +83,7 @@ const dashboardRoutes = [
     icon: BubbleChart,
     component: Icons,
     layout: '/admin',
+    isSideBarLink: false,
   },
   {
     path: '/maps',
@@ -76,6 +92,7 @@ const dashboardRoutes = [
     icon: LocationOn,
     component: Maps,
     layout: '/admin',
+    isSideBarLink: true,
   },
   {
     path: '/notifications',
@@ -84,6 +101,7 @@ const dashboardRoutes = [
     icon: Notifications,
     component: NotificationsPage,
     layout: '/admin',
+    isSideBarLink: true,
   },
   {
     path: '/rtl-page',
@@ -92,6 +110,7 @@ const dashboardRoutes = [
     icon: Language,
     component: RTLPage,
     layout: '/rtl',
+    isSideBarLink: true,
   },
 ];
 

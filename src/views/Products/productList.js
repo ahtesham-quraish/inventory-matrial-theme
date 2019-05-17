@@ -6,10 +6,12 @@ import GridItem from 'components/Grid/GridItem.jsx';
 import GridContainer from 'components/Grid/GridContainer.jsx';
 import Table from 'components/Table/Table.jsx';
 import Card from 'components/Card/Card.jsx';
+import RegularButton from '../../components/CustomButtons/Button';
 import CardHeader from 'components/Card/CardHeader.jsx';
 import CardBody from 'components/Card/CardBody.jsx';
 import { connect } from 'react-redux';
 import { addProduct } from './actions/actions';
+import Loader from 'react-loader-spinner';
 
 const styles = {
   cardCategoryWhite: {
@@ -47,14 +49,15 @@ class ProductList extends React.Component {
   };
 
   prepareTableData = () => {
-    let product = this.props.product;
+    let products = this.props.product;
     let data = [];
     let temp = [];
-    product.forEach((element) => {
-      delete element['created'];
-      delete element['updated'];
+    products.forEach((element) => {
       for (let key in element) {
-        temp.push(element[key]);
+        if (key !== 'id' && key !== 'created' && key !== 'updated') {
+          console.log(key);
+          temp.push(element[key]);
+        }
       }
       data.push(temp);
       temp = [];
@@ -64,7 +67,7 @@ class ProductList extends React.Component {
   };
 
   handleRowClick = (e, prop, key) => {
-    console.log('row clicked', e.target, prop[0], key);
+    console.log(this.props.product[key]);
   };
 
   render() {
@@ -74,6 +77,18 @@ class ProductList extends React.Component {
     return (
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
+          <div style={{ float: 'right', marginBottom: '5%' }}>
+            <RegularButton
+              classes={classes}
+              color="primary"
+              size="sm"
+              onClick={() => {
+                console.log('button clicked');
+              }}
+            >
+              Add Product{' '}
+            </RegularButton>
+          </div>
           <Card>
             <CardHeader color="primary">
               <h4 className={classes.cardTitleWhite}>Product List</h4>
@@ -81,14 +96,7 @@ class ProductList extends React.Component {
             <CardBody>
               <Table
                 tableHeaderColor="primary"
-                tableHead={[
-                  'Product ID',
-                  'Title',
-                  'Description',
-                  'Size',
-                  'Brand',
-                  'Units',
-                ]}
+                tableHead={['Title', 'Description', 'Size', 'Brand', 'Units']}
                 tableData={this.prepareTableData()}
                 onClick={this.handleRowClick}
               />
