@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { connect } from 'react-redux';
 import withStyles from '@material-ui/core/styles/withStyles';
 import logo from '../../assets/img/logo.png';
 import styles from '../../assets/jss/material-dashboard-react/components/pdf';
@@ -178,6 +178,13 @@ class QuotationPDF extends React.Component {
                   type="text"
                   id="customer"
                   placeholder="Thokar, Lahore"
+                  value={
+                    this.props.customer
+                      ? this.props.customer.fName +
+                        ' ' +
+                        this.props.customer.lName
+                      : ''
+                  }
                   disabled
                   className={`${classes.bioBlockFieldinputDisabledClass} ${
                     classes.bioBlockFieldLargeinputDisabledClass
@@ -275,72 +282,73 @@ class QuotationPDF extends React.Component {
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td
-                    className={`${classes.tableElement} ${
-                      classes.infoBlockthClass
-                    }`}
-                  >
-                    1
-                  </td>
-                  <td
-                    className={`${classes.tableElement} ${
-                      classes.infoBlockthClass
-                    }`}
-                  >
-                    CSK 30
-                  </td>
-                  <td
-                    className={`${classes.tableElement}  ${
-                      classes.infoBlockthClass
-                    }`}
-                  >
-                    On Way Richard
-                  </td>
-                  <td
-                    className={`${classes.tableElement} ${
-                      classes.infoBlockthClass
-                    }`}
-                  >
-                    SNF
-                  </td>
-                  <td
-                    className={`${classes.tableElement}  ${
-                      classes.infoBlockthClass
-                    }`}
-                  >
-                    1
-                  </td>
-                  <td
-                    className={`${classes.tableElement}  ${
-                      classes.infoBlockthClass
-                    }`}
-                  >
-                    4,200
-                  </td>
-                  <td
-                    className={`${classes.tableElement}  ${
-                      classes.infoBlockthClass
-                    }`}
-                  >
-                    Ready Stock
-                  </td>
-                  <td
-                    className={`${classes.tableElement}  ${
-                      classes.infoBlockthClass
-                    }`}
-                  >
-                    Steel
-                  </td>
-                  <td
-                    className={`${classes.tableElement} ${
-                      classes.infoBlockthClass
-                    }`}
-                  >
-                    Ok
-                  </td>
-                </tr>
-
+                {this.props.qoutationProducts.map((product, key) => (
+                  <tr>
+                    <td
+                      className={`${classes.tableElement} ${
+                        classes.infoBlockthClass
+                      }`}
+                    >
+                      {key + 1}
+                    </td>
+                    <td
+                      className={`${classes.tableElement} ${
+                        classes.infoBlockthClass
+                      }`}
+                    >
+                      {product.title}
+                    </td>
+                    <td
+                      className={`${classes.tableElement}  ${
+                        classes.infoBlockthClass
+                      }`}
+                    >
+                      {product.description}
+                    </td>
+                    <td
+                      className={`${classes.tableElement} ${
+                        classes.infoBlockthClass
+                      }`}
+                    >
+                      {product.brand}
+                    </td>
+                    <td
+                      className={`${classes.tableElement}  ${
+                        classes.infoBlockthClass
+                      }`}
+                    >
+                      {product.requiredQty}
+                    </td>
+                    <td
+                      className={`${classes.tableElement}  ${
+                        classes.infoBlockthClass
+                      }`}
+                    >
+                      {product.price}
+                    </td>
+                    <td
+                      className={`${classes.tableElement}  ${
+                        classes.infoBlockthClass
+                      }`}
+                    >
+                      Ready Stock
+                    </td>
+                    <td
+                      className={`${classes.tableElement}  ${
+                        classes.infoBlockthClass
+                      }`}
+                    >
+                      Steel
+                    </td>
+                    <td
+                      className={`${classes.tableElement} ${
+                        classes.infoBlockthClass
+                      }`}
+                    >
+                      Ok
+                    </td>
+                  </tr>
+                ))}
                 <tr className="last">
                   <td className={`${classes.infoBlocktrLasttdClass}`} />
                   <td className={`${classes.infoBlocktrLasttdClass}`} />
@@ -402,6 +410,15 @@ class QuotationPDF extends React.Component {
     );
   }
 }
-
+const mapStateToProps = (state) => {
+  return {
+    customer: state.QoutationReducer.selectedCustomers,
+    qoutationProducts: state.QoutationReducer.qoutationProducts,
+  };
+};
 QuotationPDF = withStyles(styles)(QuotationPDF);
-export default QuotationPDF;
+
+export default connect(
+  mapStateToProps,
+  null,
+)(QuotationPDF);

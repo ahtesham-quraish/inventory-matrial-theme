@@ -58,15 +58,36 @@ class AddProduct extends React.Component {
         brandError: false,
         unit: '',
         unitError: '',
+        quantity: '',
+        quantityError: false,
+        price: '',
+        priceError: false,
       },
       waiting: false,
     };
   }
-
-  ComponentDidUpdate = () => {
+  resetState = () => {
+    this.setState({
+      product: {
+        title: '',
+        titleError: false,
+        description: '',
+        descriptionError: false,
+        size: '',
+        sizeError: false,
+        brand: '',
+        brandError: false,
+        unit: '',
+        unitError: '',
+      },
+      waiting: false,
+    });
+  };
+  componentDidUpdate = () => {
     if (this.props.success === true) {
       toast.success('Product added successfully');
       this.props.togglePostSuccess();
+      this.resetState();
     }
     if (this.props.error === true) {
       toast.error('Could not add product');
@@ -185,6 +206,40 @@ class AddProduct extends React.Component {
                       inputProps={{
                         onChange: this.onChangeHandler,
                         value: product.unit,
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Product Price"
+                      id="price"
+                      type="textarea"
+                      error={this.state.product.priceError}
+                      helpText="Description is required"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: product.price,
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Product Quantity"
+                      id="quantity"
+                      type="textarea"
+                      error={this.state.product.quantityError}
+                      helpText="Description is required"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: product.quantity,
                       }}
                     />
                   </GridItem>

@@ -70,6 +70,10 @@ class ProductList extends React.Component {
     console.log(this.props.product[key]);
   };
 
+  handleAddProductClick = () => {
+    this.props.history.push('/admin/add-products');
+  };
+
   render() {
     const { classes, product } = this.props;
     console.log(product, 'these');
@@ -82,9 +86,7 @@ class ProductList extends React.Component {
               classes={classes}
               color="primary"
               size="sm"
-              onClick={() => {
-                console.log('button clicked');
-              }}
+              onClick={this.handleAddProductClick}
             >
               Add Product{' '}
             </RegularButton>

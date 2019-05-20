@@ -46,6 +46,7 @@ const dashboardRoutes = [
     icon: 'content_paste',
     component: Quotation,
     layout: '/admin',
+    isSideBarLink: true,
   },
   {
     path: '/products',

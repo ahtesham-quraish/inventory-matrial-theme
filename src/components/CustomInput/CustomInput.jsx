@@ -18,6 +18,7 @@ function CustomInput({ ...props }) {
     formControlProps,
     labelText,
     id,
+    type,
     labelProps,
     inputProps,
     error,
@@ -62,6 +63,7 @@ function CustomInput({ ...props }) {
           underline: underlineClasses,
         }}
         id={id}
+        type={type}
         {...inputProps}
       />
       {error ? (

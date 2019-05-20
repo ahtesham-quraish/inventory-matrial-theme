@@ -17,6 +17,23 @@ import avatar from 'assets/img/faces/marc.jpg';
 import CustomInput from 'components/CustomInput/CustomInput.jsx';
 import InputLabel from '@material-ui/core/InputLabel';
 import Select from 'react-select';
+import { SingleSelect } from 'react-select-material-ui';
+import { element } from 'prop-types';
+import getAllCustomers from '../../containers/Customers/actions/getCustomers';
+import { setSelectedCustomer } from './actions/setSelectedCustomer';
+import { addProduct } from '../../views/Products/actions/actions';
+import { addProductToQoutation } from './actions/addProductToQoutation';
+import { removeProductFromQoutation } from './actions/removeProductFromQoutation';
+
+//imports for dialog
+import { Button as DialogButton } from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
 const styles = {
   cardCategoryWhite: {
     color: 'rgba(255,255,255,.62)',
@@ -41,17 +58,197 @@ const styles = {
     width: '100%',
   },
   containerbackground: {
-    background: 'white',
+    background: 'light grey',
   },
 };
+
 class Quotation extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      customer: null,
+      selectedCustomer: null,
+      selectedProducts: [],
+      options: [],
+      productOptions: [],
+      addProductModelOpen: false,
+      addProcductInputs: {
+        requiredQuantity: '',
+      },
+      productToBeAdded: null,
+    };
+  }
+
+  componentDidMount = () => {
+    this.props.getCustomers().then(() => {
+      this.getCustomerOptions();
+    });
+    this.props.fetchProduct().then(() => {
+      this.getProductOptions();
+    });
+  };
+
+  getCustomerOptions = () => {
+    let opts = [];
+    this.props.customers.forEach((element) => {
+      opts.push({
+        value: element.id,
+        label: element.fName + ' ' + element.lName,
+      });
+    });
+    this.setState({
+      options: opts,
+    });
+  };
+
+  getProductOptions = () => {
+    let opts = [];
+    this.props.products.forEach((element) => {
+      opts.push({
+        value: element.id,
+        label: element.title,
+      });
+    });
+    this.setState({
+      productOptions: opts,
+    });
+  };
+
+  handleCustomerSelect = (selectedOption) => {
+    let temp = {};
+    this.props.customers.forEach((element) => {
+      if (element.id === selectedOption.value) {
+        temp = element;
+      }
+    });
+    this.setState({
+      customer: temp,
+      selectedCustomer: selectedOption,
+    });
+    this.props.setCustomer(temp);
+  };
+
+  handleProductSelect = (selectedOption, action) => {
+    if (action.action === 'select-option') {
+      console.log('action is ', action, selectedOption);
+      var temp = {};
+      this.props.products.forEach((element) => {
+        if (element.id === action.option.value) {
+          temp = element;
+        }
+      });
+      console.log('temp is ', temp);
+      this.setState({
+        selectedProducts: selectedOption,
+        addProductModelOpen: true,
+        productToBeAdded: temp,
+      });
+    }
+    if (action.action === 'remove-value') {
+      this.props.removeProductFromQoutation(action.removedValue);
+      console.log('removed', selectedOption, action);
+      this.setState({
+        selectedProducts: selectedOption,
+      });
+    }
+  };
+
+  addProductToQoutation = () => {
+    const { productToBeAdded, addProcductInputs } = this.state;
+    let temp = productToBeAdded;
+    temp.requiredQty = this.state.addProcductInputs.requiredQuantity;
+    this.props.addProductToQoutation(temp);
+    addProcductInputs.requiredQuantity = '';
+    this.setState({
+      productToBeAdded: null,
+      addProductModelOpen: false,
+      addProcductInputs: addProcductInputs,
+    });
+  };
+
+  handleCancelClick = () => {
+    this.props.removeProductFromQoutation(this.state.productToBeAdded);
+    this.setState({
+      addProductModelOpen: false,
+      selectedProducts: this.state.selectedProducts.filter((product) => {
+        return product.value !== this.state.productToBeAdded.id;
+      }),
+      productToBeAdded: null,
+    });
+  };
+  handleAddProductsChange = (event) => {
+    if (event.target.value <= this.state.productToBeAdded.quatity) {
+      const { addProcductInputs } = this.state;
+      addProcductInputs[event.target.id] = event.target.value;
+      this.setState({
+        addProcductInputs: addProcductInputs,
+      });
+    }
+  };
   render() {
     const { classes } = this.props;
+
     return (
       <div className={`${classes.containerbackground} `}>
+        {/* dialog to get product details */}
+        <Dialog
+          open={this.state.addProductModelOpen}
+          onClose={this.handleClose}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">Product Details</DialogTitle>
+          <DialogContent>
+            <TextField
+              margin="dense"
+              id="currentInventory"
+              label="Current inventory"
+              value={
+                this.state.productToBeAdded
+                  ? this.state.productToBeAdded.quatity
+                  : ''
+              }
+              type="text"
+              fullWidth
+              disabled
+            />
+            <TextField
+              autoFocus
+              margin="dense"
+              id="requiredQuantity"
+              label="Required Quantity"
+              type="number"
+              value={this.state.addProcductInputs.requiredQuantity}
+              onChange={this.handleAddProductsChange}
+              fullWidth
+              helperText={'Required quantity can not exceed current quantity'}
+            />
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={this.handleCancelClick} color="warning">
+              Cancel
+            </Button>
+            <Button onClick={this.addProductToQoutation} color="primary">
+              Add Product
+            </Button>
+          </DialogActions>
+        </Dialog>
         <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
-            <Select value={''} onChange={this.handleChange} options={[]} />
+            <Select
+              placeholder="Select Customer"
+              value={this.state.selectedCustomer}
+              onChange={this.handleCustomerSelect}
+              options={this.state.options}
+            />
+          </GridItem>
+          <GridItem xs={12} sm={12} md={6}>
+            <Select
+              placeholder="Select Product"
+              value={this.state.selectedProducts}
+              onChange={this.handleProductSelect}
+              options={this.state.productOptions}
+              isMulti={true}
+            />
           </GridItem>
         </GridContainer>
       </div>
@@ -64,10 +261,23 @@ const mapStateToProps = (state) => {
     customers: state.CustomerState.customers,
     selectedCustomerId: state.CustomerState.customerId,
     customer: state.CustomerState.customer,
+    products: state.productReducer.product,
+    qoutationProducts: state.QoutationReducer.qoutationProducts,
   };
 };
 const mapDispatchToProps = (dispatch) => {
-  return {};
+  return {
+    getCustomers: () => dispatch(getAllCustomers()),
+    setCustomer: (payload) => dispatch(setSelectedCustomer(payload)),
+    fetchProduct: (payload) => dispatch(addProduct(payload)),
+    addProductToQoutation: (payload) =>
+      dispatch(addProductToQoutation(payload)),
+    removeProductFromQoutation: (payload) =>
+      dispatch(removeProductFromQoutation(payload)),
+  };
 };
 Quotation = withStyles(styles)(Quotation);
-export default Quotation;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(Quotation);
