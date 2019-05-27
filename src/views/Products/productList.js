@@ -67,7 +67,9 @@ class ProductList extends React.Component {
   };
 
   handleRowClick = (e, prop, key) => {
-    console.log(this.props.product[key]);
+    console.log(this.props.product[key].id);
+    let product_id = this.props.product[key].id;
+    this.props.history.push('/admin/update-product/' + product_id);
   };
 
   handleAddProductClick = () => {

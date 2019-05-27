@@ -33,6 +33,12 @@ const styles = {
   },
 };
 class QuotationContainer extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isPrintable: true,
+    };
+  }
   render() {
     const { classes } = this.props;
     return (

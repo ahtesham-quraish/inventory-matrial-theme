@@ -19,6 +19,8 @@ import Quotation from './containers/quotation/index.jsx';
 import RTLPage from 'views/RTLPage/RTLPage.jsx';
 import ProductList from './views/Products/productList';
 import AddProduct from './views/Products/addProduct';
+import UpdateProduct from './views/Products/updateProduct';
+import Invoice from './containers/invoice/index';
 
 const dashboardRoutes = [
   {
@@ -66,6 +68,15 @@ const dashboardRoutes = [
     layout: '/admin',
     isSideBarLink: false,
   },
+  {
+    path: '/update-product/:product_id',
+    name: 'Update Product',
+    rtlName: 'ملف تعريفي للمستخدم',
+    icon: Person,
+    component: UpdateProduct,
+    layout: '/admin',
+    isSideBarLink: false,
+  },
 
   {
     path: '/customers',
@@ -73,6 +84,15 @@ const dashboardRoutes = [
     rtlName: 'قائمة الجدول',
     icon: 'content_paste',
     component: CustomerListContainer,
+    layout: '/admin',
+    isSideBarLink: true,
+  },
+  {
+    path: '/invoice',
+    name: 'Invoice',
+    rtlName: 'قائمة الجدول',
+    icon: 'content_paste',
+    component: Invoice,
     layout: '/admin',
     isSideBarLink: true,
   },

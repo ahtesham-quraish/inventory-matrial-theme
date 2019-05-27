@@ -1,0 +1,176 @@
+
+
+.vl{
+    border-left: 2px solid #925562;
+    margin-top: 15px;
+}
+.logo{
+    text-align: center;
+    
+}
+.logo img{
+    width: 200px;
+    height: 200px;
+}
+.company-address{
+    margin-bottom: 10px;
+    border-left: 2px solid #925562;
+}
+.company-address dt{
+    float: left;
+    margin: 0 5px 0 0;
+    font-weight: bold;
+
+}
+.normal-label{
+    display: block;
+}
+.income-tex{
+    display: block;
+    text-align: center;
+    font-size: 20px;
+    font-style: bold;
+    font-weight: bold;
+}
+.outer-container{
+    max-width: 1170px;
+    margin: 20px auto 50px;
+    border: 2px solid black;
+}
+.left{
+  
+    margin-top: 20px;
+    margin-bottom: 10px;
+}
+.right{
+    border-left: 1px solid black;
+}
+.cus-add-left{
+    display: inline-block;
+    vertical-align: middle;
+    width: 40%;
+    font-size: 16px;
+    font-weight: bold;
+
+}
+.cus-add-right{
+    display: inline-block;
+    vertical-align: middle;
+    width: 59%;
+    text-align: center;
+    border-left: 3px solid black;
+    border-bottom: 3px solid black;
+    padding: 10px 0;
+    font-size: 26px;
+    font-weight: bold;
+    text-transform: uppercase;
+
+}
+.cus-div{
+    margin-right: -17px;
+}
+.cus-detail{
+
+    margin-top: 40px;
+    margin-left: 22px;
+    font-weight: bold;
+    font-size: 15px;
+    max-width: 400px;
+}
+.two-columns { overflow: hidden; }
+.two-columns .column {
+    float: left;
+    width: 50%;
+}
+.two-columns table { width: 100%; }
+.two-columns th, td {
+    border: 1px solid #000;
+    padding: 10px;
+    vertical-align: middle;
+    width: 70%;
+}
+.one-column{
+    margin: 0 0 28px;
+}
+.one-column table, caption, tbody, tfoot, thead, tr, th, td {
+	border-collapse: collapse;
+	border-spacing: 0;
+	width: 100%;
+}
+.one-column th, .one-column td {
+	border: 1px solid #000;
+	padding: 15px 7px;
+	text-align: left;
+	vertical-align: middle;
+	width: auto;
+	text-align: center;
+}
+.one-column tr.last td {
+	font-size: 20px;
+	line-height: 25px;
+	border: 0;
+	padding: 20px 10px 0;
+	text-align: left;
+}
+.one-column tr.last.grand td {
+	font-size: 25px;
+	line-height: 30px;
+	font-weight: bold;
+	border: 0;
+}
+.one-column tr.last td span {
+	display: block;
+	width: 150px;
+}
+
+.signature-block {
+	overflow: hidden;
+    margin: -25px 0 0 21px;
+}
+.signature-block .name {
+	display: inline-block;
+	vertical-align: bottom;
+	margin: 0 10px 0 0;
+}
+.signature-block .signature {
+	display: inline-block;
+	vertical-align: bottom;
+	border-bottom: 1px solid #000;
+	width: 300px;
+}
+.footer{
+    max-width:1170px;
+    margin: 0 auto;
+}
+.comman{
+    overflow: hidden;
+}
+.comman-left{
+    display: inline-block;
+    vertical-align: middle;
+    width: 100px
+}
+.comman-right{
+
+    display: inline-block;
+    vertical-align: middle;
+    background: #97ccef;
+    width: 91%;
+    padding-left: 19px;
+    padding-top: 8px;
+    border-radius: 10px;
+    border: 1px solid blue;
+}
+.comman-right-span{
+    padding: 0 0 5px 36px;
+}
+.auth-div{
+    background: #025aa5;
+    border-top-left-radius: 59px;
+    padding: 11px 1px 5px 35px;
+    /* height: 100%; */
+    margin-left: 0px;
+}
+.common-logo{
+    width: 100px;
+}

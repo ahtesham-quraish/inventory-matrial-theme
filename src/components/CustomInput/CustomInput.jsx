@@ -21,6 +21,7 @@ function CustomInput({ ...props }) {
     type,
     labelProps,
     inputProps,
+    disabled,
     error,
     helpText,
     success,
@@ -64,6 +65,7 @@ function CustomInput({ ...props }) {
         }}
         id={id}
         type={type}
+        disabled={disabled}
         {...inputProps}
       />
       {error ? (

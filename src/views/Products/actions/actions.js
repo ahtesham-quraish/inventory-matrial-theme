@@ -27,7 +27,7 @@ export function postProduct(payload) {
       .post('http://127.0.0.1:8000/product/', payload, options)
       .then((response) => {
         dispatch({
-          type: action_types.ADD_FETCHED_PRODUCT,
+          type: action_types.APPEND_POSTED_PRODUCT,
           payload: response.data,
         });
         dispatch({
@@ -62,5 +62,29 @@ export function togglePostError() {
     dispatch({
       type: action_types.APPEND_POSTED_PRODUCT_ERROR,
     });
+  };
+}
+
+export function fetchProductDetails(id) {
+  return (dispatch) => {
+    return axiosInstance
+      .get(`http://127.0.0.1:8000/product/${id}/`)
+      .then((response) => {
+        dispatch({
+          type: action_types.FETCH_PRODUCT_DETAILS,
+          payload: response.data,
+        });
+      });
+  };
+}
+
+export function updateProduct(payload, id) {
+  return (dispatch) => {
+    let options = { 'Content-Type': 'application/json' };
+    return axiosInstance
+      .put(`http://127.0.0.1:8000/product/${id}/`, payload, options)
+      .then((response) => {
+        return response;
+      });
   };
 }

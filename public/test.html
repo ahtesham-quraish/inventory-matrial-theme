@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Material Dashboard React by Creative Tim</title>
+  </head>
+  <script>
+    function setup() {
+      var nodes = document.getElementsByClassName('remove');
+      console.log(nodes[0]);
+      [].forEach.call(nodes, function(node) {
+        node.addEventListener('click', function(e) {
+          e.target.parentElement.remove();
+        });
+      });
+    }
+  </script>
+  <body>
+    <div class="image">
+      <img src="https://goo.gl/kjzfbE" alt="First" />
+      <button class="remove">X</button>
+    </div>
+    <div class="image">
+      <img src="https://goo.gl/d2JncW" alt="Second" />
+      <button class="remove">X</button>
+    </div>
+    `
+    <script>
+      setup();
+
+      //   document.getElementsByClassName('remove')[0].click();
+    </script>
+  </body>
+</html>

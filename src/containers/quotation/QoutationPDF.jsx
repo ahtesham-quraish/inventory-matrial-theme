@@ -5,6 +5,29 @@ import logo from '../../assets/img/logo.png';
 import styles from '../../assets/jss/material-dashboard-react/components/pdf';
 
 class QuotationPDF extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      discountPercentage: 10,
+    };
+  }
+
+  getSubTotal = () => {
+    let subtotal = 0;
+    this.props.qoutationProducts.forEach((element) => {
+      console.log('element in sub total', element);
+      subtotal += element.price * element.requiredQty;
+    });
+    return subtotal;
+  };
+  getGrandTotal = () => {
+    let subtotal = 0;
+    this.props.qoutationProducts.forEach((element) => {
+      subtotal += element.price * element.requiredQty;
+    });
+    let factor = (this.state.discountPercentage / 100) * subtotal;
+    return subtotal - factor;
+  };
   render() {
     const { classes } = this.props;
     return (
@@ -148,7 +171,7 @@ class QuotationPDF extends React.Component {
                   type="text"
                   id="attn"
                   placeholder="Manager"
-                  disabled
+                  // disabled
                 />
               </div>
               <div className={classes.bioBlockFieldClass}>
@@ -159,7 +182,7 @@ class QuotationPDF extends React.Component {
                   className={classes.bioBlockFieldinputDisabledClass}
                   type="text"
                   id="valid"
-                  placeholder="22-10-17"
+                  placeholder=""
                   disabled
                 />
               </div>
@@ -177,13 +200,37 @@ class QuotationPDF extends React.Component {
                 <input
                   type="text"
                   id="customer"
-                  placeholder="Thokar, Lahore"
+                  placeholder=""
                   value={
                     this.props.customer
                       ? this.props.customer.fName +
                         ' ' +
                         this.props.customer.lName
                       : ''
+                  }
+                  disabled
+                  className={`${classes.bioBlockFieldinputDisabledClass} ${
+                    classes.bioBlockFieldLargeinputDisabledClass
+                  }`}
+                />
+              </div>
+              <div
+                className={`${classes.bioBlockFieldClass} ${
+                  classes.bioBlockFieldLargeClass
+                }`}
+              >
+                <label
+                  className={classes.bioBlockFieldlabelClass}
+                  for="customer"
+                >
+                  Address :
+                </label>
+                <input
+                  type="text"
+                  id="customer"
+                  placeholder=""
+                  value={
+                    this.props.customer ? this.props.customer.Address1 : ''
                   }
                   disabled
                   className={`${classes.bioBlockFieldinputDisabledClass} ${
@@ -209,7 +256,7 @@ class QuotationPDF extends React.Component {
                   type="text"
                   id="remarks"
                   placeholder=" "
-                  disabled
+                  // disabled
                 />
               </div>
             </div>
@@ -228,7 +275,7 @@ class QuotationPDF extends React.Component {
                       classes.infoBlockthClass
                     }`}
                   >
-                    Cust Description
+                    Product Name
                   </th>
                   <th
                     className={`${classes.tableElement}  ${
@@ -236,6 +283,13 @@ class QuotationPDF extends React.Component {
                     }`}
                   >
                     Item Description
+                  </th>
+                  <th
+                    className={`${classes.tableElement}  ${
+                      classes.infoBlockthClass
+                    }`}
+                  >
+                    Cust Description
                   </th>
                   <th
                     className={`${classes.tableElement}  ${
@@ -265,13 +319,7 @@ class QuotationPDF extends React.Component {
                   >
                     Delivery Time
                   </th>
-                  <th
-                    className={`${classes.tableElement}  ${
-                      classes.infoBlockthClass
-                    }`}
-                  >
-                    Cages
-                  </th>
+
                   <th
                     className={`${classes.tableElement}  ${
                       classes.infoBlockthClass
@@ -306,6 +354,13 @@ class QuotationPDF extends React.Component {
                       {product.description}
                     </td>
                     <td
+                      className={`${classes.tableElement}  ${
+                        classes.infoBlockthClass
+                      }`}
+                    >
+                      <div contenteditable="true" />
+                    </td>
+                    <td
                       className={`${classes.tableElement} ${
                         classes.infoBlockthClass
                       }`}
@@ -333,13 +388,7 @@ class QuotationPDF extends React.Component {
                     >
                       Ready Stock
                     </td>
-                    <td
-                      className={`${classes.tableElement}  ${
-                        classes.infoBlockthClass
-                      }`}
-                    >
-                      Steel
-                    </td>
+
                     <td
                       className={`${classes.tableElement} ${
                         classes.infoBlockthClass
@@ -359,10 +408,12 @@ class QuotationPDF extends React.Component {
                   <td className={`${classes.infoBlocktrLasttdClass}`} />
                   <td className={`${classes.infoBlocktrLasttdClass}`}>
                     <span className={classes.infoBlocktrLasttdspanClass}>
-                      Sub Total:
+                      Sub Total
                     </span>
                   </td>
-                  <td className={`${classes.infoBlocktrLasttdClass}`}>5,000</td>
+                  <td className={`${classes.infoBlocktrLasttdClass}`}>
+                    {this.getSubTotal()}
+                  </td>
                 </tr>
                 <tr className="last">
                   <td className={`${classes.infoBlocktrLasttdClass}`} />
@@ -377,7 +428,9 @@ class QuotationPDF extends React.Component {
                       Discount:
                     </span>
                   </td>
-                  <td className={`${classes.infoBlocktrLasttdClass}`}>10%</td>
+                  <td className={`${classes.infoBlocktrLasttdClass}`}>
+                    {this.state.discountPercentage + '%'}
+                  </td>
                 </tr>
                 <tr className="last grand">
                   <td className={classes.infoBlocktrLastGrandtdClass} />
@@ -393,7 +446,7 @@ class QuotationPDF extends React.Component {
                     </span>
                   </td>
                   <td className={classes.infoBlocktrLastGrandtdClass}>
-                    35,000
+                    {this.getGrandTotal()}
                   </td>
                 </tr>
               </tbody>

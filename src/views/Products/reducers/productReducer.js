@@ -2,6 +2,7 @@ import action_types from '../actions/actionTypes';
 
 const initialState = {
   product: [],
+  productDetail: {},
   loading: false,
   success: false,
   error: false,
@@ -34,6 +35,11 @@ export function productReducer(state = initialState, action) {
       return {
         ...state,
         error: !state.error,
+      };
+    case action_types.FETCH_PRODUCT_DETAILS:
+      return {
+        ...state,
+        productDetail: action.payload,
       };
     default:
       return state;
