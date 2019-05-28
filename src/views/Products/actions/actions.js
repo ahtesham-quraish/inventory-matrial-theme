@@ -88,3 +88,13 @@ export function updateProduct(payload, id) {
       });
   };
 }
+
+export function deleteProduct(id) {
+  return (dispatch) => {
+    return axiosInstance
+      .delete(`http://127.0.0.1:8000/product/${id}/`)
+      .then((response) => {
+        return response;
+      });
+  };
+}

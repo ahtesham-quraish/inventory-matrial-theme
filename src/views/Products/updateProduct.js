@@ -16,10 +16,19 @@ import { ToastContainer, toast } from 'react-toastify';
 import Loader from 'react-loader-spinner';
 import 'react-toastify/dist/ReactToastify.css';
 import avatar from 'assets/img/faces/marc.jpg';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
 
 // actions
 
-import { fetchProductDetails, updateProduct } from './actions/actions';
+import {
+  fetchProductDetails,
+  updateProduct,
+  deleteProduct,
+} from './actions/actions';
 
 const styles = {
   cardCategoryWhite: {
@@ -65,6 +74,7 @@ class UpdateProduct extends React.Component {
       },
       waiting: false,
       editModeDisabled: true,
+      deleteModelOpen: false,
     };
   }
 
@@ -84,6 +94,12 @@ class UpdateProduct extends React.Component {
   enableEditing = () => {
     this.setState({
       editModeDisabled: !this.state.editModeDisabled,
+    });
+  };
+
+  toggleDeleteModel = () => {
+    this.setState({
+      deleteModelOpen: !this.state.deleteModelOpen,
     });
   };
 
@@ -115,6 +131,26 @@ class UpdateProduct extends React.Component {
       });
   };
 
+  handleProductDelete = () => {
+    // console.log(this.state.product);
+    this.props
+      .deleteProduct(this.props.match.params.product_id)
+      .then(() => {
+        toast.success('Product deleted successfully');
+        this.props.history.push('/admin/products');
+        this.setState({
+          deleteModelOpen: false,
+          waiting: false,
+        });
+      })
+      .catch(() => {
+        toast.error('Product could not be deleted');
+        this.setState({
+          waiting: false,
+        });
+      });
+  };
+
   render() {
     const { classes } = this.props;
     const { product } = this.state;
@@ -125,6 +161,44 @@ class UpdateProduct extends React.Component {
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={4000} />
         <GridContainer>
           <GridItem xs={16} sm={16} md={12}>
+            <Dialog
+              open={this.state.deleteModelOpen}
+              onClose={this.toggleDeleteModel}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle id="alert-dialog-title">
+                {'Delete ' + this.state.product.title}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  {'Are you sure you want to delete this product?'}
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={this.toggleDeleteModel} color="info">
+                  Cancel
+                </Button>
+                <Button
+                  onClick={this.handleProductDelete}
+                  color="Danger"
+                  autoFocus
+                >
+                  {this.state.waiting === true ? (
+                    <div style={{ width: '75px' }}>
+                      <Loader
+                        type="ThreeDots"
+                        color="white"
+                        height={1000}
+                        width={1000}
+                      />
+                    </div>
+                  ) : (
+                    'Delete'
+                  )}
+                </Button>
+              </DialogActions>
+            </Dialog>
             <Card>
               <CardHeader color="primary">
                 {this.state.editModeDisabled
@@ -132,12 +206,20 @@ class UpdateProduct extends React.Component {
                   : 'Edit Product Details'}
                 {'    '}
                 {this.state.editModeDisabled && (
-                  <i
-                    onClick={this.enableEditing}
-                    className={`material-icons ${classes.pointer}`}
-                  >
-                    edit
-                  </i>
+                  <span>
+                    <i
+                      onClick={this.enableEditing}
+                      className={`material-icons ${classes.pointer}`}
+                    >
+                      edit
+                    </i>
+                    <i
+                      onClick={this.toggleDeleteModel}
+                      className={`material-icons ${classes.pointer}`}
+                    >
+                      delete
+                    </i>
+                  </span>
                 )}
               </CardHeader>
               <CardBody>
@@ -312,6 +394,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     fetchProductDetails: (id) => dispatch(fetchProductDetails(id)),
     updateProduct: (payload, id) => dispatch(updateProduct(payload, id)),
+    deleteProduct: (id) => dispatch(deleteProduct(id)),
   };
 };
 UpdateProduct = withStyles(styles)(UpdateProduct);

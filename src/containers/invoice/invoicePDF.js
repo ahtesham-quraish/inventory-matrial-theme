@@ -1,7 +1,9 @@
 import React from 'react';
-import { connect } from 'react-redux';
-import '../../assets/css/style.css';
+// import '../../assets/css/style.css';
+import withStyles from '@material-ui/core/styles/withStyles';
+import styles from './invoiceStyles';
 import logo from '../../assets/img/logo.png';
+
 class InvoicePDF extends React.Component {
   constructor(props) {
     super(props);
@@ -26,56 +28,71 @@ class InvoicePDF extends React.Component {
     return subtotal - factor;
   };
   render() {
+    const { classes } = this.props;
     return (
       <React.Fragment>
-        <div className="container-fluid">
-          <div className="outer-container">
+        <div>
+          <div className={classes.outerContainerClass}>
             <div className="">
               <div className="col-md-12">
                 <div className="row">
-                  <div className="col-md-6 left">
+                  <div className={`${classes.leftClass} ${'col-md-6'}`}>
                     <div className="row">
-                      <div className="col-md-5 logo">
+                      <div
+                        className={`${classes.logoClass} ${
+                          classes.logoimgClass
+                        } ${'col-md-5'}`}
+                      >
                         <img alt="Bootstrap Image Preview" src={logo} />
                         <p>Bearing Industry Faisalabad</p>
                       </div>
-                      <div className="col-md-7 company-address">
+                      <div
+                        className={`${classes.companyAddressClass} ${
+                          classes.twoColumnsClass
+                        } ${'col-md-7 '}`}
+                      >
                         <dl>
-                          <dt>Faisalabad :</dt>
+                          <dt className={classes.companyAddressdtClass}>
+                            Faisalabad :
+                          </dt>
                           <dd>
                             53 Street Number Barkat Market Mandi Bazar
                             Faisalabad.
-                            <span className="normal-label">
+                            <span className={`${classes.normalLabelClass}`}>
                               {' '}
                               Tel : (042 4343432)
                             </span>
-                            <span className="normal-label">
+                            <span className={`${classes.normalLabelClass}`}>
                               {' '}
                               Email : ahtesham.quraish@gmail.com
                             </span>
                           </dd>
-                          <dt>Lahore :</dt>
+                          <dt className={classes.companyAddressdtClass}>
+                            Lahore :
+                          </dt>
                           <dd>
                             Stree No 12 Office No 3 Modal town near farrozpur
                             Road Lahore.
-                            <span className="normal-label">
+                            <span className={`${classes.normalLabelClass}`}>
                               {' '}
                               Tel : (042 4343432)
                             </span>
-                            <span className="normal-label">
+                            <span className={`${classes.normalLabelClass}`}>
                               {' '}
                               Email : ahtesham.quraish@gmail.com
                             </span>
                           </dd>
 
-                          <dt>Reg Off :</dt>
+                          <dt className={classes.companyAddressdtClass}>
+                            Reg Off :
+                          </dt>
                           <dd>
                             Ghanta Gher bazar Mall Road Faisalabad.
-                            <span className="normal-label">
+                            <span className={`${classes.normalLabelClass}`}>
                               {' '}
                               Tel : (042 4343432)
                             </span>
-                            <span className="normal-label">
+                            <span className={`${classes.normalLabelClass}`}>
                               {' '}
                               Email : ahtesham.quraish@gmail.com
                             </span>
@@ -85,27 +102,29 @@ class InvoicePDF extends React.Component {
                     </div>
                     <div className="row">
                       <div className="col-md-12">
-                        <span className="income-tex">
+                        <span className={classes.incomeTexClass}>
                           {' '}
                           Sales Tex Registration No : 042-232-22224212-12{' '}
                         </span>
-                        <span className="income-tex">
+                        <span className={classes.incomeTexClass}>
                           National Tex Number : 12-1243343-124-2
                         </span>
                       </div>
                     </div>
                   </div>
-                  <div className="col-md-6 right">
-                    <div className="cus-div">
-                      <span className="cus-add-left">
+                  <div className={`${classes.rightClass} ${'col-md-6'}`}>
+                    <div className={classes.cusDivClass}>
+                      <span className={classes.cusAddLeftClass}>
                         Buyer's Name & Address
                       </span>
-                      <span className="cus-add-right">
+                      <span className={classes.cusAddRightClass}>
                         A Sales Tex Invoice.
                       </span>
                     </div>
                     <div className="row">
-                      <div className="col-md-12 cus-detail">
+                      <div
+                        className={`${classes.cusDetailClass}  ${'col-md-12'}`}
+                      >
                         <span>
                           {' '}
                           {this.props.customer
@@ -118,93 +137,190 @@ class InvoicePDF extends React.Component {
                             ? this.props.customer.Address1
                             : ''}
                         </span>
-                        <span className="normal-label">
+                        <span className={`${classes.normalLabelClass}`}>
                           Sale Tex Registration No : 2323434312-3434
                         </span>
-                        <span className="normal-label">
+                        <span className={`${classes.normalLabelClass}`}>
                           Nationl Tex No : 2323243431-23
                         </span>
-                        <span className="normal-label">City : FAISLABAD</span>
-                        <span className="normal-label">Country : PAKISTAN</span>
+                        <span className={`${classes.normalLabelClass}`}>
+                          City : FAISLABAD
+                        </span>
+                        <span className={classes.testClass}>
+                          Country : PAKISTAN
+                        </span>
                       </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
-            <div className="two-columns">
-              <div className="column">
-                <table>
+            <div className={classes.twoColumnsClass}>
+              <div className={classes.twoColumnsColumnClass}>
+                <table className={classes.twoColumnstableClass}>
                   <tr>
-                    <th>Buyer's Order Number</th>
-                    <th>DATE</th>
+                    <th className={classes.twoColumnsthClass}>
+                      Buyer's Order Number
+                    </th>
+                    <th className={classes.twoColumnsthClass}>DATE</th>
                   </tr>
                   <tr>
-                    <td>23232545-34232</td>
-                    <td>12/1/2009</td>
+                    <td className={classes.tdElement}>23232545-34232</td>
+                    <td className={classes.tdElement}>12/1/2009</td>
                   </tr>
                   <tr>
-                    <th>DIVLIVERY/CHALLAN NO</th>
-                    <th>DATE</th>
+                    <th className={classes.tdElement}>DIVLIVERY/CHALLAN NO</th>
+                    <th className={classes.tdElement}>DATE</th>
                   </tr>
                   <tr>
-                    <td>f121434343</td>
-                    <td>12/12/2009</td>
+                    <td className={classes.tdElement}>f121434343</td>
+                    <td className={classes.tdElement}>12/12/2009</td>
                   </tr>
                 </table>
               </div>
-              <div className="column">
-                <table>
+              <div className={classes.twoColumnsColumnClass}>
+                <table className={classes.twoColumnstableClass}>
                   <tr>
-                    <th>BILL & SALES TAX INVOICE NO</th>
-                    <th>DATE</th>
+                    <th className={classes.twoColumnsthClass}>
+                      BILL & SALES TAX INVOICE NO
+                    </th>
+                    <th className={classes.twoColumnsthClass}>DATE</th>
                   </tr>
                   <tr>
-                    <td>f12132323</td>
-                    <td>12/34/2009</td>
+                    <td className={classes.tdElement}>f12132323</td>
+                    <td className={classes.tdElement}>12/34/2009</td>
                   </tr>
                   <tr>
-                    <th>OUR ORD.ACK./QOUT.NO</th>
-                    <th>DATE</th>
+                    <th className={classes.tdElement}>OUR ORD.ACK./QOUT.NO</th>
+                    <th className={classes.tdElement}>DATE</th>
                   </tr>
                   <tr>
-                    <td>f23231212</td>
-                    <td>12/1/1001</td>
+                    <td className={classes.tdElement}>f23231212</td>
+                    <td className={classes.tdElement}>12/1/1001</td>
                   </tr>
                 </table>
               </div>
             </div>
-            <div className="one-column">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Sr#</th>
-                    <th>Cust Description</th>
-                    <th>Item Description</th>
-                    <th>Brand</th>
-                    <th>Qty</th>
-                    <th>U Price</th>
-                    <th>Delivery Time</th>
-                    <th>Status</th>
-                    <th />
+            <div className={classes.oneColumnClass}>
+              <table classes={classes.oneColumntableClass}>
+                <thead classes={classes.theadElement}>
+                  <tr className={classes.trElement}>
+                    <th className={classes.oneColumnthClass}>Sr#</th>
+                    <th className={classes.oneColumnthClass}>
+                      Cust Description
+                    </th>
+                    <th className={classes.oneColumnthClass}>
+                      Item Description
+                    </th>
+                    <th
+                      className={`${classes.oneColumnthClass} ${
+                        classes.thElement
+                      }`}
+                    >
+                      Brand
+                    </th>
+                    <th
+                      className={`${classes.oneColumnthClass} ${
+                        classes.thElement
+                      }`}
+                    >
+                      Qty
+                    </th>
+                    <th
+                      className={`${classes.oneColumnthClass} ${
+                        classes.thElement
+                      }`}
+                    >
+                      U Price
+                    </th>
+                    <th
+                      className={`${classes.oneColumnthClass} ${
+                        classes.thElement
+                      }`}
+                    >
+                      Delivery Time
+                    </th>
+                    <th
+                      className={`${classes.oneColumnthClass} ${
+                        classes.thElement
+                      }`}
+                    >
+                      Status
+                    </th>
+                    <th
+                      className={`${classes.oneColumnthClass} ${
+                        classes.thElement
+                      }`}
+                    />
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className={classes.tbodyElement}>
                   {this.props.qoutationProducts.map((product, key) => (
-                    <tr>
-                      <td>{key + 1}</td>
-                      <td contenteditable="true" />
-                      <td>{product.description}</td>
-                      <td>{product.brand}</td>
-                      <td>{product.requiredQty}</td>
-                      <td>{product.price}</td>
-                      <td>Ready Stock</td>
-                      <td>Ok</td>
-                      <td />
+                    <tr className={classes.trElement}>
+                      <td
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      >
+                        {key + 1}
+                      </td>
+                      <td
+                        contenteditable="true"
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      />
+                      <td
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      >
+                        {product.description}
+                      </td>
+                      <td
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      >
+                        {product.brand}
+                      </td>
+                      <td
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      >
+                        {product.requiredQty}
+                      </td>
+                      <td
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      >
+                        {product.price}
+                      </td>
+                      <td
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      >
+                        Ready Stock
+                      </td>
+                      <td
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      >
+                        Ok
+                      </td>
+                      <td
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      />
                     </tr>
                   ))}
 
-                  <tr className="last">
+                  <tr className={classes.oneColumntrLasttdClass}>
                     <td />
                     <td />
                     <td />
@@ -217,7 +333,7 @@ class InvoicePDF extends React.Component {
                     </td>
                     <td>{this.getSubTotal()}</td>
                   </tr>
-                  <tr className="last">
+                  <tr className={classes.oneColumntrLasttdClass}>
                     <td />
                     <td />
                     <td />
@@ -230,7 +346,11 @@ class InvoicePDF extends React.Component {
                     </td>
                     <td>{this.state.discountPercentage + '%'}</td>
                   </tr>
-                  <tr className="last grand">
+                  <tr
+                    className={`$classes.oneColumntrLasttdClass ${
+                      classes.oneColumntrLastGrandtdClass
+                    }`}
+                  >
                     <td />
                     <td />
                     <td />
@@ -239,45 +359,39 @@ class InvoicePDF extends React.Component {
                     <td />
                     <td />
                     <td>
-                      <span>Grand Total:</span>
+                      <span className={classes.oneColumntrLasttdspanClass}>
+                        Grand Total:
+                      </span>
                     </td>
                     <td>{this.getGrandTotal()}</td>
                   </tr>
                 </tbody>
               </table>
-              <div className="signature-block">
-                <span className="name">Manager's Signature:</span>
-                <span className="signature" />
+              <div className={classes.signatureBlockClass}>
+                <span className={classes.signatureBlockNameClass}>
+                  Manager's Signature:
+                </span>
+                <span className={classes.signatureBlockSignatureClass} />
               </div>
             </div>
           </div>
         </div>
-        <div className="footer comman">
-          <div className="comman-left">
+        <div className={`${classes.footerClass} ${classes.commanClass}`}>
+          <div className={classes.commanLeftClass}>
             {' '}
-            <img className="common-logo" src={logo} />
+            <img className={classes.commonLogoClass} src={logo} />
           </div>
-          <div className="comman-right">
+          <div className={classes.commanRightClass}>
             {' '}
-            <span className="comman-right-span">
+            <span className={classes.commanRightSpanClass}>
               Abaco Techinal Provate Limited
             </span>
-            <div className="auth-div"> Authorized Distributor </div>
+            <div className={classes.authDivClass}> Authorized Distributor </div>
           </div>
         </div>
       </React.Fragment>
     );
   }
 }
-
-const mapStateToProps = (state) => {
-  return {
-    customer: state.QoutationReducer.selectedCustomers,
-    qoutationProducts: state.QoutationReducer.qoutationProducts,
-  };
-};
-
-export default connect(
-  mapStateToProps,
-  null,
-)(InvoicePDF);
+InvoicePDF = withStyles(styles)(InvoicePDF);
+export default InvoicePDF;

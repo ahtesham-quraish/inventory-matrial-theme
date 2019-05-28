@@ -470,8 +470,8 @@ const mapStateToProps = (state) => {
   };
 };
 QuotationPDF = withStyles(styles)(QuotationPDF);
-
-export default connect(
-  mapStateToProps,
-  null,
-)(QuotationPDF);
+export default QuotationPDF;
+// export default connect(
+//   mapStateToProps,
+//   null,
+// )(QuotationPDF);
