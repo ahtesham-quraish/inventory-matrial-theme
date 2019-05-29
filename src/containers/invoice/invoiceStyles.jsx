@@ -1,4 +1,13 @@
 const styles = {
+  row: { overflow: 'hidden' },
+  colmd6: { float: 'left', width: '50%' },
+  colmd7: { width: '57%', float: 'left' },
+  colmd5: { float: 'left' },
+  colmd12: {},
+  main: {
+    position: 'relative',
+    paddingBottom: '100px',
+  },
   //.vl
   vlClass: {
     borderLeft: '2px solid #925562',
@@ -8,15 +17,24 @@ const styles = {
   logoClass: {
     textAlign: 'center',
   },
+
   //.logo img
   logoimgClass: {
-    width: '200px',
-    height: '200px',
+    width: '180px',
+    height: '180px',
+  },
+  imglogo: {
+    maxWidth: '100%',
+    height: 'auto',
+    display: 'block',
+    margin: '0 auto',
+    width: 'auto',
   },
   //.company-address
   companyAddressClass: {
-    marginBottom: '10px',
     borderLeft: '2px solid #925562',
+    margin: '0 0 10px 15px',
+    padding: '0 0 0 15px',
   },
   //.company-address dt
   companyAddressdtClass: {
@@ -44,12 +62,12 @@ const styles = {
   },
   //.left
   leftClass: {
-    marginTop: '20px',
-    marginBottom: '10px',
+    padding: '20px 20px 10px',
+    borderRight: '1px solid black',
   },
   //.right
   rightClass: {
-    borderLeft: '1px solid black',
+    padding: '0 0 0 20px',
   },
   //.cus-add-left
   cusAddLeftClass: {
@@ -150,11 +168,11 @@ const styles = {
     borderSpacing: '0',
     width: '100%',
   },
-  tdElement: {
-    borderCollapse: 'collapse',
-    borderSpacing: '0',
-    width: '100%',
-  },
+  // tdElement: {
+  //   borderCollapse: 'collapse',
+  //   borderSpacing: '0',
+  //   width: '100%',
+  // },
   //.one-column th, .one-column td
   oneColumnthClass: {
     border: '1px solid #000',
@@ -210,8 +228,13 @@ const styles = {
   },
   //.footer
   footerClass: {
-    maxWidth: '1170px',
     margin: '0 auto',
+    maxWidth: '1170px',
+    position: 'absolute',
+    bottom: '0',
+    left: '0',
+    width: '100%',
+    right: '0',
   },
   //.comman
   commanClass: {
@@ -249,6 +272,15 @@ const styles = {
   //.common-logo
   commonLogoClass: {
     width: '100px',
+  },
+  [`@media print`]: {
+    footerClass: {
+      position: 'fixed',
+      bottom: '10px',
+    },
+    main: {
+      padding: '0 20px',
+    },
   },
 };
 

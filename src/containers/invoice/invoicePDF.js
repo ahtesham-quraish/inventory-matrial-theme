@@ -31,126 +31,123 @@ class InvoicePDF extends React.Component {
     const { classes } = this.props;
     return (
       <React.Fragment>
-        <div>
+        <div className={classes.main}>
           <div className={classes.outerContainerClass}>
-            <div className="">
-              <div className="col-md-12">
-                <div className="row">
-                  <div className={`${classes.leftClass} ${'col-md-6'}`}>
-                    <div className="row">
-                      <div
-                        className={`${classes.logoClass} ${
-                          classes.logoimgClass
-                        } ${'col-md-5'}`}
-                      >
-                        <img alt="Bootstrap Image Preview" src={logo} />
-                        <p>Bearing Industry Faisalabad</p>
-                      </div>
-                      <div
-                        className={`${classes.companyAddressClass} ${
-                          classes.twoColumnsClass
-                        } ${'col-md-7 '}`}
-                      >
-                        <dl>
-                          <dt className={classes.companyAddressdtClass}>
-                            Faisalabad :
-                          </dt>
-                          <dd>
-                            53 Street Number Barkat Market Mandi Bazar
-                            Faisalabad.
-                            <span className={`${classes.normalLabelClass}`}>
-                              {' '}
-                              Tel : (042 4343432)
-                            </span>
-                            <span className={`${classes.normalLabelClass}`}>
-                              {' '}
-                              Email : ahtesham.quraish@gmail.com
-                            </span>
-                          </dd>
-                          <dt className={classes.companyAddressdtClass}>
-                            Lahore :
-                          </dt>
-                          <dd>
-                            Stree No 12 Office No 3 Modal town near farrozpur
-                            Road Lahore.
-                            <span className={`${classes.normalLabelClass}`}>
-                              {' '}
-                              Tel : (042 4343432)
-                            </span>
-                            <span className={`${classes.normalLabelClass}`}>
-                              {' '}
-                              Email : ahtesham.quraish@gmail.com
-                            </span>
-                          </dd>
-
-                          <dt className={classes.companyAddressdtClass}>
-                            Reg Off :
-                          </dt>
-                          <dd>
-                            Ghanta Gher bazar Mall Road Faisalabad.
-                            <span className={`${classes.normalLabelClass}`}>
-                              {' '}
-                              Tel : (042 4343432)
-                            </span>
-                            <span className={`${classes.normalLabelClass}`}>
-                              {' '}
-                              Email : ahtesham.quraish@gmail.com
-                            </span>
-                          </dd>
-                        </dl>
-                      </div>
-                    </div>
-                    <div className="row">
-                      <div className="col-md-12">
-                        <span className={classes.incomeTexClass}>
-                          {' '}
-                          Sales Tex Registration No : 042-232-22224212-12{' '}
-                        </span>
-                        <span className={classes.incomeTexClass}>
-                          National Tex Number : 12-1243343-124-2
-                        </span>
-                      </div>
-                    </div>
+            <div className={`${classes.row}`}>
+              <div className={`${classes.leftClass} ${classes.colmd6}`}>
+                <div className={`${classes.row}`}>
+                  <div
+                    className={`${classes.logoClass} ${classes.logoimgClass} ${
+                      classes.colmd5
+                    }`}
+                  >
+                    <img
+                      className={`${classes.imglogo}`}
+                      alt="Bootstrap Image Preview"
+                      src={logo}
+                    />
+                    <p>Bearing Industry Faisalabad</p>
                   </div>
-                  <div className={`${classes.rightClass} ${'col-md-6'}`}>
-                    <div className={classes.cusDivClass}>
-                      <span className={classes.cusAddLeftClass}>
-                        Buyer's Name & Address
-                      </span>
-                      <span className={classes.cusAddRightClass}>
-                        A Sales Tex Invoice.
-                      </span>
-                    </div>
-                    <div className="row">
-                      <div
-                        className={`${classes.cusDetailClass}  ${'col-md-12'}`}
-                      >
-                        <span>
+                  <div
+                    className={`${classes.companyAddressClass} ${
+                      classes.twoColumnsClass
+                    } ${classes.colmd7}`}
+                  >
+                    <dl>
+                      <dt className={classes.companyAddressdtClass}>
+                        Faisalabad :
+                      </dt>
+                      <dd>
+                        53 Street Number Barkat Market Mandi Bazar Faisalabad.
+                        <span className={`${classes.normalLabelClass}`}>
                           {' '}
-                          {this.props.customer
-                            ? this.props.customer.fName +
-                              ' ' +
-                              this.props.customer.lName
-                            : ''}{' '}
-                          <br />
-                          {this.props.customer
-                            ? this.props.customer.Address1
-                            : ''}
+                          Tel : (042 4343432)
                         </span>
                         <span className={`${classes.normalLabelClass}`}>
-                          Sale Tex Registration No : 2323434312-3434
+                          {' '}
+                          Email : ahtesham.quraish@gmail.com
+                        </span>
+                      </dd>
+                      <dt className={classes.companyAddressdtClass}>
+                        Lahore :
+                      </dt>
+                      <dd>
+                        Stree No 12 Office No 3 Modal town near farrozpur Road
+                        Lahore.
+                        <span className={`${classes.normalLabelClass}`}>
+                          {' '}
+                          Tel : (042 4343432)
                         </span>
                         <span className={`${classes.normalLabelClass}`}>
-                          Nationl Tex No : 2323243431-23
+                          {' '}
+                          Email : ahtesham.quraish@gmail.com
+                        </span>
+                      </dd>
+
+                      <dt className={classes.companyAddressdtClass}>
+                        Reg Off :
+                      </dt>
+                      <dd>
+                        Ghanta Gher bazar Mall Road Faisalabad.
+                        <span className={`${classes.normalLabelClass}`}>
+                          {' '}
+                          Tel : (042 4343432)
                         </span>
                         <span className={`${classes.normalLabelClass}`}>
-                          City : FAISLABAD
+                          {' '}
+                          Email : ahtesham.quraish@gmail.com
                         </span>
-                        <span className={classes.testClass}>
-                          Country : PAKISTAN
-                        </span>
-                      </div>
-                    </div>
+                      </dd>
+                    </dl>
+                  </div>
+                </div>
+                <div className={`${classes.row}`}>
+                  <div className={`${classes.colmd12}`}>
+                    <span className={classes.incomeTexClass}>
+                      {' '}
+                      Sales Tex Registration No : 042-232-22224212-12{' '}
+                    </span>
+                    <span className={classes.incomeTexClass}>
+                      National Tex Number : 12-1243343-124-2
+                    </span>
+                  </div>
+                </div>
+              </div>
+              <div className={`${classes.rightClass} ${classes.colmd6}`}>
+                <div className={classes.cusDivClass}>
+                  <span className={classes.cusAddLeftClass}>
+                    Buyer's Name & Address
+                  </span>
+                  <span className={classes.cusAddRightClass}>
+                    A Sales Tex Invoice.
+                  </span>
+                </div>
+                <div className={`${classes.row}`}>
+                  <div
+                    className={`${classes.cusDetailClass}  ${classes.colmd12}`}
+                  >
+                    <span>
+                      {' '}
+                      {this.props.customer
+                        ? this.props.customer.fName +
+                          ' ' +
+                          this.props.customer.lName
+                        : ''}{' '}
+                      <br />
+                      {this.props.customer ? this.props.customer.Address1 : ''}
+                    </span>
+                    <span className={`${classes.normalLabelClass}`}>
+                      Sale Tex Registration No : 2323434312-3434
+                    </span>
+                    <span className={`${classes.normalLabelClass}`}>
+                      Nationl Tex No : 2323243431-23
+                    </span>
+                    <span className={`${classes.normalLabelClass}`}>
+                      City : FAISLABAD
+                    </span>
+                    <span className={classes.testClass}>
+                      Country : PAKISTAN
+                    </span>
                   </div>
                 </div>
               </div>
@@ -179,7 +176,10 @@ class InvoicePDF extends React.Component {
                 </table>
               </div>
               <div className={classes.twoColumnsColumnClass}>
-                <table className={classes.twoColumnstableClass}>
+                <table
+                  style={{ width: '100%' }}
+                  className={classes.twoColumnstableClass}
+                >
                   <tr>
                     <th className={classes.twoColumnsthClass}>
                       BILL & SALES TAX INVOICE NO
@@ -202,7 +202,10 @@ class InvoicePDF extends React.Component {
               </div>
             </div>
             <div className={classes.oneColumnClass}>
-              <table classes={classes.oneColumntableClass}>
+              <table
+                style={{ width: '100%' }}
+                classes={classes.oneColumntableClass}
+              >
                 <thead classes={classes.theadElement}>
                   <tr className={classes.trElement}>
                     <th className={classes.oneColumnthClass}>Sr#</th>
@@ -319,7 +322,68 @@ class InvoicePDF extends React.Component {
                       />
                     </tr>
                   ))}
-
+                  <tr className={classes.trElement}>
+                    <td
+                      className={`${classes.oneColumntdClass} ${
+                        classes.tdElement
+                      }`}
+                    >
+                      1
+                    </td>
+                    <td
+                      contenteditable="true"
+                      className={`${classes.oneColumntdClass} ${
+                        classes.tdElement
+                      }`}
+                    />
+                    <td
+                      className={`${classes.oneColumntdClass} ${
+                        classes.tdElement
+                      }`}
+                    >
+                      this is noce
+                    </td>
+                    <td
+                      className={`${classes.oneColumntdClass} ${
+                        classes.tdElement
+                      }`}
+                    >
+                      lassi
+                    </td>
+                    <td
+                      className={`${classes.oneColumntdClass} ${
+                        classes.tdElement
+                      }`}
+                    >
+                      12
+                    </td>
+                    <td
+                      className={`${classes.oneColumntdClass} ${
+                        classes.tdElement
+                      }`}
+                    >
+                      12
+                    </td>
+                    <td
+                      className={`${classes.oneColumntdClass} ${
+                        classes.tdElement
+                      }`}
+                    >
+                      Ready Stock
+                    </td>
+                    <td
+                      className={`${classes.oneColumntdClass} ${
+                        classes.tdElement
+                      }`}
+                    >
+                      Ok
+                    </td>
+                    <td
+                      className={`${classes.oneColumntdClass} ${
+                        classes.tdElement
+                      }`}
+                    />
+                  </tr>
                   <tr className={classes.oneColumntrLasttdClass}>
                     <td />
                     <td />
@@ -375,18 +439,21 @@ class InvoicePDF extends React.Component {
               </div>
             </div>
           </div>
-        </div>
-        <div className={`${classes.footerClass} ${classes.commanClass}`}>
-          <div className={classes.commanLeftClass}>
-            {' '}
-            <img className={classes.commonLogoClass} src={logo} />
-          </div>
-          <div className={classes.commanRightClass}>
-            {' '}
-            <span className={classes.commanRightSpanClass}>
-              Abaco Techinal Provate Limited
-            </span>
-            <div className={classes.authDivClass}> Authorized Distributor </div>
+          <div className={`${classes.footerClass} ${classes.commanClass}`}>
+            <div className={classes.commanLeftClass}>
+              {' '}
+              <img className={classes.commonLogoClass} src={logo} />
+            </div>
+            <div className={classes.commanRightClass}>
+              {' '}
+              <span className={classes.commanRightSpanClass}>
+                Abaco Techinal Provate Limited
+              </span>
+              <div className={classes.authDivClass}>
+                {' '}
+                Authorized Distributor{' '}
+              </div>
+            </div>
           </div>
         </div>
       </React.Fragment>
