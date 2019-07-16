@@ -74,6 +74,14 @@ class Quotation extends React.Component {
       addProductModelOpen: false,
       addProcductInputs: {
         requiredQuantity: '',
+        requiredQuantityError: false,
+        requiredQuantityMsg: null,
+        qoutedPrice: '',
+        qoutedPriceError: false,
+        qoutedPriceMsg: null,
+        custDescription: '',
+        custDescriptionError: false,
+        custDescriptionMsg: null,
       },
       productToBeAdded: null,
     };
@@ -154,18 +162,49 @@ class Quotation extends React.Component {
   };
 
   addProductToQoutation = () => {
-    const { productToBeAdded, addProcductInputs } = this.state;
-    let temp = productToBeAdded;
-    temp.requiredQty = this.state.addProcductInputs.requiredQuantity;
-    this.props.addProductToQoutation(temp);
-    addProcductInputs.requiredQuantity = '';
+    if (this.validateProductData() === true) {
+      const { productToBeAdded, addProcductInputs } = this.state;
+      let temp = productToBeAdded;
+      temp.requiredQty = this.state.addProcductInputs.requiredQuantity;
+      temp.qoutedPrice = this.state.addProcductInputs.qoutedPrice;
+      temp.custDescription = this.state.addProcductInputs.custDescription;
+      this.props.addProductToQoutation(temp);
+      addProcductInputs.requiredQuantity = '';
+      addProcductInputs.qoutedPrice = '';
+      addProcductInputs.custDescription = '';
+      this.setState({
+        productToBeAdded: null,
+        addProductModelOpen: false,
+        addProcductInputs: addProcductInputs,
+      });
+    }
+  };
+  validateProductData = () => {
+    let isValid = true;
+    const { addProcductInputs } = this.state;
+    for (let key in addProcductInputs) {
+      if (addProcductInputs[key] === '') {
+        addProcductInputs[key + 'Error'] = true;
+        addProcductInputs[key + 'Msg'] = 'This field is required';
+        isValid = false;
+      }
+    }
+    console.log('returning this for isValidfirst', isValid);
+    if (
+      addProcductInputs.requiredQuantity > this.state.productToBeAdded.quatity
+    ) {
+      addProcductInputs['requiredQuantityError'] = true;
+      addProcductInputs['requiredQuantityMsg'] =
+        'Quantity can not exceed current quantity';
+      isValid = false;
+    }
+
     this.setState({
-      productToBeAdded: null,
-      addProductModelOpen: false,
       addProcductInputs: addProcductInputs,
     });
+    console.log('returning this for isValid', isValid);
+    return isValid;
   };
-
   handleCancelClick = () => {
     this.props.removeProductFromQoutation(this.state.productToBeAdded);
     this.setState({
@@ -177,13 +216,15 @@ class Quotation extends React.Component {
     });
   };
   handleAddProductsChange = (event) => {
-    if (event.target.value <= this.state.productToBeAdded.quatity) {
-      const { addProcductInputs } = this.state;
-      addProcductInputs[event.target.id] = event.target.value;
-      this.setState({
-        addProcductInputs: addProcductInputs,
-      });
-    }
+    // if (event.target.value <= this.state.productToBeAdded.quatity) {
+    const { addProcductInputs } = this.state;
+    addProcductInputs[event.target.id] = event.target.value;
+    addProcductInputs[event.target.id + 'Error'] = false;
+    addProcductInputs[event.target.id + 'Msg'] = null;
+    this.setState({
+      addProcductInputs: addProcductInputs,
+    });
+    // }
   };
   render() {
     const { classes } = this.props;
@@ -220,7 +261,30 @@ class Quotation extends React.Component {
               value={this.state.addProcductInputs.requiredQuantity}
               onChange={this.handleAddProductsChange}
               fullWidth
-              helperText={'Required quantity can not exceed current quantity'}
+              error={this.state.addProcductInputs.requiredQuantityError}
+              helperText={this.state.addProcductInputs.requiredQuantityMsg}
+            />
+            <TextField
+              margin="dense"
+              id="qoutedPrice"
+              label="Qouted Price"
+              type="number"
+              value={this.state.addProcductInputs.qoutedPrice}
+              onChange={this.handleAddProductsChange}
+              fullWidth
+              error={this.state.addProcductInputs.qoutedPriceError}
+              helperText={this.state.addProcductInputs.qoutedPriceMsg}
+            />
+            <TextField
+              margin="dense"
+              id="custDescription"
+              label="Customer Description"
+              type="text"
+              value={this.state.addProcductInputs.custDescription}
+              onChange={this.handleAddProductsChange}
+              fullWidth
+              error={this.state.addProcductInputs.custDescriptionError}
+              helperText={this.state.addProcductInputs.custDescriptionMsg}
             />
           </DialogContent>
           <DialogActions>
@@ -233,7 +297,7 @@ class Quotation extends React.Component {
           </DialogActions>
         </Dialog>
         <GridContainer>
-          <GridItem xs={12} sm={12} md={6}>
+          <GridItem xs={8} sm={8} md={4}>
             <Select
               placeholder="Select Customer"
               value={this.state.selectedCustomer}
@@ -241,9 +305,18 @@ class Quotation extends React.Component {
               options={this.state.options}
             />
           </GridItem>
-          <GridItem xs={12} sm={12} md={6}>
+          <GridItem xs={8} sm={8} md={4}>
             <Select
               placeholder="Select Product"
+              value={this.state.selectedProducts}
+              onChange={this.handleProductSelect}
+              options={this.state.productOptions}
+              isMulti={true}
+            />
+          </GridItem>
+          <GridItem xs={8} sm={8} md={4}>
+            <Select
+              placeholder="Products from previous invoices"
               value={this.state.selectedProducts}
               onChange={this.handleProductSelect}
               options={this.state.productOptions}

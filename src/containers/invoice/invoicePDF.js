@@ -29,6 +29,7 @@ class InvoicePDF extends React.Component {
   };
   render() {
     const { classes } = this.props;
+    console.log(this.props.qoutationProducts);
     return (
       <React.Fragment>
         <div className={classes.main}>
@@ -268,11 +269,12 @@ class InvoicePDF extends React.Component {
                         {key + 1}
                       </td>
                       <td
-                        contenteditable="true"
                         className={`${classes.oneColumntdClass} ${
                           classes.tdElement
                         }`}
-                      />
+                      >
+                        {product.custDescription}
+                      </td>
                       <td
                         className={`${classes.oneColumntdClass} ${
                           classes.tdElement
@@ -299,7 +301,7 @@ class InvoicePDF extends React.Component {
                           classes.tdElement
                         }`}
                       >
-                        {product.price}
+                        {product.qoutedPrice}
                       </td>
                       <td
                         className={`${classes.oneColumntdClass} ${
@@ -322,68 +324,7 @@ class InvoicePDF extends React.Component {
                       />
                     </tr>
                   ))}
-                  <tr className={classes.trElement}>
-                    <td
-                      className={`${classes.oneColumntdClass} ${
-                        classes.tdElement
-                      }`}
-                    >
-                      1
-                    </td>
-                    <td
-                      contenteditable="true"
-                      className={`${classes.oneColumntdClass} ${
-                        classes.tdElement
-                      }`}
-                    />
-                    <td
-                      className={`${classes.oneColumntdClass} ${
-                        classes.tdElement
-                      }`}
-                    >
-                      this is noce
-                    </td>
-                    <td
-                      className={`${classes.oneColumntdClass} ${
-                        classes.tdElement
-                      }`}
-                    >
-                      lassi
-                    </td>
-                    <td
-                      className={`${classes.oneColumntdClass} ${
-                        classes.tdElement
-                      }`}
-                    >
-                      12
-                    </td>
-                    <td
-                      className={`${classes.oneColumntdClass} ${
-                        classes.tdElement
-                      }`}
-                    >
-                      12
-                    </td>
-                    <td
-                      className={`${classes.oneColumntdClass} ${
-                        classes.tdElement
-                      }`}
-                    >
-                      Ready Stock
-                    </td>
-                    <td
-                      className={`${classes.oneColumntdClass} ${
-                        classes.tdElement
-                      }`}
-                    >
-                      Ok
-                    </td>
-                    <td
-                      className={`${classes.oneColumntdClass} ${
-                        classes.tdElement
-                      }`}
-                    />
-                  </tr>
+
                   <tr className={classes.oneColumntrLasttdClass}>
                     <td />
                     <td />

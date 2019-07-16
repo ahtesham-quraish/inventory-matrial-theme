@@ -18,7 +18,7 @@ const customersDataSelector = createSelector(
         ]);
       }, 0);
     }
-    console.log('selector returns ', data);
+
     return data;
   },
 );

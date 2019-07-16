@@ -2,6 +2,7 @@ import ACTION_TYPES, { action_types } from '../actions/actionTypes';
 const initialState = {
   selectedCustomers: null,
   qoutationProducts: [],
+  pastProducts:[]
 };
 
 export default function QoutationReducer(state = initialState, action) {
