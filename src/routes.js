@@ -80,7 +80,7 @@ const dashboardRoutes = [
 
   {
     path: '/customers',
-    name: 'Customer List',
+    name: 'Customers',
     rtlName: 'قائمة الجدول',
     icon: 'content_paste',
     component: CustomerListContainer,

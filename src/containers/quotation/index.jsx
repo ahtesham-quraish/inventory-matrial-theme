@@ -5,6 +5,8 @@ import Qoutation from './Qoutation';
 import ReactToPrint from 'react-to-print';
 import QuotationPDF from './QoutationPDF';
 import Button from 'components/CustomButtons/Button.jsx';
+const electron = window.require('electron');
+const ipc = electron.ipcRenderer;
 
 const styles = {
   cardCategoryWhite: {
@@ -53,8 +55,9 @@ class QuotationContainer extends React.Component {
           <Qoutation />
           <ReactToPrint
             copyStyles={true}
+            onBeforePrint={() => ipc.send('print-to-pdf')}
             trigger={() => (
-              <Button color="primary" size="md">
+              <Button style={{ margin: '18px 0px' }} color="primary" size="md">
                 Print this out
               </Button>
             )}

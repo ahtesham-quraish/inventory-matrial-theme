@@ -47,7 +47,6 @@ class InvoicePDF extends React.Component {
                       alt="Bootstrap Image Preview"
                       src={logo}
                     />
-                    <p>Bearing Industry Faisalabad</p>
                   </div>
                   <div
                     className={`${classes.companyAddressClass} ${

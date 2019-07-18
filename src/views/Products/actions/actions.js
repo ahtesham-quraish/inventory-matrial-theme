@@ -23,7 +23,7 @@ export function postProduct(payload) {
     dispatch({
       type: action_types.TOGGLE_PRODUCT_LOADER,
     });
-    axiosInstance
+    return axiosInstance
       .post('http://127.0.0.1:8000/product/', payload, options)
       .then((response) => {
         dispatch({
