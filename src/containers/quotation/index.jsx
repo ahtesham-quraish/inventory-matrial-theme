@@ -4,7 +4,12 @@ import withStyles from '@material-ui/core/styles/withStyles';
 import Qoutation from './Qoutation';
 import ReactToPrint from 'react-to-print';
 import QuotationPDF from './QoutationPDF';
+import sendPDFViaEmail from './actions/sendPDFViaEmail';
 import Button from 'components/CustomButtons/Button.jsx';
+import Pdf from 'react-to-pdf';
+import { ToastContainer, toast } from 'react-toastify';
+import Loader from 'react-loader-spinner';
+import 'react-toastify/dist/ReactToastify.css';
 
 const styles = {
   cardCategoryWhite: {
@@ -38,12 +43,64 @@ class QuotationContainer extends React.Component {
     super(props);
     this.state = {
       isPrintable: true,
+      selectedPDF: null,
+      sendingEmail: false,
     };
   }
+
+  handlePDFSelect = () => {
+    document.getElementById('pdf').click();
+  };
+
+  sendEmail = () => {
+    this.setState({
+      sendingEmail: true,
+    });
+    let file = document.getElementById('pdf').files[0];
+    var form = new FormData();
+    if (this.props.customer !== null) {
+      form.append('user_id', this.props.customer.id);
+    }
+
+    form.append('file', file);
+    this.props.sendPDFViaEmail(form).then(() => {
+      // this.setState({
+      //   sendingEmail: false,
+      // });
+      if (this.props.pdf_email_response.status === 200) {
+        toast.success(
+          'Qoutation emailed to ' +
+            this.props.customer.fName +
+            ' ' +
+            this.props.customer.lName,
+        );
+        this.setState({
+          sendingEmail: false,
+        });
+      } else if (this.props.pdf_email_response.status === 406) {
+        toast.error('Please select a recipient');
+        this.setState({
+          sendingEmail: false,
+        });
+      } else if (this.props.pdf_email_response.status === 406) {
+        toast.error('Please select a file');
+        this.setState({
+          sendingEmail: false,
+        });
+      } else {
+        toast.error('Qoutation could not be emailed');
+        this.setState({
+          sendingEmail: false,
+        });
+      }
+    });
+  };
+
   render() {
     const { classes } = this.props;
     return (
       <React.Fragment>
+        <ToastContainer />
         <QuotationPDF
           ref={(el) => (this.componentRef = el)}
           qoutationProducts={this.props.qoutationProducts}
@@ -60,6 +117,16 @@ class QuotationContainer extends React.Component {
             )}
             content={() => this.componentRef}
           />
+          <Button color="primary" size="md" onClick={this.handlePDFSelect}>
+            {!this.state.sendingEmail ? 'Send Via Email' : 'Sending...'}
+          </Button>
+          <input
+            type="file"
+            id="pdf"
+            value={this.state.selectedPDF}
+            hidden={true}
+            onChange={this.sendEmail}
+          />
         </div>
       </React.Fragment>
     );
@@ -69,10 +136,16 @@ const mapStateToProps = (state) => {
   return {
     customer: state.QoutationReducer.selectedCustomers,
     qoutationProducts: state.QoutationReducer.qoutationProducts,
+    pdf_email_response: state.QoutationReducer.pdf_email_response,
+  };
+};
+const mapDispatchToProps = (dispatch) => {
+  return {
+    sendPDFViaEmail: (payload) => dispatch(sendPDFViaEmail(payload)),
   };
 };
 QuotationContainer = withStyles(styles)(QuotationContainer);
 export default connect(
   mapStateToProps,
-  null,
+  mapDispatchToProps,
 )(QuotationContainer);

@@ -24,6 +24,7 @@ import { setSelectedCustomer } from './actions/setSelectedCustomer';
 import { addProduct } from '../../views/Products/actions/actions';
 import { addProductToQoutation } from './actions/addProductToQoutation';
 import { removeProductFromQoutation } from './actions/removeProductFromQoutation';
+import getCustomerInvoiceProducts from './actions/getCustomerInvoiceProducts';
 
 //imports for dialog
 import { Button as DialogButton } from '@material-ui/core/Button';
@@ -134,6 +135,7 @@ class Quotation extends React.Component {
       selectedCustomer: selectedOption,
     });
     this.props.setCustomer(temp);
+    this.props.getCustomerInvoiceProducts(selectedOption.value);
   };
 
   handleProductSelect = (selectedOption, action) => {
@@ -347,6 +349,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(addProductToQoutation(payload)),
     removeProductFromQoutation: (payload) =>
       dispatch(removeProductFromQoutation(payload)),
+    getCustomerInvoiceProducts: (payload) =>
+      dispatch(getCustomerInvoiceProducts(payload)),
   };
 };
 Quotation = withStyles(styles)(Quotation);

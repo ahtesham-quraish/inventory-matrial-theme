@@ -100,7 +100,7 @@ class ProductList extends React.Component {
             <CardBody>
               <Table
                 tableHeaderColor="primary"
-                tableHead={['Title', 'Description', 'Size', 'Brand', 'Units']}
+                tableHead={['Title', 'Description', 'Size', 'Brand', 'Units','Quantity','Price']}
                 tableData={this.prepareTableData()}
                 onClick={this.handleRowClick}
               />

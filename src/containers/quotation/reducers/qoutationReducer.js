@@ -1,8 +1,10 @@
 import ACTION_TYPES, { action_types } from '../actions/actionTypes';
+
 const initialState = {
   selectedCustomers: null,
   qoutationProducts: [],
-  pastProducts:[]
+  pastProducts: [],
+  pdf_email_response: null,
 };
 
 export default function QoutationReducer(state = initialState, action) {
@@ -24,6 +26,14 @@ export default function QoutationReducer(state = initialState, action) {
           return product.id !== action.payload.value;
         }),
       };
+
+    case action_types.SEND_PDF_VIA_EMAIL_SUCCESS:
+      return {
+        ...state,
+        pdf_email_response: action.payload,
+      };
+    case action_types.GET_CUSTOMER_INVOICE_PRODUCTS_SUCCESS:
+      return { pastProducts: action.payload.products };
     default:
       return state;
   }
