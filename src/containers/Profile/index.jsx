@@ -69,6 +69,7 @@ class ProfileDetailContainer extends React.Component {
       function() {
         this.setState({ customer: {} });
         this.notify();
+        this.props.history.push(`/admin/customers`);
       }.bind(this),
     );
   };

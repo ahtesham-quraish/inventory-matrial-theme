@@ -127,7 +127,9 @@ class AddProduct extends React.Component {
     this.setState({
       waiting: true,
     });
-    this.props.postProduct(this.state.product);
+    this.props.postProduct(this.state.product).then(() => {
+      this.props.history.push('/admin/products');
+    });
   };
 
   render() {
@@ -231,7 +233,7 @@ class AddProduct extends React.Component {
                     <CustomInput
                       labelText="Product Quantity"
                       id="quantity"
-                      type="textarea"
+                      type="number"
                       error={this.state.product.quantityError}
                       helpText="Description is required"
                       formControlProps={{
