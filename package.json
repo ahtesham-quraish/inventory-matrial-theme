@@ -11,6 +11,8 @@
     "chartist": "0.10.1",
     "classnames": "2.2.6",
     "cross-env": "5.1.6",
+    "electron": "^5.0.7",
+    "electron-builder": "^21.1.1",
     "electron-is-dev": "^1.1.0",
     "fs": "^0.0.1-security",
     "history": "4.7.2",
@@ -78,8 +80,6 @@
   ],
   "devDependencies": {
     "concurrently": "^4.1.0",
-    "electron": "^5.0.1",
-    "electron-builder": "^20.39.0",
     "eslint-config-prettier": "4.0.0",
     "eslint-plugin-prettier": "3.0.1",
     "typescript": "^3.4.5",
