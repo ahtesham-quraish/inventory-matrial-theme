@@ -40,16 +40,16 @@ app.on('activate', () => {
   }
 });
 
-ipc.on('print-to-pdf', function(sender) {
-  const pdfPath = path.join(os.tmpdir(), 'print.pdf');
-  const win = BrowserWindow.fromWebContents(event.sender);
-  win.webContents.printToPDF({}, function(error, data) {
-    if (error) return console.log(error.message);
+// ipc.on('print-to-pdf', function(sender) {
+//   const pdfPath = path.join(os.tmpdir(), 'print.pdf');
+//   const win = BrowserWindow.fromWebContents(event.sender);
+//   win.webContents.printToPDF({}, function(error, data) {
+//     if (error) return console.log(error.message);
 
-    fs.writeFile(pdfPath, function(err) {
-      if (err) return console.log(err.message);
-      shell.openExternal('file//' + pdfPath);
-      event.sender.send('wrote-pdf', pdfPath);
-    });
-  });
-});
+//     fs.writeFile(pdfPath, function(err) {
+//       if (err) return console.log(err.message);
+//       shell.openExternal('file//' + pdfPath);
+//       event.sender.send('wrote-pdf', pdfPath);
+//     });
+//   });
+// });

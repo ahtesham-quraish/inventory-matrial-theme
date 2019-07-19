@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import withStyles from '@material-ui/core/styles/withStyles';
 import logo from '../../assets/img/logo.png';
 import styles from '../../assets/jss/material-dashboard-react/components/pdf';
-const electron = require('electron');
+//const electron = require('electron');
 
 class QuotationPDF extends React.Component {
   constructor(props) {

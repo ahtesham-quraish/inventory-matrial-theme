@@ -6,12 +6,12 @@ import ReactToPrint from 'react-to-print';
 import QuotationPDF from './QoutationPDF';
 import sendPDFViaEmail from './actions/sendPDFViaEmail';
 import Button from 'components/CustomButtons/Button.jsx';
-import Pdf from 'react-to-pdf';
+//import Pdf from 'react-to-pdf';
 import { ToastContainer, toast } from 'react-toastify';
 import Loader from 'react-loader-spinner';
 import 'react-toastify/dist/ReactToastify.css';
-const electron = window.require('electron');
-const ipc = electron.ipcRenderer;
+// const electron = window.require('electron');
+// const ipc = electron.ipcRenderer;
 
 const styles = {
   cardCategoryWhite: {
@@ -112,7 +112,6 @@ class QuotationContainer extends React.Component {
           <Qoutation />
           <ReactToPrint
             copyStyles={true}
-            onBeforePrint={() => ipc.send('print-to-pdf')}
             trigger={() => (
               <Button style={{ margin: '18px 0px' }} color="primary" size="md">
                 Print this out
