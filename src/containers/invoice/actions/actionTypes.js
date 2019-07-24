@@ -1,3 +1,4 @@
 export const action_types = {
   POST_INVOICE_SUCCESS: 'POST_IVOICE',
+  GET_INVOICE_SUCCESS: 'GET_INVOICE_SUCCESSL',
 };

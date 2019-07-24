@@ -41,6 +41,19 @@ export function productReducer(state = initialState, action) {
         ...state,
         productDetail: action.payload,
       };
+    case action_types.GET_CUSTOMER_INVOICE_PRODUCTS_SUCCESS:
+      let ids = [];
+      console.log('prod filter here', action.payload);
+      action.payload.products.forEach((element) => {
+        console.log(element.original_product.id, ' element');
+        ids.push(element.original_product.id);
+      });
+      console.log('products to filter are', ids);
+      console.log('present products are', state.product);
+      return {
+        ...state,
+        product: state.product.filter((item) => !ids.includes(item.id)),
+      };
     default:
       return state;
   }

@@ -70,19 +70,24 @@ class Quotation extends React.Component {
       customer: null,
       selectedCustomer: null,
       selectedProducts: [],
+      seelctedPastProducts: [],
       options: [],
       productOptions: [],
+      pastProductsOptions: [],
       addProductModelOpen: false,
       addProcductInputs: {
         requiredQuantity: '',
         requiredQuantityError: false,
         requiredQuantityMsg: null,
+        requiredQuantityOptional: false,
         qoutedPrice: '',
         qoutedPriceError: false,
         qoutedPriceMsg: null,
+        qoutedPriceOptional: false,
         custDescription: '',
         custDescriptionError: false,
         custDescriptionMsg: null,
+        custDescriptionOptional: true,
       },
       productToBeAdded: null,
     };
@@ -95,6 +100,12 @@ class Quotation extends React.Component {
     this.props.fetchProduct().then(() => {
       this.getProductOptions();
     });
+  };
+
+  componentDidUpdate = (prevProps, prevState) => {
+    if (prevProps !== this.props) {
+      this.getProductOptions();
+    }
   };
 
   getCustomerOptions = () => {
@@ -135,7 +146,21 @@ class Quotation extends React.Component {
       selectedCustomer: selectedOption,
     });
     this.props.setCustomer(temp);
-    this.props.getCustomerInvoiceProducts(selectedOption.value);
+    this.props.fetchProduct().then(() => {
+      this.props.getCustomerInvoiceProducts(selectedOption.value).then(() => {
+        let opts = [];
+        console.log('past products are ', this.props.pastProducts);
+        this.props.pastProducts.forEach((element) => {
+          opts.push({
+            value: element.original_product.id,
+            label: element.original_product.title,
+          });
+        });
+        this.setState({
+          pastProductsOptions: opts,
+        });
+      });
+    });
   };
 
   handleProductSelect = (selectedOption, action) => {
@@ -163,14 +188,55 @@ class Quotation extends React.Component {
     }
   };
 
+  handlePastProductSelect = (selectedOption, action) => {
+    if (action.action === 'select-option') {
+      console.log('action is ', action, selectedOption);
+      var temp = {};
+      this.props.pastProducts.forEach((element) => {
+        if (element.original_product.id === action.option.value) {
+          temp = element;
+        }
+      });
+      const { addProcductInputs } = this.state;
+      addProcductInputs['requiredQuantity'] = temp.added_info.requiredQty;
+      addProcductInputs['qoutedPrice'] = temp.added_info.qoutedPrice;
+      addProcductInputs['custDescription'] = temp.added_info.custDescription;
+      this.setState({
+        seelctedPastProducts: selectedOption,
+        addProductModelOpen: true,
+        productToBeAdded: temp,
+        addProcductInputs: addProcductInputs,
+      });
+    }
+    if (action.action === 'remove-value') {
+      this.props.removeProductFromQoutation(action.removedValue);
+      console.log('removed', selectedOption, action);
+      this.setState({
+        seelctedPastProducts: selectedOption,
+      });
+    }
+  };
+
   addProductToQoutation = () => {
     if (this.validateProductData() === true) {
       const { productToBeAdded, addProcductInputs } = this.state;
       let temp = productToBeAdded;
-      temp.requiredQty = this.state.addProcductInputs.requiredQuantity;
-      temp.qoutedPrice = this.state.addProcductInputs.qoutedPrice;
-      temp.custDescription = this.state.addProcductInputs.custDescription;
-      this.props.addProductToQoutation(temp);
+      if (temp.original_product !== undefined) {
+        temp.original_product.requiredQty = this.state.addProcductInputs.requiredQuantity;
+        temp.original_product.qoutedPrice = this.state.addProcductInputs.qoutedPrice;
+        temp.original_product.custDescription = this.state.addProcductInputs.custDescription;
+      } else {
+        temp.requiredQty = this.state.addProcductInputs.requiredQuantity;
+        temp.qoutedPrice = this.state.addProcductInputs.qoutedPrice;
+        temp.custDescription = this.state.addProcductInputs.custDescription;
+      }
+      console.log('product to be added ', temp);
+      if (temp.added_info === undefined) {
+        this.props.addProductToQoutation(temp);
+      } else {
+        this.props.addProductToQoutation(temp.original_product);
+      }
+
       addProcductInputs.requiredQuantity = '';
       addProcductInputs.qoutedPrice = '';
       addProcductInputs.custDescription = '';
@@ -185,7 +251,10 @@ class Quotation extends React.Component {
     let isValid = true;
     const { addProcductInputs } = this.state;
     for (let key in addProcductInputs) {
-      if (addProcductInputs[key] === '') {
+      if (
+        addProcductInputs[key] === '' &&
+        addProcductInputs[key + 'Optional'] === false
+      ) {
         addProcductInputs[key + 'Error'] = true;
         addProcductInputs[key + 'Msg'] = 'This field is required';
         isValid = false;
@@ -247,7 +316,9 @@ class Quotation extends React.Component {
               label="Current inventory"
               value={
                 this.state.productToBeAdded
-                  ? this.state.productToBeAdded.quatity
+                  ? this.state.productToBeAdded.quatity !== undefined
+                    ? this.state.productToBeAdded.quatity
+                    : this.state.productToBeAdded.original_product.quatity
                   : ''
               }
               type="text"
@@ -319,9 +390,9 @@ class Quotation extends React.Component {
           <GridItem xs={8} sm={8} md={4}>
             <Select
               placeholder="Products from previous invoices"
-              value={this.state.selectedProducts}
-              onChange={this.handleProductSelect}
-              options={this.state.productOptions}
+              value={this.state.seelctedPastProducts}
+              onChange={this.handlePastProductSelect}
+              options={this.state.pastProductsOptions}
               isMulti={true}
             />
           </GridItem>
@@ -337,6 +408,7 @@ const mapStateToProps = (state) => {
     selectedCustomerId: state.CustomerState.customerId,
     customer: state.CustomerState.customer,
     products: state.productReducer.product,
+    pastProducts: state.QoutationReducer.pastProducts,
     qoutationProducts: state.QoutationReducer.qoutationProducts,
   };
 };

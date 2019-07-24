@@ -10,15 +10,17 @@ class QuotationPDF extends React.Component {
     super(props);
     this.state = {
       discountPercentage: 10,
+      dueDate: '',
     };
   }
 
   getSubTotal = () => {
     let subtotal = 0;
     this.props.qoutationProducts.forEach((element) => {
-      console.log('element in sub total', element);
+      console.log('element in sub total', element, element.price);
       subtotal += element.price * element.requiredQty;
     });
+    console.log('sub total returned ', subtotal);
     return subtotal;
   };
   getGrandTotal = () => {
@@ -26,8 +28,14 @@ class QuotationPDF extends React.Component {
     this.props.qoutationProducts.forEach((element) => {
       subtotal += element.price * element.requiredQty;
     });
-    let factor = (this.state.discountPercentage / 100) * subtotal;
+    let factor = (Number(this.state.discountPercentage) / 100) * subtotal;
+    console.log('factor is ', factor);
     return subtotal - factor;
+  };
+  changeDiscount = (e) => {
+    this.setState({
+      discountPercentage: e.target.value,
+    });
   };
   render() {
     const { classes } = this.props;
@@ -160,7 +168,6 @@ class QuotationPDF extends React.Component {
                   type="text"
                   id="date"
                   placeholder="22-09-17"
-                  disabled
                 />
               </div>
               <div className={classes.bioBlockFieldClass}>
@@ -433,7 +440,16 @@ class QuotationPDF extends React.Component {
                     </span>
                   </td>
                   <td className={`${classes.infoBlocktrLasttdClass}`}>
-                    {this.state.discountPercentage + '%'}
+                    {/* {this.state.discountPercentage + '%'} */}
+                    {/* kjashdjkahsdjkh */}
+                    <input
+                      // className={classes.bioBlockFieldinputDisabledClass}
+                      type="text"
+                      id="date"
+                      value={this.state.discountPercentage}
+                      onChange={this.changeDiscount}
+                      placeholder="22-09-17"
+                    />
                   </td>
                 </tr>
                 <tr className="last grand">

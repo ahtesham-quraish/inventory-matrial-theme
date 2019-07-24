@@ -21,7 +21,7 @@ import ProductList from './views/Products/productList';
 import AddProduct from './views/Products/addProduct';
 import UpdateProduct from './views/Products/updateProduct';
 import Invoice from './containers/invoice/index';
-
+import InvoiceList from './containers/invoice/invoices';
 const dashboardRoutes = [
   {
     path: '/dashboard',
@@ -96,6 +96,15 @@ const dashboardRoutes = [
     layout: '/admin',
     isSideBarLink: true,
   },
+  // {
+  //   path: '/all-invoices',
+  //   name: 'All Invoices',
+  //   rtlName: 'قائمة الجدول',
+  //   icon: 'content_paste',
+  //   component: InvoiceList,
+  //   layout: '/admin',
+  //   isSideBarLink: true,
+  // },
   {
     path: '/typography',
     name: 'Typography',

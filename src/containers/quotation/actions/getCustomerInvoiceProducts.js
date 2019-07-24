@@ -3,7 +3,7 @@ import axiosInstance from '../../../helpers/axios-instance';
 export function getAllCustomersSuccess(products) {
   return (dispatch) => {
     dispatch({
-      products,
+      payload: products,
       type: action_types.GET_CUSTOMER_INVOICE_PRODUCTS_SUCCESS,
     });
   };

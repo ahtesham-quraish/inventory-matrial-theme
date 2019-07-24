@@ -33,7 +33,19 @@ export default function QoutationReducer(state = initialState, action) {
         pdf_email_response: action.payload,
       };
     case action_types.GET_CUSTOMER_INVOICE_PRODUCTS_SUCCESS:
-      return { pastProducts: action.payload.products };
+      let ids = [];
+
+      action.payload.products.forEach((element) => {
+        console.log(element.original_product.id, ' element');
+        ids.push(element.original_product.id);
+      });
+      return {
+        ...state,
+        pastProducts: action.payload.products,
+        qoutationProducts: state.qoutationProducts.filter(
+          (item) => !ids.includes(item.id),
+        ),
+      };
     default:
       return state;
   }
