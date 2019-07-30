@@ -68,7 +68,7 @@ class Invoice extends React.Component {
                 content={() => this.componentRef}
               />
             </div>
-            <div style={{ padding: '10px 0px' }} hidden={this.state.isSaved}>
+            <div style={{ margin: '10px 10px' }} hidden={this.state.isSaved}>
               <Button
                 color="primary"
                 size="md"
