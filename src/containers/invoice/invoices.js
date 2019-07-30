@@ -57,7 +57,7 @@ class InvoiceList extends React.Component {
     let temp = [];
     let temp_invoice = {};
     products.forEach((element) => {
-      temp.push(element.cutsomer.fName + ' ' + element.cutsomer.lName);
+      temp.push(element.customer);
       temp.push(element.products.length);
       temp.push(element.dateCreated);
       console.log('pushing ', temp);
@@ -82,7 +82,9 @@ class InvoiceList extends React.Component {
                   tableHeaderColor="primary"
                   tableHead={['Customer', 'No. of Products', 'Date Created']}
                   tableData={this.prepareTableData()}
-                  onClick={this.handleRowClick}
+                  onClick={(e) => {
+                    e.preventDefault();
+                  }}
                 />
               </CardBody>
             </Card>

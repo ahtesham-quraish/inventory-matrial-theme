@@ -1,5 +1,5 @@
 import ACTION_TYPES, { action_types } from '../actions/actionTypes';
-
+var _ = require('lodash');
 const initialState = {
   selectedCustomers: null,
   qoutationProducts: [],
@@ -34,14 +34,30 @@ export default function QoutationReducer(state = initialState, action) {
       };
     case action_types.GET_CUSTOMER_INVOICE_PRODUCTS_SUCCESS:
       let ids = [];
+      let final_products = [];
+      action.payload.products.forEach((element) => {
+        if (!ids.includes(element.original_product.id)) {
+          ids.push(element.original_product.id);
+        }
+      });
 
       action.payload.products.forEach((element) => {
-        console.log(element.original_product.id, ' element');
-        ids.push(element.original_product.id);
+        let is_present = false;
+        final_products.forEach((prod) => {
+          if (prod.id === element.original_product.id) {
+            is_present = true;
+            console.log('item is present');
+          }
+        });
+        if (is_present === false) {
+          final_products.push(element);
+        }
+        is_present = true;
       });
+
       return {
         ...state,
-        pastProducts: action.payload.products,
+        pastProducts: final_products,
         qoutationProducts: state.qoutationProducts.filter(
           (item) => !ids.includes(item.id),
         ),
