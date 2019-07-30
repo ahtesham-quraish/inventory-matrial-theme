@@ -27,6 +27,10 @@ class InvoicePDF extends React.Component {
     let factor = (this.state.discountPercentage / 100) * subtotal;
     return subtotal - factor;
   };
+  componentWillUpdate = () => {
+    console.log('invoice products are ', this.props.qoutationProducts);
+    console.log('invoice cust is ', this.props.customer);
+  };
   render() {
     const { classes } = this.props;
     console.log(this.props.qoutationProducts);
