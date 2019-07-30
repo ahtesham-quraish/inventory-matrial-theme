@@ -21,7 +21,7 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
+import Select from 'react-select';
 // actions
 
 import {
@@ -29,7 +29,12 @@ import {
   updateProduct,
   deleteProduct,
 } from './actions/actions';
-
+const unitOptions = [
+  { value: null, label: 'No Unit' },
+  { value: 'KG', label: 'KG' },
+  { value: 'Liter', label: 'Liter' },
+  { value: 'Meter', label: 'Meter' },
+];
 const styles = {
   cardCategoryWhite: {
     color: 'rgba(255,255,255,.62)',
@@ -50,12 +55,16 @@ const styles = {
   pointer: {
     cursor: 'pointer',
   },
+  unitSelect: {
+    marginTop: '40px',
+  },
 };
 
 class UpdateProduct extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      unitOption: null,
       product: {
         title: '',
         titleError: false,
@@ -70,6 +79,10 @@ class UpdateProduct extends React.Component {
         quatity: '',
         quatityError: false,
         price: '',
+        api: '',
+        sae: '',
+        saeError: false,
+        apiError: false,
         priceError: false,
       },
       waiting: false,
@@ -84,9 +97,9 @@ class UpdateProduct extends React.Component {
       .then(() => {
         const { product } = this.state;
         let merged = { ...product, ...this.props.productDetails };
-        console.log('merged objects are ', merged);
         this.setState({
           product: merged,
+          unitOption: { value: merged.unit, label: merged.unit },
         });
       });
   };
@@ -123,6 +136,9 @@ class UpdateProduct extends React.Component {
           waiting: false,
         });
       })
+      .then(() => {
+        this.props.history.push('/admin/products');
+      })
       .catch(() => {
         toast.error('Product could not be updated');
         this.setState({
@@ -130,9 +146,12 @@ class UpdateProduct extends React.Component {
         });
       });
   };
-
+  handleUnitSelect = (unitOption) => {
+    const { product } = this.state;
+    product.unit = unitOption.value;
+    this.setState({ unitOption, product });
+  };
   handleProductDelete = () => {
-    // console.log(this.state.product);
     this.props
       .deleteProduct(this.props.match.params.product_id)
       .then(() => {
@@ -153,7 +172,7 @@ class UpdateProduct extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { product } = this.state;
+    const { product, unitOption } = this.state;
 
     // const disabled = id ? this.state.disabled : false;
     return (
@@ -242,10 +261,42 @@ class UpdateProduct extends React.Component {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
+                      labelText="Product API"
+                      id="api"
+                      type="text"
+                      error={this.state.product.sizeError}
+                      helpText="Product API is required"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: product.api,
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Product SAE"
+                      id="sae"
+                      error={this.state.product.titleError}
+                      helpText="SAE is required"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: product.sae,
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
                       labelText="Product Size"
                       id="size"
-                      type="number"
-                      disabled={this.state.editModeDisabled}
+                      type="text"
                       error={this.state.product.sizeError}
                       helpText="Size is required"
                       formControlProps={{
@@ -277,20 +328,14 @@ class UpdateProduct extends React.Component {
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
-                    <CustomInput
-                      labelText="Product Units"
-                      id="unit"
-                      type="number"
-                      disabled={this.state.editModeDisabled}
-                      error={this.state.product.unitError}
-                      helpText="Units are required"
-                      formControlProps={{
-                        fullWidth: true,
-                      }}
-                      inputProps={{
-                        onChange: this.onChangeHandler,
-                        value: product.unit,
-                      }}
+                    <Select
+                      placeholder="Select Product Unit"
+                      style={{ marginTop: '40px' }}
+                      value={unitOption}
+                      className={classes.unitSelect}
+                      onChange={this.handleUnitSelect}
+                      options={unitOptions}
+                      isMulti={false}
                     />
                   </GridItem>
                 </GridContainer>

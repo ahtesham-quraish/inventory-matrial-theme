@@ -13,6 +13,7 @@ import CardAvatar from 'components/Card/CardAvatar.jsx';
 import CardBody from 'components/Card/CardBody.jsx';
 import CardFooter from 'components/Card/CardFooter.jsx';
 import { ToastContainer, toast } from 'react-toastify';
+import Select from 'react-select';
 import Loader from 'react-loader-spinner';
 import 'react-toastify/dist/ReactToastify.css';
 import avatar from 'assets/img/faces/marc.jpg';
@@ -42,11 +43,22 @@ const styles = {
   pointer: {
     cursor: 'pointer',
   },
+  unitSelect: {
+    marginTop: '40px',
+  },
 };
+
+const unitOptions = [
+  { value: null, label: 'No Unit' },
+  { value: 'KG', label: 'KG' },
+  { value: 'Liter', label: 'Liter' },
+  { value: 'Meter', label: 'Meter' },
+];
 class AddProduct extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      unitOption: null,
       product: {
         title: '',
         titleError: false,
@@ -57,8 +69,8 @@ class AddProduct extends React.Component {
         brand: '',
         brandError: false,
         unit: '',
-        unitError: '',
-        quantity: '',
+        unitError: false,
+        quatity: '',
         quantityError: false,
         price: '',
         priceError: false,
@@ -78,7 +90,7 @@ class AddProduct extends React.Component {
         brand: '',
         brandError: false,
         unit: '',
-        unitError: '',
+        unitError: false,
       },
       waiting: false,
     });
@@ -102,12 +114,15 @@ class AddProduct extends React.Component {
     product[errorVar] = false;
     this.setState({ product: product });
   };
-
+  handleUnitSelect = (unitOption) => {
+    const { product } = this.state;
+    product.unit = unitOption.value;
+    this.setState({ unitOption, product });
+  };
   validateProductData = () => {
     const { product } = this.state;
     var isInvalid = true;
     for (var key in product) {
-      console.log(key);
       if (product[key] === '') {
         product[key + 'Error'] = true;
         isInvalid = false;
@@ -121,8 +136,12 @@ class AddProduct extends React.Component {
   };
 
   handleAddPoductClick = () => {
+    const { unitOption, product } = this.state;
     if (this.validateProductData() === false) {
       return;
+    }
+    if (unitOption && unitOption.value) {
+      product.unit = unitOption.value;
     }
     this.setState({
       waiting: true,
@@ -134,9 +153,7 @@ class AddProduct extends React.Component {
 
   render() {
     const { classes } = this.props;
-    const { product } = this.state;
-
-    // const disabled = id ? this.state.disabled : false;
+    const { product, unitOption } = this.state;
     return (
       <div>
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={4000} />
@@ -163,9 +180,42 @@ class AddProduct extends React.Component {
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
+                      labelText="Product API"
+                      id="api"
+                      type="text"
+                      error={this.state.product.sizeError}
+                      helpText="Product API is required"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: product.api,
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText="Product SAE"
+                      id="sae"
+                      error={this.state.product.titleError}
+                      helpText="SAE is required"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: product.sae,
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
                       labelText="Product Size"
                       id="size"
-                      type="number"
+                      type="text"
                       error={this.state.product.sizeError}
                       helpText="Size is required"
                       formControlProps={{
@@ -178,7 +228,6 @@ class AddProduct extends React.Component {
                     />
                   </GridItem>
                 </GridContainer>
-
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
@@ -196,19 +245,14 @@ class AddProduct extends React.Component {
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
-                    <CustomInput
-                      labelText="Product Units"
-                      id="unit"
-                      type="number"
-                      error={this.state.product.unitError}
-                      helpText="Units are required"
-                      formControlProps={{
-                        fullWidth: true,
-                      }}
-                      inputProps={{
-                        onChange: this.onChangeHandler,
-                        value: product.unit,
-                      }}
+                    <Select
+                      placeholder="Select Product Unit"
+                      style={{ marginTop: '40px' }}
+                      value={unitOption}
+                      className={classes.unitSelect}
+                      onChange={this.handleUnitSelect}
+                      options={unitOptions}
+                      isMulti={false}
                     />
                   </GridItem>
                 </GridContainer>
@@ -232,7 +276,7 @@ class AddProduct extends React.Component {
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
                       labelText="Product Quantity"
-                      id="quantity"
+                      id="quatity"
                       type="number"
                       error={this.state.product.quantityError}
                       helpText="Description is required"
@@ -241,7 +285,7 @@ class AddProduct extends React.Component {
                       }}
                       inputProps={{
                         onChange: this.onChangeHandler,
-                        value: product.quantity,
+                        value: product.quatity,
                       }}
                     />
                   </GridItem>
@@ -314,8 +358,6 @@ const mapDispatchToProps = (dispatch) => {
     togglePostError: () => dispatch(togglePostError()),
   };
 };
-
-// ProfileDetailContainer = withStyles(styles)(ProfileDetailContainer);
 AddProduct = withStyles(styles)(AddProduct);
 export default connect(
   mapStateToProps,

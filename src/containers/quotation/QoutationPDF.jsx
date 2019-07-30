@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import withStyles from '@material-ui/core/styles/withStyles';
 import logo from '../../assets/img/logo.png';
 import styles from '../../assets/jss/material-dashboard-react/components/pdf';
-//const electron = require('electron');
 
 class QuotationPDF extends React.Component {
   constructor(props) {
@@ -17,10 +16,8 @@ class QuotationPDF extends React.Component {
   getSubTotal = () => {
     let subtotal = 0;
     this.props.qoutationProducts.forEach((element) => {
-      console.log('element in sub total', element, element.price);
       subtotal += element.price * element.requiredQty;
     });
-    console.log('sub total returned ', subtotal);
     return subtotal;
   };
   getGrandTotal = () => {
@@ -29,7 +26,6 @@ class QuotationPDF extends React.Component {
       subtotal += element.price * element.requiredQty;
     });
     let factor = (Number(this.state.discountPercentage) / 100) * subtotal;
-    console.log('factor is ', factor);
     return subtotal - factor;
   };
   changeDiscount = (e) => {
@@ -264,7 +260,6 @@ class QuotationPDF extends React.Component {
                   type="text"
                   id="remarks"
                   placeholder=" "
-                  // disabled
                 />
               </div>
             </div>
@@ -355,6 +350,7 @@ class QuotationPDF extends React.Component {
                       {product.title}
                     </td>
                     <td
+                      style={{ textAlign: 'left' }}
                       className={`${classes.tableElement}  ${
                         classes.infoBlockthClass
                       }`}
@@ -448,7 +444,7 @@ class QuotationPDF extends React.Component {
                       id="date"
                       value={this.state.discountPercentage}
                       onChange={this.changeDiscount}
-                      placeholder="22-09-17"
+                      placeholder="Discount"
                     />
                   </td>
                 </tr>

@@ -83,7 +83,7 @@ class Quotation extends React.Component {
         qoutedPrice: '',
         qoutedPriceError: false,
         qoutedPriceMsg: null,
-        qoutedPriceOptional: false,
+        qoutedPriceOptional: true,
         custDescription: '',
         custDescriptionError: false,
         custDescriptionMsg: null,
@@ -149,7 +149,6 @@ class Quotation extends React.Component {
     this.props.fetchProduct().then(() => {
       this.props.getCustomerInvoiceProducts(selectedOption.value).then(() => {
         let opts = [];
-        console.log('past products are ', this.props.pastProducts);
         this.props.pastProducts.forEach((element) => {
           opts.push({
             value: element.original_product.id,
@@ -165,14 +164,12 @@ class Quotation extends React.Component {
 
   handleProductSelect = (selectedOption, action) => {
     if (action.action === 'select-option') {
-      console.log('action is ', action, selectedOption);
       var temp = {};
       this.props.products.forEach((element) => {
         if (element.id === action.option.value) {
           temp = element;
         }
       });
-      console.log('temp is ', temp);
       this.setState({
         selectedProducts: selectedOption,
         addProductModelOpen: true,
@@ -181,7 +178,6 @@ class Quotation extends React.Component {
     }
     if (action.action === 'remove-value') {
       this.props.removeProductFromQoutation(action.removedValue);
-      console.log('removed', selectedOption, action);
       this.setState({
         selectedProducts: selectedOption,
       });
@@ -190,16 +186,18 @@ class Quotation extends React.Component {
 
   handlePastProductSelect = (selectedOption, action) => {
     if (action.action === 'select-option') {
-      console.log('action is ', action, selectedOption);
       var temp = {};
       this.props.pastProducts.forEach((element) => {
         if (element.original_product.id === action.option.value) {
           temp = element;
         }
       });
-      const { addProcductInputs } = this.state;
+      const { addProcductInputs, productToBeAdded } = this.state;
       addProcductInputs['requiredQuantity'] = temp.added_info.requiredQty;
-      addProcductInputs['qoutedPrice'] = temp.added_info.qoutedPrice;
+      addProcductInputs['qoutedPrice'] =
+        temp.added_info.qoutedPrice === ''
+          ? productToBeAdded.price
+          : temp.added_info.qoutedPrice;
       addProcductInputs['custDescription'] = temp.added_info.custDescription;
       this.setState({
         seelctedPastProducts: selectedOption,
@@ -230,7 +228,6 @@ class Quotation extends React.Component {
         temp.qoutedPrice = this.state.addProcductInputs.qoutedPrice;
         temp.custDescription = this.state.addProcductInputs.custDescription;
       }
-      console.log('product to be added ', temp);
       if (temp.added_info === undefined) {
         this.props.addProductToQoutation(temp);
       } else {
@@ -260,7 +257,6 @@ class Quotation extends React.Component {
         isValid = false;
       }
     }
-    console.log('returning this for isValidfirst', isValid);
     if (
       addProcductInputs.requiredQuantity > this.state.productToBeAdded.quatity
     ) {
@@ -273,7 +269,6 @@ class Quotation extends React.Component {
     this.setState({
       addProcductInputs: addProcductInputs,
     });
-    console.log('returning this for isValid', isValid);
     return isValid;
   };
   handleCancelClick = () => {
@@ -287,7 +282,6 @@ class Quotation extends React.Component {
     });
   };
   handleAddProductsChange = (event) => {
-    // if (event.target.value <= this.state.productToBeAdded.quatity) {
     const { addProcductInputs } = this.state;
     addProcductInputs[event.target.id] = event.target.value;
     addProcductInputs[event.target.id + 'Error'] = false;
@@ -295,7 +289,6 @@ class Quotation extends React.Component {
     this.setState({
       addProcductInputs: addProcductInputs,
     });
-    // }
   };
   render() {
     const { classes } = this.props;
@@ -336,6 +329,22 @@ class Quotation extends React.Component {
               fullWidth
               error={this.state.addProcductInputs.requiredQuantityError}
               helperText={this.state.addProcductInputs.requiredQuantityMsg}
+            />
+            <TextField
+              margin="dense"
+              id="qoutedPrice"
+              label="Orignal Price"
+              type="number"
+              disabled={true}
+              value={
+                this.state.productToBeAdded
+                  ? this.state.productToBeAdded.price
+                  : ''
+              }
+              onChange={this.handleAddProductsChange}
+              fullWidth
+              error={this.state.addProcductInputs.qoutedPriceError}
+              helperText={this.state.addProcductInputs.qoutedPriceMsg}
             />
             <TextField
               margin="dense"

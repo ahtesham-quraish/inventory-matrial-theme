@@ -13,6 +13,14 @@ import { connect } from 'react-redux';
 import { addProduct } from './actions/actions';
 import Loader from 'react-loader-spinner';
 
+const elementsNotToDisplay = [
+  'id',
+  'created',
+  'updated',
+  'description',
+  'api',
+  'sae',
+];
 const styles = {
   cardCategoryWhite: {
     '&,& a,& a:hover,& a:focus': {
@@ -54,9 +62,12 @@ class ProductList extends React.Component {
     let temp = [];
     products.forEach((element) => {
       for (let key in element) {
-        if (key !== 'id' && key !== 'created' && key !== 'updated') {
-          console.log(key);
-          temp.push(element[key]);
+        if (!elementsNotToDisplay.includes(key)) {
+          if (key === 'title') {
+            temp.push(`${element['api']}-${element[key]}- ${element['sae']}`);
+          } else {
+            temp.push(element[key]);
+          }
         }
       }
       data.push(temp);
@@ -67,7 +78,6 @@ class ProductList extends React.Component {
   };
 
   handleRowClick = (e, prop, key) => {
-    console.log(this.props.product[key].id);
     let product_id = this.props.product[key].id;
     this.props.history.push('/admin/update-product/' + product_id);
   };
@@ -100,7 +110,14 @@ class ProductList extends React.Component {
             <CardBody>
               <Table
                 tableHeaderColor="primary"
-                tableHead={['Title', 'Description', 'Size', 'Brand', 'Units','Quantity','Price']}
+                tableHead={[
+                  'Title',
+                  'Size',
+                  'Brand',
+                  'Units',
+                  'Quantity',
+                  'Price',
+                ]}
                 tableData={this.prepareTableData()}
                 onClick={this.handleRowClick}
               />
