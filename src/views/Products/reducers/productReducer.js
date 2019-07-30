@@ -45,8 +45,12 @@ export function productReducer(state = initialState, action) {
       let ids = [];
       console.log('prod filter here', action.payload);
       action.payload.products.forEach((element) => {
-        console.log(element.original_product.id, ' element');
-        ids.push(element.original_product.id);
+        // ids.push(element.original_product.id);
+        if (!ids.includes(element.original_product.id)) {
+          console.log('conditions check');
+          ids.push(element.original_product.id);
+        }
+        console.log(ids, ' ids are');
       });
       console.log('products to filter are', ids);
       console.log('present products are', state.product);
