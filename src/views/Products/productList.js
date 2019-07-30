@@ -12,7 +12,7 @@ import CardBody from 'components/Card/CardBody.jsx';
 import { connect } from 'react-redux';
 import { addProduct } from './actions/actions';
 import Loader from 'react-loader-spinner';
-
+const name = ['api', 'title', 'sae', 'size'];
 const elementsNotToDisplay = [
   'id',
   'created',
@@ -64,7 +64,16 @@ class ProductList extends React.Component {
       for (let key in element) {
         if (!elementsNotToDisplay.includes(key)) {
           if (key === 'title') {
-            temp.push(`${element['api']}-${element[key]}- ${element['sae']}`);
+            let newName = '';
+            name.forEach((n) => {
+              newName =
+                element[n] && element[n] != ''
+                  ? newName !== ''
+                    ? `${newName} - ${element[n]}`
+                    : `${element[n]}`
+                  : newName;
+            });
+            temp.push(newName);
           } else {
             temp.push(element[key]);
           }

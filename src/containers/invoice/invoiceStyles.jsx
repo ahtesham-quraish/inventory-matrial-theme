@@ -261,6 +261,13 @@ const styles = {
   commanRightSpanClass: {
     padding: '0 0 5px 36px',
   },
+  customInput: {
+    display: 'block',
+    width: '100%',
+    padding: '5px 5px',
+    border: 'none',
+    backgroundColor: 'inherit',
+  },
   //.auth-div
   authDivClass: {
     background: '#025aa5',

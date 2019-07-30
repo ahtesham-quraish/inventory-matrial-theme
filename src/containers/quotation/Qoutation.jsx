@@ -34,7 +34,11 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
-
+const name = ['api', 'title', 'sae', 'size'];
+const PaymentStatus = [
+  { value: 'Unpaid', label: 'Unpaid' },
+  { value: 'Paid', label: 'Paid' },
+];
 const styles = {
   cardCategoryWhite: {
     color: 'rgba(255,255,255,.62)',
@@ -60,6 +64,9 @@ const styles = {
   },
   containerbackground: {
     background: 'light grey',
+  },
+  margin: {
+    margin: '10px 10px',
   },
 };
 
@@ -124,9 +131,18 @@ class Quotation extends React.Component {
   getProductOptions = () => {
     let opts = [];
     this.props.products.forEach((element) => {
+      let newName = '';
+      name.forEach((n) => {
+        newName =
+          element[n] && element[n] != ''
+            ? newName !== ''
+              ? `${newName} - ${element[n]}`
+              : `${element[n]}`
+            : newName;
+      });
       opts.push({
         value: element.id,
-        label: element.title,
+        label: newName,
       });
     });
     this.setState({
@@ -150,9 +166,18 @@ class Quotation extends React.Component {
       this.props.getCustomerInvoiceProducts(selectedOption.value).then(() => {
         let opts = [];
         this.props.pastProducts.forEach((element) => {
+          let newName = '';
+          name.forEach((n) => {
+            newName =
+              element.original_product[n] && element.original_product[n] != ''
+                ? newName !== ''
+                  ? `${newName} - ${element.original_product[n]}`
+                  : `${element.original_product[n]}`
+                : newName;
+          });
           opts.push({
             value: element.original_product.id,
-            label: element.original_product.title,
+            label: newName,
           });
         });
         this.setState({
@@ -379,16 +404,18 @@ class Quotation extends React.Component {
           </DialogActions>
         </Dialog>
         <GridContainer>
-          <GridItem xs={8} sm={8} md={4}>
+          <GridItem xs={12} sm={8} md={4}>
             <Select
+              className={classes.margin}
               placeholder="Select Customer"
               value={this.state.selectedCustomer}
               onChange={this.handleCustomerSelect}
               options={this.state.options}
             />
           </GridItem>
-          <GridItem xs={8} sm={8} md={4}>
+          <GridItem xs={12} sm={8} md={4}>
             <Select
+              className={classes.margin}
               placeholder="Select Product"
               value={this.state.selectedProducts}
               onChange={this.handleProductSelect}
@@ -396,13 +423,25 @@ class Quotation extends React.Component {
               isMulti={true}
             />
           </GridItem>
-          <GridItem xs={8} sm={8} md={4}>
+        </GridContainer>
+        <GridContainer>
+          <GridItem xs={12} sm={8} md={4}>
             <Select
+              className={classes.margin}
               placeholder="Products from previous invoices"
               value={this.state.seelctedPastProducts}
               onChange={this.handlePastProductSelect}
               options={this.state.pastProductsOptions}
               isMulti={true}
+            />
+          </GridItem>
+          <GridItem xs={12} sm={8} md={4}>
+            <Select
+              className={classes.margin}
+              placeholder="Payment Status"
+              onChange={this.handlePastProductSelect}
+              options={PaymentStatus}
+              isMulti={false}
             />
           </GridItem>
         </GridContainer>

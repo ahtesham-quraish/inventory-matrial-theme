@@ -39,6 +39,11 @@ const styles = {
       fontWeight: '400',
       lineHeight: '1',
     },
+    customInput: {
+      display: 'block',
+      width: '100%',
+      padding: '5px 5px',
+    },
   },
 };
 
