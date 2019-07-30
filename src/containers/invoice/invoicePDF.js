@@ -139,10 +139,10 @@ class InvoicePDF extends React.Component {
                           : ''}
                       </span>
                       <span className={`${classes.normalLabelClass}`}>
-                        Sale Tex Registration No : {this.props.gst}
+                        Sale Tex Registration No : {this.props.customer.gst}
                       </span>
                       <span className={`${classes.normalLabelClass}`}>
-                        Nationl Tex No : {this.props.ntn}
+                        Nationl Tex No : {this.props.customer.ntn}
                       </span>
                       <span className={`${classes.normalLabelClass}`}>
                         City : {this.props.customer.city}
