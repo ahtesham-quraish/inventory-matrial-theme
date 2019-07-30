@@ -75,7 +75,13 @@ class CustomerListContainer extends React.Component {
             <CardBody>
               <Table
                 tableHeaderColor="primary"
-                tableHead={['Name', 'Address', 'Phone#', 'Email']}
+                tableHead={[
+                  'Name',
+                  'Address',
+                  'Phone#',
+                  'Email',
+                  'Company Name',
+                ]}
                 tableData={this.props.customers}
                 onClick={this.rowClickhandler}
                 pointer={classes.pointer}

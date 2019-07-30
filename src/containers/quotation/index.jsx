@@ -66,9 +66,6 @@ class QuotationContainer extends React.Component {
 
     form.append('file', file);
     this.props.sendPDFViaEmail(form).then(() => {
-      // this.setState({
-      //   sendingEmail: false,
-      // });
       if (this.props.pdf_email_response.status === 200) {
         toast.success(
           'Qoutation emailed to ' +

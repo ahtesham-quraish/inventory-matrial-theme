@@ -192,6 +192,36 @@ class ProfileDetailContainer extends React.Component {
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
+                      labelText={!customer.fName ? 'NTN' : ''}
+                      id="ntn"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.ntn,
+                        readOnly: disabled,
+                      }}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
+                      labelText={!customer.gst ? 'GST' : null}
+                      id="gst"
+                      formControlProps={{
+                        fullWidth: true,
+                      }}
+                      inputProps={{
+                        onChange: this.onChangeHandler,
+                        value: customer.gst,
+                        readOnly: disabled,
+                      }}
+                    />
+                  </GridItem>
+                </GridContainer>
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <CustomInput
                       labelText={!customer.Address1 ? 'Address 1' : null}
                       id="Address1"
                       formControlProps={{
