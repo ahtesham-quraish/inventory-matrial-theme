@@ -97,13 +97,22 @@ const dashboardRoutes = [
     isSideBarLink: true,
   },
   {
-    path: '/all-invoices',
+    path: '/all-invoice',
     name: 'All Invoices',
     rtlName: 'قائمة الجدول',
     icon: 'content_paste',
     component: InvoiceList,
     layout: '/admin',
     isSideBarLink: true,
+  },
+  {
+    path: '/all-invoice/:cust_id',
+    name: 'User Invoices',
+    rtlName: 'قائمة الجدول',
+    icon: 'content_paste',
+    component: InvoiceList,
+    layout: '/admin',
+    isSideBarLink: false,
   },
   // {
   //   path: '/typography',

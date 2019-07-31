@@ -282,12 +282,9 @@ class Quotation extends React.Component {
         isValid = false;
       }
     }
-    if (
-      addProcductInputs.requiredQuantity > this.state.productToBeAdded.quatity
-    ) {
+    if (addProcductInputs.requiredQuantity === '') {
       addProcductInputs['requiredQuantityError'] = true;
-      addProcductInputs['requiredQuantityMsg'] =
-        'Quantity can not exceed current quantity';
+      addProcductInputs['requiredQuantityMsg'] = 'Quantity should be given';
       isValid = false;
     }
 

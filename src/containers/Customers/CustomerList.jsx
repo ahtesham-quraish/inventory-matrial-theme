@@ -43,6 +43,10 @@ const styles = {
   pointer: {
     cursor: 'pointer',
   },
+  link: {
+    cursor: 'pointer',
+    color: '#0000EE',
+  },
 };
 
 class CustomerListContainer extends React.Component {
@@ -58,6 +62,11 @@ class CustomerListContainer extends React.Component {
     const { cusotmersRawData } = this.props;
     this.props.setCustomerId(cusotmersRawData[key].id);
     this.props.history.push(`/admin/user?id=${cusotmersRawData[key].id}`);
+  };
+  onInvoicesClick = (e, props, key) => {
+    const { cusotmersRawData } = this.props;
+    this.props.setCustomerId(cusotmersRawData[key].id);
+    this.props.history.push(`/admin/all-invoice/${cusotmersRawData[key].id}`);
   };
   render() {
     const { classes } = this.props;
@@ -81,10 +90,13 @@ class CustomerListContainer extends React.Component {
                   'Phone#',
                   'Email',
                   'Company Name',
+                  'Invoices',
                 ]}
                 tableData={this.props.customers}
                 onClick={this.rowClickhandler}
                 pointer={classes.pointer}
+                className={classes.link}
+                onInvoicesClick={this.onInvoicesClick}
               />
             </CardBody>
           </Card>

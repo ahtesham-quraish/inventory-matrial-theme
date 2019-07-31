@@ -13,4 +13,12 @@ const getInvoices = () => {
   };
 };
 
+export const getInvoice = (id) => {
+  return (dispatch) => {
+    return axiosInstance
+      .get(`http://localhost:8000/invoice/?cust_id=${id}`)
+      .then((response) => dispatch(getInvoiceSuccess(response.data)));
+  };
+};
+
 export default getInvoices;

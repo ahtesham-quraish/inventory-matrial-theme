@@ -182,6 +182,13 @@ const styles = {
     verticalAlign: 'middle',
     width: 'auto',
   },
+  textAlignCenter: {
+    textAlign: 'center',
+  },
+  removeBg: {
+    background: 'none',
+    border: 'none',
+  },
   oneColumntdClass: {
     border: '1px solid #000',
     padding: '15px 7px',

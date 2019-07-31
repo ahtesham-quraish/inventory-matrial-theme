@@ -49,6 +49,10 @@ const styles = {
       lineHeight: '1',
     },
   },
+  link: {
+    cursor: 'pointer',
+    color: '#0000EE',
+  },
 };
 
 class ProductList extends React.Component {
@@ -82,7 +86,6 @@ class ProductList extends React.Component {
       data.push(temp);
       temp = [];
     });
-    console.log('prepared data is ', data);
     return data;
   };
 
@@ -129,6 +132,7 @@ class ProductList extends React.Component {
                 ]}
                 tableData={this.prepareTableData()}
                 onClick={this.handleRowClick}
+                className={classes.link}
               />
             </CardBody>
           </Card>

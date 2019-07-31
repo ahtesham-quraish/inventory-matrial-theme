@@ -26,9 +26,6 @@ class InvoicePDF extends React.Component {
     let factor = (this.state.discountPercentage / 100) * subtotal;
     return subtotal - factor;
   };
-  componentWillUpdate = () => {
-    console.log('invoice products are ', this.props.qoutationProducts);
-    console.log('invoice cust is ', this.props.customer);
   getProductName = (product) => {
     const name = ['api', 'title', 'sae'];
     let newName = '';
@@ -354,7 +351,7 @@ class InvoicePDF extends React.Component {
                           classes.tdElement
                         }`}
                       >
-                        <input />
+                        <input className={classes.removeBg} />
                       </td>
                     </tr>
                   ))}
@@ -388,7 +385,12 @@ class InvoicePDF extends React.Component {
                       <span>Discount:</span>
                     </td>
                     <td className={classes.alignCenter}>
-                      {this.state.discountPercentage + '%'}
+                      <input
+                        className={`${classes.removeBg} ${
+                          classes.textAlignCenter
+                        }`}
+                        value={this.state.discountPercentage + '%'}
+                      />
                     </td>
                   </tr>
                   <tr

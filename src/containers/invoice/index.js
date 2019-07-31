@@ -59,7 +59,7 @@ class Invoice extends React.Component {
           </div>
 
           <div>
-            <div>
+            <div hidden={!this.state.isSaved}>
               <ReactToPrint
                 copyStyles={true}
                 trigger={() => (
