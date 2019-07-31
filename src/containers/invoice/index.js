@@ -51,13 +51,15 @@ class Invoice extends React.Component {
           qoutationProducts={this.props.qoutationProducts}
         />
 
-        <div style={{ marginTop: '10px' }}>
+        <div
+          style={{ marginTop: '10px', margin: '0 auto', maxWidth: '1200px' }}
+        >
           <div hidden={this.state.isSaved}>
             <Quotation />
           </div>
 
           <div>
-            <div hidden={!this.state.isSaved}>
+            <div>
               <ReactToPrint
                 copyStyles={true}
                 trigger={() => (

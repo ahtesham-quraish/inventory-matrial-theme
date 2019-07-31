@@ -80,21 +80,6 @@ class InvoicePDF extends React.Component {
                           Email : farooqitech@gmail.com
                         </span>
                       </dd>
-
-                      <dt className={classes.companyAddressdtClass}>
-                        Reg Off :
-                      </dt>
-                      <dd>
-                        Ghanta Gher bazar Mall Road Faisalabad.
-                        <span className={`${classes.normalLabelClass}`}>
-                          {' '}
-                          Tel : (042 4343432)
-                        </span>
-                        <span className={`${classes.normalLabelClass}`}>
-                          {' '}
-                          Email : ahtesham.quraish@gmail.com
-                        </span>
-                      </dd>
                     </dl>
                   </div>
                 </div>
@@ -299,6 +284,13 @@ class InvoicePDF extends React.Component {
                     >
                       Status
                     </th>
+                    <th
+                      className={`${classes.oneColumnthClass} ${
+                        classes.thElement
+                      }`}
+                    >
+                      Remarks
+                    </th>
                   </tr>
                 </thead>
                 <tbody className={classes.tbodyElement}>
@@ -354,6 +346,13 @@ class InvoicePDF extends React.Component {
                       >
                         Ok
                       </td>
+                      <td
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      >
+                        <input />
+                      </td>
                     </tr>
                   ))}
 
@@ -364,11 +363,16 @@ class InvoicePDF extends React.Component {
                     <td />
                     <td />
                     <td />
-                    <td />
-                    <td>
+                    <td
+                      className={`${classes.alignRight} ${classes.paddingTop}`}
+                    >
                       <span>Sub Total:</span>
                     </td>
-                    <td>{this.getSubTotal()}</td>
+                    <td
+                      className={`${classes.alignCenter} ${classes.paddingTop}`}
+                    >
+                      {this.getSubTotal()}
+                    </td>
                   </tr>
                   <tr className={classes.oneColumntrLasttdClass}>
                     <td />
@@ -377,14 +381,15 @@ class InvoicePDF extends React.Component {
                     <td />
                     <td />
                     <td />
-                    <td />
-                    <td>
+                    <td className={classes.alignRight}>
                       <span>Discount:</span>
                     </td>
-                    <td>{this.state.discountPercentage + '%'}</td>
+                    <td className={classes.alignCenter}>
+                      {this.state.discountPercentage + '%'}
+                    </td>
                   </tr>
                   <tr
-                    className={`$classes.oneColumntrLasttdClass ${
+                    className={`${classes.oneColumntrLasttdClass} ${
                       classes.oneColumntrLastGrandtdClass
                     }`}
                   >
@@ -394,13 +399,14 @@ class InvoicePDF extends React.Component {
                     <td />
                     <td />
                     <td />
-                    <td />
-                    <td>
+                    <td className={classes.alignRight}>
                       <span className={classes.oneColumntrLasttdspanClass}>
                         Grand Total:
                       </span>
                     </td>
-                    <td>{this.getGrandTotal()}</td>
+                    <td className={classes.alignCenter}>
+                      {this.getGrandTotal()}
+                    </td>
                   </tr>
                 </tbody>
               </table>

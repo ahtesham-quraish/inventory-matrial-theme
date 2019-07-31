@@ -112,7 +112,7 @@ class ProductList extends React.Component {
               Add Product{' '}
             </RegularButton>
           </div>
-          <Card>
+          <Card className={'blue'}>
             <CardHeader color="primary">
               <h4 className={classes.cardTitleWhite}>Product List</h4>
             </CardHeader>

@@ -73,7 +73,7 @@ class InvoiceList extends React.Component {
       <React.Fragment>
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
-            <Card>
+            <Card data-background-color={'blue'}>
               <CardHeader color="primary">
                 <h4 className={classes.cardTitleWhite}>All Invoices</h4>
               </CardHeader>

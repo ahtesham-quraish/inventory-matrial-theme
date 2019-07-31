@@ -20,8 +20,8 @@ const styles = {
 
   //.logo img
   logoimgClass: {
-    width: '180px',
-    height: '180px',
+    width: '185px',
+    height: '185px',
   },
   imglogo: {
     maxWidth: '100%',
@@ -29,11 +29,12 @@ const styles = {
     display: 'block',
     margin: '0 auto',
     width: 'auto',
+    borderRight: '2px solid #925562',
+    padding: '0 15px 0 0',
   },
   //.company-address
   companyAddressClass: {
-    borderLeft: '2px solid #925562',
-    margin: '0 0 10px 15px',
+    margin: '0 0 10px',
     padding: '0 0 0 15px',
   },
   //.company-address dt
@@ -206,7 +207,6 @@ const styles = {
   //.one-column tr.last td span
   oneColumntrLasttdspanClass: {
     display: 'block',
-    width: '150px',
   },
   //.signature-block
   signatureBlockClass: {
@@ -275,6 +275,15 @@ const styles = {
     padding: '11px 1px 5px 35px',
     Height: '100%',
     MarginLeft: '0px',
+  },
+  alignRight: {
+    textAlign: 'right',
+  },
+  alignCenter: {
+    textAlign: 'center',
+  },
+  paddingTop: {
+    paddingTop: '20px',
   },
   //.common-logo
   commonLogoClass: {
