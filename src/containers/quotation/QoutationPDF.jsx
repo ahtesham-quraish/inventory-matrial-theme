@@ -440,6 +440,7 @@ class QuotationPDF extends React.Component {
                     {/* kjashdjkahsdjkh */}
                     <input
                       // className={classes.bioBlockFieldinputDisabledClass}
+                      style={{ background: 'none', border: 'none' }}
                       type="text"
                       id="date"
                       value={this.state.discountPercentage}

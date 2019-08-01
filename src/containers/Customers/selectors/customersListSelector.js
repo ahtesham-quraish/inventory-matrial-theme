@@ -16,6 +16,7 @@ const customersDataSelector = createSelector(
           phone,
           val.email,
           val.company_name,
+          'Invoices',
         ]);
       }, 0);
     }

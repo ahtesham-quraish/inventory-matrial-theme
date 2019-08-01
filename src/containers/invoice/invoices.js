@@ -9,7 +9,7 @@ import RegularButton from '../../components/CustomButtons/Button';
 import CardHeader from 'components/Card/CardHeader.jsx';
 import CardBody from 'components/Card/CardBody.jsx';
 import { connect } from 'react-redux';
-import getInvoices from './actions/getInvoices';
+import getInvoices, { getInvoice } from './actions/getInvoices';
 import Loader from 'react-loader-spinner';
 
 const styles = {
@@ -49,22 +49,36 @@ const styles = {
 
 class InvoiceList extends React.Component {
   componentDidMount = () => {
+    const { selectedCustomerId } = this.props;
+    if (selectedCustomerId) {
+      this.props.getInvoice(selectedCustomerId);
+      return;
+    }
+
     this.props.getInvoices();
   };
   prepareTableData = () => {
     let products = this.props.invoices;
     let data = [];
     let temp = [];
+    let dueDatetime = '';
+    let formattedDueDatetime = '';
     let temp_invoice = {};
     products.forEach((element) => {
       temp.push(element.customer);
       temp.push(element.products.length);
-      temp.push(element.dateCreated);
-      console.log('pushing ', temp);
+      dueDatetime = new Date(element.dateCreated);
+      formattedDueDatetime =
+        dueDatetime.getMonth() +
+        1 +
+        '/' +
+        dueDatetime.getDate() +
+        '/' +
+        dueDatetime.getFullYear();
+      temp.push(formattedDueDatetime);
       data.push(temp);
       temp = [];
     });
-    console.log('prepared data is ', data);
     return data;
   };
   rowClickhandler = (e, value, key) => {
@@ -80,7 +94,7 @@ class InvoiceList extends React.Component {
       <React.Fragment>
         <GridContainer>
           <GridItem xs={12} sm={12} md={12}>
-            <Card>
+            <Card data-background-color={'blue'}>
               <CardHeader color="primary">
                 <h4 className={classes.cardTitleWhite}>All Invoices</h4>
               </CardHeader>
@@ -103,11 +117,13 @@ class InvoiceList extends React.Component {
 const mapStateToProps = (state) => {
   return {
     invoices: state.InvoiceReducer.invoices,
+    selectedCustomerId: state.CustomerState.customerId,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    getInvoice: (id) => dispatch(getInvoice(id)),
     getInvoices: () => dispatch(getInvoices()),
   };
 };

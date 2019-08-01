@@ -98,7 +98,7 @@ const dashboardRoutes = [
     isSideBarLink: true,
   },
   {
-    path: '/all-invoices',
+    path: '/all-invoice',
     name: 'All Invoices',
     rtlName: 'قائمة الجدول',
     icon: 'content_paste',

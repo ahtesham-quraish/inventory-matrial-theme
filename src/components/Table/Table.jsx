@@ -7,6 +7,8 @@ import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import TableBody from '@material-ui/core/TableBody';
 import TableCell from '@material-ui/core/TableCell';
+import MenuItem from '@material-ui/core/MenuItem';
+import MenuList from '@material-ui/core/MenuList';
 // core components
 import tableStyle from 'assets/jss/material-dashboard-react/components/tableStyle.jsx';
 function CustomTable({ ...props }) {
@@ -17,7 +19,10 @@ function CustomTable({ ...props }) {
     tableData,
     tableHeaderColor,
     onClick,
+    className,
+    onInvoicesClick,
   } = props;
+  console.log(tableData, '22222222222222');
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
@@ -38,21 +43,43 @@ function CustomTable({ ...props }) {
           </TableHead>
         ) : null}
         <TableBody>
-          {tableData.map((prop, key) => {
+          {tableData.map((props, key) => {
             return (
-              <TableRow
-                hover={true}
-                onClick={(e) => onClick(e, prop, key)}
-                key={key}
-                className={pointer}
-              >
-                {prop.map((prop, key) => {
-                  return (
-                    <TableCell className={classes.tableCell} key={key}>
-                      {prop}
-                    </TableCell>
-                  );
-                })}
+              <TableRow hover={true} key={key} className={pointer}>
+                <React.Fragment>
+                  {props.map((prop, k) => {
+                    if (k === 0) {
+                      return (
+                        <TableCell
+                          onClick={(e) => onClick(e, props, key)}
+                          className={`${classes.tableCell} ${className}`}
+                          key={`${key} ${k}`}
+                        >
+                          {prop}
+                        </TableCell>
+                      );
+                    } else if (prop === 'Invoices') {
+                      return (
+                        <TableCell
+                          onClick={(e) => onInvoicesClick(e, props, key)}
+                          className={`${classes.tableCell} ${className}`}
+                          key={`${key} ${k}`}
+                        >
+                          {prop}
+                        </TableCell>
+                      );
+                    } else {
+                      return (
+                        <TableCell
+                          className={classes.tableCell}
+                          key={`${key} ${k}`}
+                        >
+                          {prop}
+                        </TableCell>
+                      );
+                    }
+                  })}
+                </React.Fragment>
               </TableRow>
             );
           })}

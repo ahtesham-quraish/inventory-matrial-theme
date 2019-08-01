@@ -43,11 +43,14 @@ class InvoicePDF extends React.Component {
     }
     return subtotal - factor;
   };
+<<<<<<< HEAD
 
   componentWillUpdate = () => {
     console.log('invoice products are ', this.props.qoutationProducts);
     console.log('invoice cust is ', this.props.customer);
   };
+=======
+>>>>>>> 01877eb30fe8035c51d57f4cdd3625c190cce34f
   getProductName = (product) => {
     const name = ['api', 'title', 'sae'];
     let newName = '';
@@ -100,21 +103,6 @@ class InvoicePDF extends React.Component {
                         <span className={`${classes.normalLabelClass}`}>
                           {' '}
                           Email : farooqitech@gmail.com
-                        </span>
-                      </dd>
-
-                      <dt className={classes.companyAddressdtClass}>
-                        Reg Off :
-                      </dt>
-                      <dd>
-                        Ghanta Gher bazar Mall Road Faisalabad.
-                        <span className={`${classes.normalLabelClass}`}>
-                          {' '}
-                          Tel : (042 4343432)
-                        </span>
-                        <span className={`${classes.normalLabelClass}`}>
-                          {' '}
-                          Email : ahtesham.quraish@gmail.com
                         </span>
                       </dd>
                     </dl>
@@ -345,6 +333,13 @@ class InvoicePDF extends React.Component {
                     >
                       Status
                     </th>
+                    <th
+                      className={`${classes.oneColumnthClass} ${
+                        classes.thElement
+                      }`}
+                    >
+                      Remarks
+                    </th>
                   </tr>
                 </thead>
                 <tbody className={classes.tbodyElement}>
@@ -400,6 +395,13 @@ class InvoicePDF extends React.Component {
                       >
                         Ok
                       </td>
+                      <td
+                        className={`${classes.oneColumntdClass} ${
+                          classes.tdElement
+                        }`}
+                      >
+                        <input className={classes.removeBg} />
+                      </td>
                     </tr>
                   ))}
 
@@ -410,10 +412,12 @@ class InvoicePDF extends React.Component {
                     <td />
                     <td />
                     <td />
-                    <td />
-                    <td>
+                    <td
+                      className={`${classes.alignRight} ${classes.paddingTop}`}
+                    >
                       <span>Sub Total:</span>
                     </td>
+<<<<<<< HEAD
                     <td>
                       <input
                         id="subTotal"
@@ -421,6 +425,12 @@ class InvoicePDF extends React.Component {
                         onChange={this.props.handleInvoiceChange}
                         // disabled
                       />
+=======
+                    <td
+                      className={`${classes.alignCenter} ${classes.paddingTop}`}
+                    >
+                      {this.getSubTotal()}
+>>>>>>> 01877eb30fe8035c51d57f4cdd3625c190cce34f
                     </td>
                   </tr>
                   <tr className={classes.oneColumntrLasttdClass}>
@@ -430,20 +440,28 @@ class InvoicePDF extends React.Component {
                     <td />
                     <td />
                     <td />
-                    <td />
-                    <td>
+                    <td className={classes.alignRight}>
                       <span>Discount:</span>
                     </td>
+<<<<<<< HEAD
                     <td>
                       <input
                         id="discount"
                         onChange={this.props.handleInvoiceChange}
                         value={this.props.invoicePDFInputs.discount}
+=======
+                    <td className={classes.alignCenter}>
+                      <input
+                        className={`${classes.removeBg} ${
+                          classes.textAlignCenter
+                        }`}
+                        value={this.state.discountPercentage + '%'}
+>>>>>>> 01877eb30fe8035c51d57f4cdd3625c190cce34f
                       />
                     </td>
                   </tr>
                   <tr
-                    className={`$classes.oneColumntrLasttdClass ${
+                    className={`${classes.oneColumntrLasttdClass} ${
                       classes.oneColumntrLastGrandtdClass
                     }`}
                   >
@@ -453,8 +471,7 @@ class InvoicePDF extends React.Component {
                     <td />
                     <td />
                     <td />
-                    <td />
-                    <td>
+                    <td className={classes.alignRight}>
                       <span className={classes.oneColumntrLasttdspanClass}>
                         Grand Total:
                       </span>

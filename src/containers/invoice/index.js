@@ -79,7 +79,9 @@ class Invoice extends React.Component {
           invoicePDFInputs={this.props.invoicePDFInputs}
         />
 
-        <div style={{ marginTop: '10px' }}>
+        <div
+          style={{ marginTop: '10px', margin: '0 auto', maxWidth: '1200px' }}
+        >
           <div hidden={this.state.isSaved}>
             <Quotation />
           </div>
