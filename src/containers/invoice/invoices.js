@@ -67,6 +67,13 @@ class InvoiceList extends React.Component {
     console.log('prepared data is ', data);
     return data;
   };
+  rowClickhandler = (e, value, key) => {
+    // const { cusotmersRawData } = this.props;
+    // this.props.setCustomerId(cusotmersRawData[key].id);
+    // this.props.history.push(`/admin/user?id=${cusotmersRawData[key].id}`);
+    let id = this.props.invoices[key].id;
+    this.props.history.push('/admin/update-invoices/' + id);
+  };
   render() {
     const { classes, product } = this.props;
     return (
@@ -82,9 +89,7 @@ class InvoiceList extends React.Component {
                   tableHeaderColor="primary"
                   tableHead={['Customer', 'No. of Products', 'Date Created']}
                   tableData={this.prepareTableData()}
-                  onClick={(e) => {
-                    e.preventDefault();
-                  }}
+                  onClick={this.rowClickhandler}
                 />
               </CardBody>
             </Card>

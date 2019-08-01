@@ -22,6 +22,7 @@ import AddProduct from './views/Products/addProduct';
 import UpdateProduct from './views/Products/updateProduct';
 import Invoice from './containers/invoice/index';
 import InvoiceList from './containers/invoice/invoices';
+import UpdateInvoice from './containers/invoice/updateInvoice';
 const dashboardRoutes = [
   {
     path: '/dashboard',
@@ -104,6 +105,15 @@ const dashboardRoutes = [
     component: InvoiceList,
     layout: '/admin',
     isSideBarLink: true,
+  },
+  {
+    path: '/update-invoices/:invoice_id',
+    name: 'All Invoices',
+    rtlName: 'قائمة الجدول',
+    icon: 'content_paste',
+    component: UpdateInvoice,
+    layout: '/admin',
+    isSideBarLink: false,
   },
   // {
   //   path: '/typography',

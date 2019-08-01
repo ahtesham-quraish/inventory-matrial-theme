@@ -1,15 +1,16 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import InvoicePDF from './invoicePDF';
+import UpdateInvoicePDF from './updateInvoicePdf';
 import Quotation from '../quotation/Qoutation';
 import ReactToPrint from 'react-to-print';
 import Button from 'components/CustomButtons/Button.jsx';
 import saveInvoice from './actions/saveInvoice';
+import getInvoiceByID from './actions/getInvoiceByID';
 import invoicePDFChangeHandler from './actions/invoicePDFChangeHandle';
 import Loader from 'react-loader-spinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
-class Invoice extends React.Component {
+class UpdateInvoice extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -17,6 +18,11 @@ class Invoice extends React.Component {
       waiting: false,
     };
   }
+  componentDidMount = () => {
+    this.props.getInvoiceByID('9').then(() => {
+      console.log('received invoice is ', this.props.invoiceByID.products);
+    });
+  };
   saveInvoice = () => {
     this.setState({
       waiting: true,
@@ -52,37 +58,26 @@ class Invoice extends React.Component {
         value: event.target.value,
       },
     };
-    this.props.invoicePDFChangeHandler(payload);
-  };
-
-  handleTotalChanges = (field, value) => {
-    let payload = {
-      type: 'INVOICE_INPUTS_CHANGE_HANDLE',
-      payload: {
-        field: field,
-        value: value,
-      },
-    };
-    this.props.invoicePDFChangeHandler(payload);
+    this.props.invoicePDFChangeHandler(payload).catch((e) => {
+      throw e;
+    });
   };
 
   render() {
     return (
       <React.Fragment>
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={4000} />
-        <InvoicePDF
+        <UpdateInvoicePDF
           ref={(el) => (this.componentRef = el)}
           customer={this.props.customer}
           qoutationProducts={this.props.qoutationProducts}
           handleInvoiceChange={this.handleInvoiceChange}
-          handleTotalChanges={this.handleTotalChanges}
           invoicePDFInputs={this.props.invoicePDFInputs}
+          invoiceByID={this.props.invoiceByID}
         />
 
         <div style={{ marginTop: '10px' }}>
-          <div hidden={this.state.isSaved}>
-            <Quotation />
-          </div>
+          <div hidden={this.state.isSaved}>{/* <Quotation /> */}</div>
 
           <div>
             <div hidden={!this.state.isSaved}>
@@ -128,19 +123,18 @@ const mapStateToProps = (state) => {
     customer: state.QoutationReducer.selectedCustomers,
     qoutationProducts: state.QoutationReducer.qoutationProducts,
     savedInvoice: state.InvoiceReducer.savedInvoice,
+    invoiceByID: state.InvoiceReducer.invoiceByID,
     invoicePDFInputs: state.InvoiceReducer.invoicePDFInputs,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    saveInvoice: (payload) => dispatch(saveInvoice(payload)),
-    invoicePDFChangeHandler: (paylaod) =>
-      dispatch(invoicePDFChangeHandler(paylaod)),
+    getInvoiceByID: (payload) => dispatch(getInvoiceByID(payload)),
   };
 };
 
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
-)(Invoice);
+)(UpdateInvoice);

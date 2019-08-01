@@ -246,11 +246,17 @@ class Quotation extends React.Component {
       let temp = productToBeAdded;
       if (temp.original_product !== undefined) {
         temp.original_product.requiredQty = this.state.addProcductInputs.requiredQuantity;
-        temp.original_product.qoutedPrice = this.state.addProcductInputs.qoutedPrice;
+        temp.original_product.qoutedPrice =
+          this.state.addProcductInputs.qoutedPrice === ''
+            ? this.state.productToBeAdded.price
+            : this.state.addProcductInputs.qoutedPrice;
         temp.original_product.custDescription = this.state.addProcductInputs.custDescription;
       } else {
         temp.requiredQty = this.state.addProcductInputs.requiredQuantity;
-        temp.qoutedPrice = this.state.addProcductInputs.qoutedPrice;
+        temp.qoutedPrice =
+          this.state.addProcductInputs.qoutedPrice === ''
+            ? this.state.productToBeAdded.price
+            : this.state.addProcductInputs.qoutedPrice;
         temp.custDescription = this.state.addProcductInputs.custDescription;
       }
       if (temp.added_info === undefined) {

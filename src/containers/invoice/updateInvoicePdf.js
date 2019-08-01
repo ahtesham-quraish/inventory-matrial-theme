@@ -4,7 +4,7 @@ import styles from './invoiceStyles';
 import logo from '../../assets/img/logo.png';
 import TextField from '@material-ui/core/TextField';
 
-class InvoicePDF extends React.Component {
+class UpdateInvoicePDF extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -13,37 +13,19 @@ class InvoicePDF extends React.Component {
   }
   getSubTotal = () => {
     let subtotal = 0;
-    let oldValue = 0;
-    let elem = document.getElementById('subTotal');
-    if (elem !== null) {
-      oldValue = elem.value;
-    }
     this.props.qoutationProducts.forEach((element) => {
       subtotal += element.price * element.requiredQty;
     });
-    console.log('old val is ', oldValue);
-    if (subtotal !== Number(oldValue)) {
-      this.props.handleTotalChanges('subTotal', subtotal);
-    }
     return subtotal;
   };
   getGrandTotal = () => {
     let subtotal = 0;
-    let oldValue = 0;
-    let elem = document.getElementById('grandTotal');
-    if (elem !== null) {
-      oldValue = elem.value;
-    }
     this.props.qoutationProducts.forEach((element) => {
       subtotal += element.price * element.requiredQty;
     });
-    let factor = (this.props.invoicePDFInputs.discount / 100) * subtotal;
-    if (subtotal - factor !== Number(oldValue)) {
-      this.props.handleTotalChanges('grandTotal', subtotal - factor);
-    }
+    let factor = (this.state.discountPercentage / 100) * subtotal;
     return subtotal - factor;
   };
-
   componentWillUpdate = () => {
     console.log('invoice products are ', this.props.qoutationProducts);
     console.log('invoice cust is ', this.props.customer);
@@ -60,6 +42,10 @@ class InvoicePDF extends React.Component {
           : newName;
     });
     return newName;
+  };
+  processDate = (date) => {
+    let newDate = date.split('T');
+    return newDate[0];
   };
   render() {
     const { classes } = this.props;
@@ -141,7 +127,7 @@ class InvoicePDF extends React.Component {
                     A Sales Tex Invoice.
                   </span>
                 </div>
-                {this.props.customer && (
+                {this.props.invoiceByID.invoice.customer && (
                   <div className={`${classes.row}`}>
                     <div
                       className={`${classes.cusDetailClass}  ${
@@ -151,26 +137,29 @@ class InvoicePDF extends React.Component {
                       <span>
                         {' '}
                         {this.props.customer
-                          ? this.props.customer.fName +
+                          ? this.props.invoiceByID.invoice.customer.fName +
                             ' ' +
-                            this.props.customer.lName
+                            this.props.invoiceByID.invoice.customer.lName
                           : ''}{' '}
                         <br />
                         {this.props.customer
-                          ? this.props.customer.Address1
+                          ? this.props.invoiceByID.invoice.customer.Address1
                           : ''}
                       </span>
                       <span className={`${classes.normalLabelClass}`}>
-                        Sale Tex Registration No : {this.props.customer.gst}
+                        Sale Tex Registration No :{' '}
+                        {this.props.invoiceByID.invoice.customer.gst}
                       </span>
                       <span className={`${classes.normalLabelClass}`}>
-                        Nationl Tex No : {this.props.customer.ntn}
+                        Nationl Tex No :{' '}
+                        {this.props.invoiceByID.invoice.customer.ntn}
                       </span>
                       <span className={`${classes.normalLabelClass}`}>
-                        City : {this.props.customer.city}
+                        City : {this.props.invoiceByID.invoice.customer.city}
                       </span>
                       <span className={classes.testClass}>
-                        Country : {this.props.customer.country}
+                        Country :{' '}
+                        {this.props.invoiceByID.invoice.customer.country}
                       </span>
                     </div>
                   </div>
@@ -190,7 +179,7 @@ class InvoicePDF extends React.Component {
                     <td className={classes.tdElement}>
                       <input
                         className={classes.customInput}
-                        value={this.props.invoicePDFInputs.buyerOrderNumber}
+                        value={this.props.invoiceByID.invoice.buyerOrderNumber}
                         id={'buyerOrderNumber'}
                         onChange={this.props.handleInvoiceChange}
                       />
@@ -199,8 +188,10 @@ class InvoicePDF extends React.Component {
                       <TextField
                         id="buyerOrderNumberDate"
                         label=""
-                        type="date"
-                        defaultValue="2017-05-24"
+                        type="text"
+                        value={this.processDate(
+                          this.props.invoiceByID.invoice.deliverNumberDate,
+                        )}
                         className={classes.textField}
                         InputLabelProps={{
                           shrink: true,
@@ -218,22 +209,22 @@ class InvoicePDF extends React.Component {
                       {' '}
                       <input
                         className={classes.customInput}
-                        value={this.props.invoicePDFInputs.deliverNumber}
+                        value={this.props.invoiceByID.invoice.deliverNumber}
                         id={'deliverNumber'}
-                        onChange={this.props.handleInvoiceChange}
                       />
                     </td>
                     <td className={classes.tdElement}>
                       <TextField
                         id="deliverNumberDate"
                         label=""
-                        type="date"
-                        defaultValue="2017-05-24"
+                        type="text"
+                        value={this.processDate(
+                          this.props.invoiceByID.invoice.deliverNumberDate,
+                        )}
                         className={classes.textField}
                         InputLabelProps={{
                           shrink: true,
                         }}
-                        onChange={this.props.handleInvoiceChange}
                       />
                     </td>
                   </tr>
@@ -255,22 +246,22 @@ class InvoicePDF extends React.Component {
                       {' '}
                       <input
                         className={classes.customInput}
-                        value={this.props.invoicePDFInputs.taxInvoiceNumber}
+                        value={this.props.invoiceByID.invoice.taxInvoiceNumber}
                         id={'taxInvoiceNumber'}
-                        onChange={this.props.handleInvoiceChange}
                       />
                     </td>
                     <td className={classes.tdElement}>
                       <TextField
                         id="taxInvoiceNumberDate"
                         label=""
-                        type="date"
-                        defaultValue="2017-05-24"
+                        type="text"
+                        value={this.processDate(
+                          this.props.invoiceByID.invoice.taxInvoiceNumberDate,
+                        )}
                         className={classes.textField}
                         InputLabelProps={{
                           shrink: true,
                         }}
-                        onChange={this.props.handleInvoiceChange}
                       />
                     </td>
                   </tr>
@@ -283,22 +274,22 @@ class InvoicePDF extends React.Component {
                       {' '}
                       <input
                         className={classes.customInput}
-                        value={this.props.invoicePDFInputs.qoutNumber}
+                        value={this.props.invoiceByID.invoice.qoutNumber}
                         id={'qoutNumber'}
-                        onChange={this.props.handleInvoiceChange}
                       />
                     </td>
                     <td className={classes.tdElement}>
                       <TextField
                         id="qoutNumberDate"
                         label=""
-                        type="date"
-                        defaultValue="2017-05-24"
+                        type="text"
+                        value={this.processDate(
+                          this.props.invoiceByID.invoice.qoutNumberDate,
+                        )}
                         className={classes.textField}
                         InputLabelProps={{
                           shrink: true,
                         }}
-                        onChange={this.props.handleInvoiceChange}
                       />
                     </td>
                   </tr>
@@ -348,7 +339,7 @@ class InvoicePDF extends React.Component {
                   </tr>
                 </thead>
                 <tbody className={classes.tbodyElement}>
-                  {this.props.qoutationProducts.map((product, key) => (
+                  {this.props.invoiceByID.products.map((product, key) => (
                     <tr className={classes.trElement}>
                       <td
                         className={`${classes.oneColumntdClass} ${
@@ -362,35 +353,35 @@ class InvoicePDF extends React.Component {
                           classes.tdElement
                         }`}
                       >
-                        {product.custDescription}
+                        {product.customerDescription}
                       </td>
                       <td
                         className={`${classes.oneColumntdClass} ${
                           classes.tdElement
                         }`}
                       >
-                        {this.getProductName(product)}
+                        {this.getProductName(product.product)}
                       </td>
                       <td
                         className={`${classes.oneColumntdClass} ${
                           classes.tdElement
                         }`}
                       >
-                        {product.brand}
+                        {product.product.brand}
                       </td>
                       <td
                         className={`${classes.oneColumntdClass} ${
                           classes.tdElement
                         }`}
                       >
-                        {product.requiredQty}
+                        {product.quatityOffered}
                       </td>
                       <td
                         className={`${classes.oneColumntdClass} ${
                           classes.tdElement
                         }`}
                       >
-                        {product.qoutedPrice}
+                        {product.overiddenPrice}
                       </td>
 
                       <td
@@ -414,14 +405,7 @@ class InvoicePDF extends React.Component {
                     <td>
                       <span>Sub Total:</span>
                     </td>
-                    <td>
-                      <input
-                        id="subTotal"
-                        value={this.getSubTotal()}
-                        onChange={this.props.handleInvoiceChange}
-                        // disabled
-                      />
-                    </td>
+                    <td>{this.props.invoiceByID.invoice.subTotal}</td>
                   </tr>
                   <tr className={classes.oneColumntrLasttdClass}>
                     <td />
@@ -434,13 +418,7 @@ class InvoicePDF extends React.Component {
                     <td>
                       <span>Discount:</span>
                     </td>
-                    <td>
-                      <input
-                        id="discount"
-                        onChange={this.props.handleInvoiceChange}
-                        value={this.props.invoicePDFInputs.discount}
-                      />
-                    </td>
+                    <td>{this.props.invoiceByID.invoice.discount}</td>
                   </tr>
                   <tr
                     className={`$classes.oneColumntrLasttdClass ${
@@ -459,14 +437,7 @@ class InvoicePDF extends React.Component {
                         Grand Total:
                       </span>
                     </td>
-                    <td>
-                      <input
-                        id="grandTotal"
-                        onChange={this.props.handleInvoiceChange}
-                        value={this.getGrandTotal()}
-                        disabled
-                      />
-                    </td>
+                    <td>{this.props.invoiceByID.invoice.grandTotal}</td>
                   </tr>
                 </tbody>
               </table>
@@ -499,5 +470,5 @@ class InvoicePDF extends React.Component {
     );
   }
 }
-InvoicePDF = withStyles(styles)(InvoicePDF);
-export default InvoicePDF;
+UpdateInvoicePDF = withStyles(styles)(UpdateInvoicePDF);
+export default UpdateInvoicePDF;
