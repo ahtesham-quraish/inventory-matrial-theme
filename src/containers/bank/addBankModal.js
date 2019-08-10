@@ -21,6 +21,10 @@ import CardFooter from 'components/Card/CardFooter.jsx';
 import { ToastContainer, toast } from 'react-toastify';
 import getAllCustomers from '../Customers/actions/getCustomers';
 import Loader from 'react-loader-spinner';
+import BankActions from '../bank/actions/index';
+
+const { getBanks, getCategory, createTransaction } = BankActions;
+
 const styles = {
   margin: {
     margin: '10px 10px',
@@ -44,49 +48,190 @@ class AddBankModal extends React.Component {
     this.state = {
       loading: false,
       bankMethodOption: null,
+      categoryOptions: [],
+      categoryOption: null,
+      bankOptions: [],
+      bankOption: null,
       transaction: {
         date: '',
         bank_account: '',
         type: '',
+        category: '',
         description: '',
         entry_method: '',
+        description: '',
       },
     };
   }
+  componentDidMount() {
+    this.props.getAllCustomers();
+    this.props.getBanks().then(() => {
+      const bankOptions = [];
+      const { banks } = this.props;
+      if (banks) {
+        for (let bank in banks) {
+          bankOptions.push({
+            value: banks[bank].id,
+            label: `${banks[bank].code} | ${banks[bank].name}`,
+          });
+        }
+        this.setState({ bankOptions });
+      }
+    });
+    this.props.getCategory().then(() => {
+      const categoryOptions = [];
+      const { categories } = this.props;
+      if (categories) {
+        for (let category in categories) {
+          categoryOptions.push({
+            value: categories[category].id,
+            label: `${categories[category].code} | ${
+              categories[category].name
+            }`,
+          });
+        }
+        this.setState({ categoryOptions });
+      }
+    });
+  }
+  createCategoryOptions = (keys) => {
+    const { categories } = this.props;
+    const categoriesOptions = [];
+    if (categories) {
+      for (let category in categories) {
+        if (keys.includes(categories[category].title)) {
+          categoriesOptions.push({
+            value: categories[category].id,
+            label: `${categories[category].code} | ${
+              categories[category].name
+            }`,
+          });
+        }
+      }
+    }
+    return categoriesOptions;
+  };
+
+  createCustomerOptions = (key) => {
+    const { customers } = this.props;
+
+    const customersOptions = [];
+    if (customers) {
+      customers.forEach((customer) => {
+        if (customer.customer_type === key) {
+          customersOptions.push({
+            value: customer.id,
+            label: `${customer.category} | ${customer.fName} ${customer.lName}`,
+          });
+        }
+      });
+    }
+
+    return customersOptions;
+  };
+  onChangeCategory = (categoryOption) => {
+    const { transaction, typesOption } = this.state;
+    if (
+      typesOption.value === 'Customer Receipt' ||
+      typesOption.value === 'Supplier Payment'
+    ) {
+      const customerLabelArray = categoryOption.label.split('|');
+      transaction.customer = categoryOption.value;
+      transaction.category = customerLabelArray[0].trim();
+    } else {
+      transaction.category = categoryOption.value;
+    }
+
+    this.setState({ categoryOption, transaction });
+  };
+  onTransactionChange = (e) => {
+    const { transaction } = this.state;
+    transaction[e.target.id] = e.target.value;
+    this.setState({ transaction });
+  };
+  onTypesChange = (typesOption) => {
+    const { transaction } = this.state;
+    if (typesOption.value === 'Customer Receipt') {
+      this.setState({
+        categoryOptions: this.createCustomerOptions('Buyer'),
+        categoryOption: null,
+      });
+    } else if (typesOption.value === 'Supplier Payment') {
+      this.setState({
+        categoryOptions: this.createCustomerOptions('Supplier'),
+        categoryOption: null,
+      });
+    } else if (typesOption.value === 'Money Out') {
+      this.setState({
+        categoryOptions: this.createCategoryOptions(['Liability', 'Expense']),
+        categoryOption: null,
+      });
+    } else if (typesOption.value === 'Money In') {
+      this.setState({
+        categoryOptions: this.createCategoryOptions([
+          'Revenue',
+          'Asset',
+          'Equity',
+        ]),
+        categoryOption: null,
+      });
+    }
+    transaction.type = typesOption.value;
+    this.setState({ typesOption, transaction });
+  };
+  onBankChange = (bankOption) => {
+    const { transaction } = this.state;
+    transaction.bank_account = bankOption.value;
+    this.setState({ bankOption, transaction });
+  };
+  createTransaction = () => {
+    const { transaction } = this.state;
+    this.setState({ loading: true });
+    this.props.createTransaction(transaction).then(() => {
+      this.setState({ loading: false });
+    });
+  };
   render() {
     const { classes } = this.props;
+    console.log(this.state.transaction);
     return (
       <Dialog
         open={this.props.transModelOpenState}
         onClose={this.props.handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title">Product Details</DialogTitle>
+        <DialogTitle id="form-dialog-title"> Transaction</DialogTitle>
         <DialogContent>
           <GridContainer>
             <GridItem xs={16} sm={16} md={12}>
               <Card style={{ width: '500px' }}>
-                <CardHeader color="primary">Add Product</CardHeader>
+                <CardHeader color="primary">Enter Transaction</CardHeader>
                 <CardBody>
                   <GridContainer>
                     <GridItem xs={12} sm={12} md={6}>
                       <CustomInput
                         labelText="Date"
-                        id="title"
+                        id="date"
                         type="date"
                         defaultValue="2017-05-24"
                         helpText="2017-05-24"
                         formControlProps={{
                           fullWidth: true,
                         }}
+                        inputProps={{
+                          onChange: this.onTransactionChange,
+                          value: this.state.transaction.date,
+                        }}
                       />
                     </GridItem>
                     <GridItem xs={12} sm={12} md={6}>
                       <Select
-                        placeholder="Cash FLow Type"
+                        placeholder="Select Bank "
                         style={{ marginTop: '40px' }}
                         className={classes.unitSelect}
-                        options={typesOptions}
+                        onChange={this.onBankChange}
+                        value={this.state.bankOption}
+                        options={this.state.bankOptions}
                         isMulti={false}
                       />
                     </GridItem>
@@ -94,9 +239,12 @@ class AddBankModal extends React.Component {
                   <GridContainer>
                     <GridItem xs={12} sm={12} md={6}>
                       <Select
-                        placeholder="Select Category "
+                        placeholder="Cash FLow Type"
                         style={{ marginTop: '40px' }}
                         className={classes.unitSelect}
+                        options={typesOptions}
+                        value={this.state.typesOption}
+                        onChange={this.onTypesChange}
                         isMulti={false}
                       />
                     </GridItem>
@@ -104,11 +252,28 @@ class AddBankModal extends React.Component {
                       <CustomInput
                         labelText="Amount"
                         id="amount"
-                        type="textarea"
-                        helpText="Description is required"
+                        type="text"
                         formControlProps={{
                           fullWidth: true,
                         }}
+                        inputProps={{
+                          onChange: this.onTransactionChange,
+                          value: this.state.transaction.amount,
+                        }}
+                      />
+                    </GridItem>
+                  </GridContainer>
+
+                  <GridContainer>
+                    <GridItem xs={12} sm={12} md={12}>
+                      <Select
+                        placeholder="Select Category "
+                        style={{ marginTop: '40px' }}
+                        className={classes.unitSelect}
+                        value={this.state.categoryOption}
+                        options={this.state.categoryOptions}
+                        onChange={this.onChangeCategory}
+                        isMulti={false}
                       />
                     </GridItem>
                   </GridContainer>
@@ -122,18 +287,11 @@ class AddBankModal extends React.Component {
                         formControlProps={{
                           fullWidth: true,
                         }}
+                        inputProps={{
+                          onChange: this.onTransactionChange,
+                          value: this.state.transaction.description,
+                        }}
                       />
-                    </GridItem>
-                  </GridContainer>
-                  <GridContainer>
-                    <GridItem xs={24} sm={24} md={12}>
-                      <Button
-                        onClick={this.props.onAddCategory}
-                        color="primary"
-                        size="sm"
-                      >
-                        Invoices{' '}
-                      </Button>
                     </GridItem>
                   </GridContainer>
                 </CardBody>
@@ -145,18 +303,7 @@ class AddBankModal extends React.Component {
                         color="primary"
                         size="sm"
                       >
-                        {!this.props.loading ? (
-                          'ADD Transaction'
-                        ) : (
-                          <div style={{ width: '75px' }}>
-                            <Loader
-                              type="ThreeDots"
-                              color="white"
-                              height={1000}
-                              width={1000}
-                            />
-                          </div>
-                        )}
+                        Invoices
                       </Button>
                     </GridItem>
                   </GridContainer>
@@ -164,54 +311,25 @@ class AddBankModal extends React.Component {
               </Card>
             </GridItem>
           </GridContainer>
-          {/* <GridContainer>
-            <GridItem xs={16} sm={16} md={12}>
-              <Select
-                className={classes.margin}
-                placeholder="Type"
-                options={typesOptions}
-                isMulti={false}
-              />
-              <Select
-                className={classes.margin}
-                placeholder="Customer/Product/MCS"
-                options={typesOptions}
-                isMulti={false}
-              />
-              <TextField
-                margin="dense"
-                className={`${classes.margin} ${classes.auto}`}
-                id="qoutedPrice"
-                label="Amount "
-                type="number"
-                fullWidth
-              />
-              <TextField
-                margin="dense"
-                className={`${classes.margin} ${classes.auto}`}
-                id="custDescription"
-                defaultValue="2017-05-24"
-                type="text"
-                fullWidth
-              />
-              <TextField
-                margin="dense"
-                className={`${classes.margin} `}
-                id="custDescription"
-                defaultValue="2017-05-24"
-                type="tex"
-                fullWidth
-              />
-            </GridItem>
-          </GridContainer> */}
         </DialogContent>
 
         <DialogActions>
           <Button onClick={this.props.handleCancelClick} color="warning">
             Cancel
           </Button>
-          <Button onClick={() => {}} color="primary">
-            Add Product
+          <Button onClick={this.createTransaction} color="primary">
+            {!this.props.loading ? (
+              'Enter Transaction'
+            ) : (
+              <div style={{ width: '75px' }}>
+                <Loader
+                  type="ThreeDots"
+                  color="white"
+                  height={1000}
+                  width={1000}
+                />
+              </div>
+            )}
           </Button>
         </DialogActions>
       </Dialog>
@@ -220,12 +338,22 @@ class AddBankModal extends React.Component {
 }
 
 const styledCompoenet = withStyles(styles)(AddBankModal);
+const mapStateToProps = (state) => {
+  return {
+    categories: state.BankState.categories,
+    banks: state.BankState.banks,
+    customers: state.CustomerState.customers,
+  };
+};
 const mapDispatchToProps = (dispatch) => {
   return {
     getAllCustomers: () => dispatch(getAllCustomers()),
+    getBanks: () => dispatch(getBanks()),
+    getCategory: () => dispatch(getCategory()),
+    createTransaction: (body) => dispatch(createTransaction(body)),
   };
 };
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(styledCompoenet);

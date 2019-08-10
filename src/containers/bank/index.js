@@ -30,8 +30,41 @@ import BankCreateModel from './bankCreateModel';
 import CreateCategory from './createCategory';
 import BankActions from './actions';
 import BankList from './bankList';
-const { createBank, getBanks } = BankActions;
-const styles = {};
+const { createBank, getBanks, getTransaction } = BankActions;
+
+const styles = {
+  cardCategoryWhite: {
+    '&,& a,& a:hover,& a:focus': {
+      color: 'rgba(255,255,255,.62)',
+      margin: '0',
+      fontSize: '14px',
+      marginTop: '0',
+      marginBottom: '0',
+    },
+    '& a,& a:hover,& a:focus': {
+      color: '#FFFFFF',
+    },
+  },
+  cardTitleWhite: {
+    color: '#FFFFFF',
+    marginTop: '0px',
+    minHeight: 'auto',
+    fontWeight: '300',
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    marginBottom: '3px',
+    textDecoration: 'none',
+    '& small': {
+      color: '#777',
+      fontSize: '65%',
+      fontWeight: '400',
+      lineHeight: '1',
+    },
+  },
+  link: {
+    cursor: 'pointer',
+    color: '#0000EE',
+  },
+};
 const typesOptions = [
   { value: '500-998', label: 'Expense (500 - 998)' },
   { value: '0-199', label: 'Asset (0 - 199)' },
@@ -68,8 +101,28 @@ class Bank extends React.Component {
   transModelOpen = () => {
     this.setState({ transModelOpen: true });
   };
+  componentDidMount() {
+    this.props.getTransaction();
+  }
+  prepareTableData = () => {
+    const { transactions } = this.props;
+    let data = [];
+    let temp = [];
+    for (let transaction in transactions) {
+      temp.push(transactions[transaction].date);
+      temp.push(transactions[transaction].type);
+      temp.push(transactions[transaction].bank_account.entry_method);
+      temp.push(transactions[transaction].description);
+      temp.push(transactions[transaction].category.name);
+      temp.push(transactions[transaction].amount);
+      data.push(temp);
+      temp = [];
+    }
+    return data;
+  };
 
   render() {
+    const { classes } = this.props;
     return (
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
@@ -100,46 +153,28 @@ class Bank extends React.Component {
               Add Category{' '}
             </RegularButton>
           </div>
-
-          <CustomTabs
-            title="Tasks:"
-            headerColor="primary"
-            tabs={[
-              {
-                tabName: 'Bugs',
-                tabIcon: BugReport,
-                tabContent: (
-                  <Tasks
-                    checkedIndexes={[0, 3]}
-                    tasksIndexes={[0, 1, 2, 3]}
-                    tasks={bugs}
-                  />
-                ),
-              },
-              {
-                tabName: 'Website',
-                tabIcon: Code,
-                tabContent: (
-                  <Tasks
-                    checkedIndexes={[0]}
-                    tasksIndexes={[0, 1]}
-                    tasks={website}
-                  />
-                ),
-              },
-              {
-                tabName: 'Server',
-                tabIcon: Cloud,
-                tabContent: (
-                  <Tasks
-                    checkedIndexes={[1]}
-                    tasksIndexes={[0, 1, 2]}
-                    tasks={server}
-                  />
-                ),
-              },
-            ]}
-          />
+          <Card className={'blue'}>
+            <CardHeader color="primary">
+              <h4 className={classes.cardTitleWhite}>Product List</h4>
+            </CardHeader>
+            <CardBody>
+              <Table
+                tableHeaderColor="primary"
+                tableHead={[
+                  'Date',
+                  'Transaction Type',
+                  'Method',
+                  'Description',
+                  'Category',
+                  'Total',
+                  'Action',
+                ]}
+                tableData={this.prepareTableData()}
+                onClick={this.handleRowClick}
+                className={classes.link}
+              />
+            </CardBody>
+          </Card>
         </GridItem>
         <AddBankModal
           handleCancelClick={this.handleCancelClick}
@@ -164,8 +199,7 @@ class Bank extends React.Component {
 const mapStateToProps = (state) => {
   return {
     customer: state.QoutationReducer.selectedCustomers,
-    qoutationProducts: state.QoutationReducer.qoutationProducts,
-    savedInvoice: state.State.savedInvoice,
+    transactions: state.BankState.transactions,
   };
 };
 
@@ -173,10 +207,11 @@ const mapDispatchToProps = (dispatch) => {
   return {
     createBank: (body) => dispatch(createBank(body)),
     getBanks: () => dispatch(getBanks()),
+    getTransaction: () => dispatch(getTransaction()),
   };
 };
 const styledCompoenet = withStyles(styles)(Bank);
 export default connect(
-  null,
+  mapStateToProps,
   mapDispatchToProps,
 )(styledCompoenet);

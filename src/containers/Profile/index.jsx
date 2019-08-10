@@ -53,6 +53,7 @@ const typesOptions = [{ value: '400-499', label: 'Revenue (400 - 499)' }];
 const customerOptions = [
   { value: 'Buyer', label: 'Buyer' },
   { value: 'Supplier', label: 'Supplier' },
+  { value: 'Owner', label: 'Owner' },
 ];
 const typesSupplierOptions = [
   { value: '500-998', label: 'Expense (500 - 998)' },
@@ -64,7 +65,7 @@ class ProfileDetailContainer extends React.Component {
     this.state = {
       categoryModelOpenState: null,
       categoriesOptions: [],
-      customerOption: { value: 'Buyer', label: 'Buyer' },
+      customerOption: null,
       supplier: false,
       customer: {},
       id: null,

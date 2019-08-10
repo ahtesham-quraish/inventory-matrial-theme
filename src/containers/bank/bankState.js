@@ -2,6 +2,7 @@ import actions from './actions/index';
 const initialState = {
   banks: null,
   categories: null,
+  transactions: null,
 };
 
 export default function BankState(state = initialState, action) {
@@ -29,6 +30,19 @@ export default function BankState(state = initialState, action) {
       return {
         ...state,
         categories: _category ? { ..._category } : null,
+      };
+
+    case actions.GET_TRANSACTION_SUCCESS:
+      let _transaction = null;
+      action.response.data.forEach((transaction) => {
+        _transaction = {
+          ..._transaction,
+          [transaction.id]: transaction,
+        };
+      });
+      return {
+        ...state,
+        transactions: _transaction ? { ..._transaction } : null,
       };
     default:
       return state;
