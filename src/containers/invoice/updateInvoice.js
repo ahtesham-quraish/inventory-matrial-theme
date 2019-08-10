@@ -7,20 +7,79 @@ import Button from 'components/CustomButtons/Button.jsx';
 import saveInvoice from './actions/saveInvoice';
 import getInvoiceByID from './actions/getInvoiceByID';
 import invoicePDFChangeHandler from './actions/invoicePDFChangeHandle';
+import updateInvoice from './actions/updateInvoice';
 import Loader from 'react-loader-spinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Select from 'react-select';
+import GridItem from 'components/Grid/GridItem.jsx';
+import GridContainer from 'components/Grid/GridContainer.jsx';
+import CustomInput from '../../components/CustomInput/CustomInput';
+import withStyles from '@material-ui/core/styles/withStyles';
+
+const styles = {
+  cardCategoryWhite: {
+    color: 'rgba(255,255,255,.62)',
+    margin: '0',
+    fontSize: '14px',
+    marginTop: '0',
+    marginBottom: '0',
+  },
+  cardTitleWhite: {
+    color: '#FFFFFF',
+    marginTop: '0px',
+    minHeight: 'auto',
+    fontWeight: '300',
+    fontFamily: "'Roboto', 'Helvetica', 'Arial', sans-serif",
+    marginBottom: '3px',
+    textDecoration: 'none',
+  },
+  pointer: {
+    cursor: 'pointer',
+  },
+  logowidth: {
+    width: '100%',
+  },
+  containerbackground: {
+    background: 'light grey',
+  },
+  margin: {
+    margin: '10px 10px',
+  },
+};
+
 class UpdateInvoice extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isSaved: false,
       waiting: false,
+      paymentTypeOptions: [],
+      selectedType: null,
+      receivedAmount: '',
     };
   }
   componentDidMount = () => {
-    this.props.getInvoiceByID('9').then(() => {
-      console.log('received invoice is ', this.props.invoiceByID.products);
+    let id = this.props.match.params.invoice_id;
+    this.props.getInvoiceByID(id).then(() => {
+      console.log(
+        'received invoice is ',
+        this.props.invoiceByID.invoice.status,
+      );
+
+      let types = [
+        { label: 'Unpaid', value: 'Unpaid' },
+        { label: 'Paid', value: 'Paid' },
+      ];
+
+      this.setState({
+        paymentTypeOptions: types,
+        selectedType: {
+          label: this.props.invoiceByID.invoice.status,
+          value: this.props.invoiceByID.invoice.status,
+        },
+        receivedAmount: this.props.invoiceByID.invoice.residualPayment,
+      });
     });
   };
   saveInvoice = () => {
@@ -63,7 +122,39 @@ class UpdateInvoice extends React.Component {
     });
   };
 
+  handlePaymentSelect = (selected) => {
+    this.setState({
+      selectedType: selected,
+    });
+  };
+  handleAmountRecivedchange = (e) => {
+    this.setState({
+      receivedAmount: e.target.value,
+    });
+  };
+
+  handleUpdateClick = () => {
+    let payload = {
+      id: this.props.invoiceByID.invoice.id,
+      status: this.state.selectedType.value,
+      amount: this.state.receivedAmount === '' ? 0 : this.state.receivedAmount,
+    };
+    this.setState({
+      waiting: true,
+    });
+    this.props
+      .updateInvoice(payload)
+      .then(() => {
+        this.props.history.push('/admin/all-invoice');
+      })
+      .catch(() => {
+        toast.error('Invoice could not be updated');
+      });
+  };
+
   render() {
+    const { classes } = this.props;
+
     return (
       <React.Fragment>
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={4000} />
@@ -91,15 +182,43 @@ class UpdateInvoice extends React.Component {
                 content={() => this.componentRef}
               />
             </div>
+            <GridContainer>
+              <GridItem xs={12} sm={8} md={4}>
+                <Select
+                  className={classes.margin}
+                  placeholder="Select Product"
+                  value={this.state.selectedType}
+                  onChange={this.handlePaymentSelect}
+                  options={this.state.paymentTypeOptions}
+                />
+              </GridItem>
+              <GridItem xs={12} sm={8} md={4}>
+                <CustomInput
+                  labelText="Residual amount"
+                  id="amount"
+                  type="number"
+                  error={false}
+                  helpText="Description is required"
+                  formControlProps={{
+                    fullWidth: true,
+                  }}
+                  inputProps={{
+                    onChange: this.handleAmountRecivedchange,
+                    value: this.state.receivedAmount,
+                  }}
+                />
+              </GridItem>
+            </GridContainer>
+
             <div style={{ margin: '10px 10px' }} hidden={this.state.isSaved}>
               <Button
                 color="primary"
                 size="md"
-                onClick={this.saveInvoice}
+                onClick={this.handleUpdateClick}
                 disabled={this.state.waiting}
               >
                 {!this.state.waiting ? (
-                  'Save Invoice'
+                  'Update Invoice'
                 ) : (
                   <div style={{ width: '75px' }}>
                     <Loader
@@ -131,9 +250,10 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     getInvoiceByID: (payload) => dispatch(getInvoiceByID(payload)),
+    updateInvoice: (payload) => dispatch(updateInvoice(payload)),
   };
 };
-
+UpdateInvoice = withStyles(styles)(UpdateInvoice);
 export default connect(
   mapStateToProps,
   mapDispatchToProps,

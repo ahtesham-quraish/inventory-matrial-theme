@@ -25,6 +25,7 @@ import { addProduct } from '../../views/Products/actions/actions';
 import { addProductToQoutation } from './actions/addProductToQoutation';
 import { removeProductFromQoutation } from './actions/removeProductFromQoutation';
 import getCustomerInvoiceProducts from './actions/getCustomerInvoiceProducts';
+import invoicePDFChangeHandler from '../invoice/actions/invoicePDFChangeHandle';
 
 //imports for dialog
 import { Button as DialogButton } from '@material-ui/core/Button';
@@ -78,6 +79,11 @@ class Quotation extends React.Component {
       selectedCustomer: null,
       selectedProducts: [],
       seelctedPastProducts: [],
+      PaymentStatus: [
+        { value: 'Unpaid', label: 'Unpaid' },
+        { value: 'Paid', label: 'Paid' },
+      ],
+      selectedStatus: null,
       options: [],
       productOptions: [],
       pastProductsOptions: [],
@@ -309,6 +315,23 @@ class Quotation extends React.Component {
       productToBeAdded: null,
     });
   };
+  handleTypeSelect = (option) => {
+    this.setState({
+      selectedStatus: option,
+    });
+    let payload = {
+      field: 'status',
+      value: option.value,
+    };
+    console.log('paylaod is ', {
+      payload: payload,
+      type: 'INVOICE_INPUTS_CHANGE_HANDLE',
+    });
+    this.props.invoicePDFChangeHandler({
+      payload: payload,
+      type: 'INVOICE_INPUTS_CHANGE_HANDLE',
+    });
+  };
   handleAddProductsChange = (event) => {
     const { addProcductInputs } = this.state;
     addProcductInputs[event.target.id] = event.target.value;
@@ -442,9 +465,9 @@ class Quotation extends React.Component {
             <Select
               className={classes.margin}
               placeholder="Payment Status"
-              onChange={this.handlePastProductSelect}
-              options={PaymentStatus}
-              isMulti={false}
+              value={this.state.selectedStatus}
+              onChange={this.handleTypeSelect}
+              options={this.state.PaymentStatus}
             />
           </GridItem>
         </GridContainer>
@@ -474,6 +497,8 @@ const mapDispatchToProps = (dispatch) => {
       dispatch(removeProductFromQoutation(payload)),
     getCustomerInvoiceProducts: (payload) =>
       dispatch(getCustomerInvoiceProducts(payload)),
+    invoicePDFChangeHandler: (paylaod) =>
+      dispatch(invoicePDFChangeHandler(paylaod)),
   };
 };
 Quotation = withStyles(styles)(Quotation);

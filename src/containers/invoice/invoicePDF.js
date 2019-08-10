@@ -43,14 +43,11 @@ class InvoicePDF extends React.Component {
     }
     return subtotal - factor;
   };
-<<<<<<< HEAD
 
   componentWillUpdate = () => {
     console.log('invoice products are ', this.props.qoutationProducts);
     console.log('invoice cust is ', this.props.customer);
   };
-=======
->>>>>>> 01877eb30fe8035c51d57f4cdd3625c190cce34f
   getProductName = (product) => {
     const name = ['api', 'title', 'sae'];
     let newName = '';
@@ -417,7 +414,6 @@ class InvoicePDF extends React.Component {
                     >
                       <span>Sub Total:</span>
                     </td>
-<<<<<<< HEAD
                     <td>
                       <input
                         id="subTotal"
@@ -425,12 +421,6 @@ class InvoicePDF extends React.Component {
                         onChange={this.props.handleInvoiceChange}
                         // disabled
                       />
-=======
-                    <td
-                      className={`${classes.alignCenter} ${classes.paddingTop}`}
-                    >
-                      {this.getSubTotal()}
->>>>>>> 01877eb30fe8035c51d57f4cdd3625c190cce34f
                     </td>
                   </tr>
                   <tr className={classes.oneColumntrLasttdClass}>
@@ -443,20 +433,11 @@ class InvoicePDF extends React.Component {
                     <td className={classes.alignRight}>
                       <span>Discount:</span>
                     </td>
-<<<<<<< HEAD
                     <td>
                       <input
                         id="discount"
                         onChange={this.props.handleInvoiceChange}
                         value={this.props.invoicePDFInputs.discount}
-=======
-                    <td className={classes.alignCenter}>
-                      <input
-                        className={`${classes.removeBg} ${
-                          classes.textAlignCenter
-                        }`}
-                        value={this.state.discountPercentage + '%'}
->>>>>>> 01877eb30fe8035c51d57f4cdd3625c190cce34f
                       />
                     </td>
                   </tr>

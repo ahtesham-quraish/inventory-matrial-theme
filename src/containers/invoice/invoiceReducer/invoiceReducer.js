@@ -14,6 +14,7 @@ const initialState = {
     subTotal: '',
     grandTotal: '',
     discount: 10,
+    status: 'Unpaid',
   },
   invoiceByID: {
     invoice: {
