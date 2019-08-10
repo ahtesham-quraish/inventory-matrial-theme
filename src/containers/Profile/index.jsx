@@ -19,6 +19,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import getCustomer from '../Customers/actions/getCustomer';
 import { setCustomer } from '../Customers/actions/getCustomer';
 import avatar from 'assets/img/faces/marc.jpg';
+import CreateCategory from '../bank/createCategory';
+import RegularButton from '../../components/CustomButtons/Button';
+import BankActions from '../bank/actions/index';
+import Select from 'react-select';
+const { getCategory } = BankActions;
 const styles = {
   cardCategoryWhite: {
     color: 'rgba(255,255,255,.62)',
@@ -39,14 +44,38 @@ const styles = {
   pointer: {
     cursor: 'pointer',
   },
+  unitSelect: {
+    marginTop: '40px',
+  },
 };
+const typesOptions = [{ value: '400-499', label: 'Revenue (400 - 499)' }];
+
+const customerOptions = [
+  { value: 'Buyer', label: 'Buyer' },
+  { value: 'Supplier', label: 'Supplier' },
+];
+const typesSupplierOptions = [
+  { value: '500-998', label: 'Expense (500 - 998)' },
+  { value: '0-199', label: 'Asset (0 - 199)' },
+];
 class ProfileDetailContainer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { customer: {}, id: null, disabled: true };
+    this.state = {
+      categoryModelOpenState: null,
+      categoriesOptions: [],
+      customerOption: { value: 'Buyer', label: 'Buyer' },
+      supplier: false,
+      customer: {},
+      id: null,
+      disabled: true,
+    };
   }
   componentDidMount() {
     const urlParams = new URLSearchParams(window.location.search);
+    this.props.getCategory().then(() => {
+      this.prepareCategoryOptions();
+    });
     const id = urlParams.get('id');
     if (id) {
       this.props.getCustomer(id).then(
@@ -58,6 +87,27 @@ class ProfileDetailContainer extends React.Component {
       );
     }
   }
+
+  prepareCategoryOptions = () => {
+    const categoriesOptions = [];
+    const { categories } = this.props;
+    if (categories) {
+      for (let g in categories) {
+        if (
+          (categories[g].title === 'Revenue' && !this.state.supplier) ||
+          (this.state.supplier &&
+            (categories[g].title === 'Asset' ||
+              categories[g].title === 'Expense'))
+        ) {
+          categoriesOptions.push({
+            value: categories[g].id,
+            label: `${categories[g].name} | ${categories[g].code}`,
+          });
+        }
+      }
+      this.setState({ categoriesOptions });
+    }
+  };
   onChangeHandler = (e) => {
     const { customer } = this.state;
     customer[e.target.id] = e.target.value;
@@ -86,6 +136,42 @@ class ProfileDetailContainer extends React.Component {
     const { disabled } = this.state;
     this.setState({ disabled: !disabled });
   };
+  categoryModelOpen = () => {
+    this.setState({
+      categoryModelOpenState: true,
+    });
+  };
+  handleCancelClick = () => {
+    this.props.getCategory().then(() => {
+      this.prepareCategoryOptions();
+    });
+    this.setState({
+      categoryModelOpenState: false,
+    });
+  };
+  onCateGoryChange = (categoryOption) => {
+    let { customer } = this.state;
+    customer.category = categoryOption.value;
+
+    this.setState({
+      categoryOption,
+      customer,
+    });
+  };
+  onCustomerChange = (customerOption) => {
+    let { customer, supplier } = this.state;
+    customer.customer_type = customerOption.value;
+    if (customerOption.value === 'Supplier') {
+      supplier = true;
+    } else {
+      supplier = false;
+    }
+    this.setState({
+      customerOption,
+      customer,
+      supplier,
+    });
+  };
   render() {
     const { classes } = this.props;
     const { customer, id } = this.state;
@@ -96,6 +182,15 @@ class ProfileDetailContainer extends React.Component {
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={4000} />
         <GridContainer>
           <GridItem xs={12} sm={12} md={8}>
+            <div style={{ float: 'right', marginBottom: '5%' }}>
+              <RegularButton
+                onClick={this.categoryModelOpen}
+                color="primary"
+                size="sm"
+              >
+                Add Category{' '}
+              </RegularButton>
+            </div>
             <Card>
               <CardHeader color="primary">
                 {id && (
@@ -297,8 +392,32 @@ class ProfileDetailContainer extends React.Component {
                     />
                   </GridItem>
                   <GridItem xs={12} sm={12} md={6}>
+                    <Select
+                      placeholder="Customer Type"
+                      style={{ marginTop: '40px' }}
+                      className={classes.unitSelect}
+                      options={customerOptions}
+                      isMulti={false}
+                      value={this.state.customerOption}
+                      onChange={this.onCustomerChange}
+                    />
+                  </GridItem>
+                </GridContainer>
+                <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                    <Select
+                      placeholder="Select  Account Type"
+                      style={{ marginTop: '40px' }}
+                      className={classes.unitSelect}
+                      options={this.state.categoriesOptions}
+                      isMulti={false}
+                      value={this.state.categoryOption}
+                      onChange={this.onCateGoryChange}
+                    />
+                  </GridItem>
+                  <GridItem xs={12} sm={12} md={6}>
                     <CustomInput
-                      labelText={!customer.Phone ? 'Phone#' : null}
+                      labelText={!customer.Phone ? 'Mobile' : null}
                       id="Phone"
                       formControlProps={{
                         fullWidth: true,
@@ -372,6 +491,13 @@ class ProfileDetailContainer extends React.Component {
               </CardBody>
             </Card>
           </GridItem>
+          <CreateCategory
+            typesOptions={
+              !this.state.supplier ? typesOptions : typesSupplierOptions
+            }
+            categoryModelOpenState={this.state.categoryModelOpenState}
+            handleCancelClick={this.handleCancelClick}
+          />
         </GridContainer>
       </div>
     );
@@ -383,6 +509,7 @@ const mapStateToProps = (state) => {
     customers: state.CustomerState.customers,
     selectedCustomerId: state.CustomerState.customerId,
     customer: state.CustomerState.customer,
+    categories: state.BankState.categories,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -391,6 +518,7 @@ const mapDispatchToProps = (dispatch) => {
     updateCustomer: (id, data) => dispatch(updateCustomer(id, data)),
     getCustomer: (id) => dispatch(getCustomer(id)),
     setCustomer: (data) => dispatch(setCustomer(data)),
+    getCategory: () => dispatch(getCategory()),
   };
 };
 ProfileDetailContainer = withStyles(styles)(ProfileDetailContainer);

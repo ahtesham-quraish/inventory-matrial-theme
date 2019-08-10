@@ -22,6 +22,8 @@ import AddProduct from './views/Products/addProduct';
 import UpdateProduct from './views/Products/updateProduct';
 import Invoice from './containers/invoice/index';
 import InvoiceList from './containers/invoice/invoices';
+import Bank from './containers/bank';
+import BankList from './containers/bank/bankList';
 const dashboardRoutes = [
   {
     path: '/dashboard',
@@ -39,7 +41,7 @@ const dashboardRoutes = [
     icon: Person,
     component: ProfileDetailContainer,
     layout: '/admin',
-    isSideBarLink: true,
+    isSideBarLink: false,
   },
   {
     path: '/qoutation',
@@ -113,6 +115,24 @@ const dashboardRoutes = [
     component: InvoiceList,
     layout: '/admin',
     isSideBarLink: false,
+  },
+  {
+    path: '/bank',
+    name: 'Transactions',
+    rtlName: 'قائمة الجدول',
+    icon: 'content_paste',
+    component: Bank,
+    layout: '/admin',
+    isSideBarLink: true,
+  },
+  {
+    path: '/list',
+    name: 'Bank',
+    rtlName: 'قائمة الجدول',
+    icon: 'content_paste',
+    component: BankList,
+    layout: '/admin',
+    isSideBarLink: true,
   },
   // {
   //   path: '/typography',

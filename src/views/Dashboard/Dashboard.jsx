@@ -209,7 +209,7 @@ class Dashboard extends React.Component {
             </Card>
           </GridItem>
         </GridContainer>
-        <GridContainer>
+        {/* <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <CustomTabs
               title="Tasks:"
@@ -273,7 +273,7 @@ class Dashboard extends React.Component {
               </CardBody>
             </Card>
           </GridItem>
-        </GridContainer>
+        </GridContainer> */}
       </div>
     );
   }

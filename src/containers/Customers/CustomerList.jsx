@@ -12,6 +12,7 @@ import CardBody from 'components/Card/CardBody.jsx';
 import getAllCustomers from './actions/getCustomers';
 import customersDataSelector from './selectors/customersListSelector';
 import setCustomerId from './actions/setCustomerId';
+import RegularButton from '../../components/CustomButtons/Button';
 const styles = {
   cardCategoryWhite: {
     '&,& a,& a:hover,& a:focus': {
@@ -74,8 +75,17 @@ class CustomerListContainer extends React.Component {
     return (
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
+          <div style={{ float: 'right', marginBottom: '5%' }}>
+            <RegularButton
+              onClick={() => this.props.history.push('/admin/user')}
+              color="primary"
+              size="sm"
+            >
+              Add Customer{' '}
+            </RegularButton>
+          </div>
           <Card>
-            <CardHeader color="primary">
+            <CardHeader color="success">
               <h4 className={classes.cardTitleWhite}>Customers List</h4>
               <p className={classes.cardCategoryWhite}>
                 Complete list of all the customers

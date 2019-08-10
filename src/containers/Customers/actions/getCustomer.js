@@ -8,7 +8,7 @@ export function setCustomer(customer) {
 const getCustomer = (id) => {
   return (dispatch) => {
     return axiosInstance
-      .get(`http://localhost:8000/customer/${id}`)
+      .get(`http://localhost:8000/customer/${id}/`)
       .then((response) => dispatch(setCustomer(response.data)));
   };
 };

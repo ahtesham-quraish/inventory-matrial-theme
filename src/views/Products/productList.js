@@ -100,7 +100,6 @@ class ProductList extends React.Component {
 
   render() {
     const { classes, product } = this.props;
-    console.log(product, 'these');
     this.prepareTableData();
     return (
       <GridContainer>
@@ -129,6 +128,7 @@ class ProductList extends React.Component {
                   'Units',
                   'Quantity',
                   'Price',
+                  'Action',
                 ]}
                 tableData={this.prepareTableData()}
                 onClick={this.handleRowClick}
