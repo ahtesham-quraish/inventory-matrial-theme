@@ -5,6 +5,7 @@ import Quotation from '../quotation/Qoutation';
 import ReactToPrint from 'react-to-print';
 import Button from 'components/CustomButtons/Button.jsx';
 import saveInvoice from './actions/saveInvoice';
+import invoicePDFChangeHandler from './actions/invoicePDFChangeHandle';
 import Loader from 'react-loader-spinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,8 +24,8 @@ class Invoice extends React.Component {
     let payload = {
       customer: this.props.customer,
       products: this.props.qoutationProducts,
+      invoiceInputs: this.props.invoicePDFInputs,
     };
-    console.log('saved', payload);
     this.props.saveInvoice(payload).then(() => {
       if (this.props.savedInvoice.status === 201) {
         this.setState({
@@ -41,6 +42,29 @@ class Invoice extends React.Component {
     });
   };
 
+  handleInvoiceChange = (event) => {
+    console.log('changing ', event.target.id);
+    let payload = {
+      type: 'INVOICE_INPUTS_CHANGE_HANDLE',
+      payload: {
+        field: event.target.id,
+        value: event.target.value,
+      },
+    };
+    this.props.invoicePDFChangeHandler(payload);
+  };
+
+  handleTotalChanges = (field, value) => {
+    let payload = {
+      type: 'INVOICE_INPUTS_CHANGE_HANDLE',
+      payload: {
+        field: field,
+        value: value,
+      },
+    };
+    this.props.invoicePDFChangeHandler(payload);
+  };
+
   render() {
     return (
       <React.Fragment>
@@ -49,6 +73,9 @@ class Invoice extends React.Component {
           ref={(el) => (this.componentRef = el)}
           customer={this.props.customer}
           qoutationProducts={this.props.qoutationProducts}
+          handleInvoiceChange={this.handleInvoiceChange}
+          handleTotalChanges={this.handleTotalChanges}
+          invoicePDFInputs={this.props.invoicePDFInputs}
         />
 
         <div
@@ -102,12 +129,15 @@ const mapStateToProps = (state) => {
     customer: state.QoutationReducer.selectedCustomers,
     qoutationProducts: state.QoutationReducer.qoutationProducts,
     savedInvoice: state.InvoiceReducer.savedInvoice,
+    invoicePDFInputs: state.InvoiceReducer.invoicePDFInputs,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     saveInvoice: (payload) => dispatch(saveInvoice(payload)),
+    invoicePDFChangeHandler: (paylaod) =>
+      dispatch(invoicePDFChangeHandler(paylaod)),
   };
 };
 

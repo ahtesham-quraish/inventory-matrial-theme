@@ -30,7 +30,7 @@ import BankCreateModel from './bankCreateModel';
 import CreateCategory from './createCategory';
 import BankActions from './actions';
 import BankList from './bankList';
-const { createBank, getBanks, getTransaction } = BankActions;
+const { createBank, getBanks, getTransaction, deleteTransaction } = BankActions;
 
 const styles = {
   cardCategoryWhite: {
@@ -97,6 +97,7 @@ class Bank extends React.Component {
       bankModelOpenState: false,
       categoryModelOpenState: false,
     });
+    this.props.getTransaction();
   };
   transModelOpen = () => {
     this.setState({ transModelOpen: true });
@@ -109,18 +110,42 @@ class Bank extends React.Component {
     let data = [];
     let temp = [];
     for (let transaction in transactions) {
-      temp.push(transactions[transaction].date);
+      if (transactions[transaction].isSuperAdmin) {
+        temp.push(transactions[transaction].category.name);
+      } else {
+        temp.push(
+          `${transactions[transaction].customer.fName} ${
+            transactions[transaction].customer.lName
+          }`,
+        );
+      }
+
       temp.push(transactions[transaction].type);
       temp.push(transactions[transaction].bank_account.entry_method);
       temp.push(transactions[transaction].description);
-      temp.push(transactions[transaction].category.name);
+      temp.push(transactions[transaction].date);
       temp.push(transactions[transaction].amount);
       data.push(temp);
       temp = [];
     }
     return data;
   };
-
+  onDeleteClick = (e, props, key) => {
+    const { transactions } = this.props;
+    let index = 0;
+    let transaction = null;
+    for (let t in transactions) {
+      if (index === 0) {
+        transaction = transactions[t];
+      }
+      index++;
+    }
+    if (transaction) {
+      this.props.deleteTransaction(transaction.id).then(() => {
+        this.props.getTransaction();
+      });
+    }
+  };
   render() {
     const { classes } = this.props;
     return (
@@ -155,23 +180,24 @@ class Bank extends React.Component {
           </div>
           <Card className={'blue'}>
             <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Product List</h4>
+              <h4 className={classes.cardTitleWhite}>Transactions</h4>
             </CardHeader>
             <CardBody>
               <Table
                 tableHeaderColor="primary"
                 tableHead={[
-                  'Date',
+                  'Category',
                   'Transaction Type',
                   'Method',
                   'Description',
-                  'Category',
+                  'Date',
                   'Total',
                   'Action',
                 ]}
                 tableData={this.prepareTableData()}
                 onClick={this.handleRowClick}
                 className={classes.link}
+                deleteClick={this.onDeleteClick}
               />
             </CardBody>
           </Card>
@@ -207,6 +233,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     createBank: (body) => dispatch(createBank(body)),
     getBanks: () => dispatch(getBanks()),
+    deleteTransaction: (id) => dispatch(deleteTransaction(id)),
     getTransaction: () => dispatch(getTransaction()),
   };
 };

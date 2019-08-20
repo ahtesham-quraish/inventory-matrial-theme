@@ -13,6 +13,10 @@ import getAllCustomers from './actions/getCustomers';
 import customersDataSelector from './selectors/customersListSelector';
 import setCustomerId from './actions/setCustomerId';
 import RegularButton from '../../components/CustomButtons/Button';
+import Checkbox from '@material-ui/core/Checkbox';
+import UserTransaction from '../bank/userTransaction';
+
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 const styles = {
   cardCategoryWhite: {
     '&,& a,& a:hover,& a:focus': {
@@ -53,25 +57,120 @@ const styles = {
 class CustomerListContainer extends React.Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      supplier: false,
+      buyer: false,
+      bankModelOpenState: false,
+      CustomerType: null,
+      customerId: null,
+    };
     this.rowClickhandler = this.rowClickhandler.bind(this);
   }
   componentDidMount() {
     this.props.getAllCustomers();
   }
-  rowClickhandler = (e, value, key) => {
+  handleCancelClick = () => {
+    this.setState({ bankModelOpenState: false, customerId: null });
+  };
+  showCustomerTransaction = (e, value, key) => {
     const { cusotmersRawData } = this.props;
-    this.props.setCustomerId(cusotmersRawData[key].id);
-    this.props.history.push(`/admin/user?id=${cusotmersRawData[key].id}`);
+    let CustomerType = null;
+    if (cusotmersRawData) {
+      cusotmersRawData.forEach((element) => {
+        if (element.id === value[1]) {
+          CustomerType = element.customer_type;
+        }
+      });
+    }
+    this.props.setCustomerId(value[1]);
+    this.setState({
+      bankModelOpenState: true,
+      customerId: value[1],
+      CustomerType,
+    });
+  };
+  rowClickhandler = (e, props, key) => {
+    this.props.setCustomerId(props[1]);
+    this.props.history.push(`/admin/user?id=${props[1]}`);
   };
   onInvoicesClick = (e, props, key) => {
+    this.props.setCustomerId(props[1]);
+    this.props.history.push(`/admin/all-invoice/${props[1]}`);
+  };
+  handleSupplierChange = (event, name) => {
+    let { state } = this;
+    this.setState({ ...state, [name]: event.target.checked, buyer: false });
+  };
+  handleBuyerChange = (event, name) => {
+    let { state } = this;
+    this.setState({ ...state, [name]: event.target.checked, supplier: false });
+  };
+  prepareData = () => {
     const { cusotmersRawData } = this.props;
-    this.props.setCustomerId(cusotmersRawData[key].id);
-    this.props.history.push(`/admin/all-invoice/${cusotmersRawData[key].id}`);
+    const { supplier, buyer } = this.state;
+    const data = [];
+    let phone = null;
+    if (cusotmersRawData) {
+      if (supplier && !buyer) {
+        cusotmersRawData.reduce((index, val) => {
+          if (
+            val.customer_type === 'Supplier' &&
+            val.customer_type !== 'Owner'
+          ) {
+            phone = val.Phone;
+            phone = phone ? phone.toString() : 'N/A';
+            return data.push([
+              `${val.fName} ${val.lName}`,
+              val.id,
+              val.Address1,
+              phone,
+              val.email,
+              val.company_name,
+              'Invoices',
+            ]);
+          }
+        }, 0);
+      } else if (!supplier && buyer) {
+        cusotmersRawData.reduce((index, val) => {
+          if (val.customer_type === 'Buyer' && val.customer_type !== 'Owner') {
+            phone = val.Phone;
+            phone = phone ? phone.toString() : 'N/A';
+            return data.push([
+              `${val.fName} ${val.lName}`,
+              val.id,
+              val.Address1,
+              phone,
+              val.email,
+              val.company_name,
+              'Invoices',
+            ]);
+          }
+        }, 0);
+      } else {
+        cusotmersRawData.reduce((index, val) => {
+          if (val.customer_type !== 'Owner') {
+            phone = val.Phone;
+            phone = phone ? phone.toString() : 'N/A';
+            return data.push([
+              `${val.fName} ${val.lName}`,
+              val.id,
+              val.Address1,
+              phone,
+              val.email,
+              val.company_name,
+              'Invoices',
+            ]);
+          }
+        }, 0);
+      }
+    }
+
+    return data;
   };
   render() {
     const { classes } = this.props;
-    console.log(this.props);
+    const { supplier, buyer } = this.state;
+    console.log(this.state.customerId);
     return (
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
@@ -83,6 +182,38 @@ class CustomerListContainer extends React.Component {
             >
               Add Customer{' '}
             </RegularButton>
+          </div>
+          <div style={{ float: 'right', marginBottom: '5%' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={supplier}
+                  onChange={(e) => this.handleSupplierChange(e, 'supplier')}
+                  label="Gilad Gray"
+                  value={'supplier'}
+                  inputProps={{
+                    'aria-label': 'primary checkbox',
+                  }}
+                />
+              }
+              label="Supplier"
+            />
+          </div>
+          <div style={{ float: 'right', marginBottom: '5%' }}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={buyer}
+                  onChange={(e) => this.handleBuyerChange(e, 'buyer')}
+                  label="Gilad Gray"
+                  value={'buyer'}
+                  inputProps={{
+                    'aria-label': 'primary checkbox',
+                  }}
+                />
+              }
+              label="Buyers"
+            />
           </div>
           <Card>
             <CardHeader color="success">
@@ -96,21 +227,32 @@ class CustomerListContainer extends React.Component {
                 tableHeaderColor="primary"
                 tableHead={[
                   'Name',
+                  'Customer ID',
                   'Address',
                   'Phone#',
                   'Email',
                   'Company Name',
                   'Invoices',
+                  'Action',
                 ]}
-                tableData={this.props.customers}
-                onClick={this.rowClickhandler}
+                tableData={this.prepareData()}
+                onClick={this.showCustomerTransaction}
                 pointer={classes.pointer}
                 className={classes.link}
                 onInvoicesClick={this.onInvoicesClick}
+                editClick={this.rowClickhandler}
               />
             </CardBody>
           </Card>
         </GridItem>
+        {this.state.customerId && (
+          <UserTransaction
+            bankModelOpenState={this.state.bankModelOpenState}
+            customerId={this.state.customerId}
+            handleCancelClick={this.handleCancelClick}
+            CustomerType={this.state.CustomerType}
+          />
+        )}
       </GridContainer>
     );
   }

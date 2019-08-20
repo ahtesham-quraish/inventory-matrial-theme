@@ -44,6 +44,7 @@ class BankList extends React.Component {
     this.setState({ bankModelOpenState: true });
   };
   handleCancelClick = () => {
+    this.props.getBanks();
     this.setState({ bankModelOpenState: false });
   };
 

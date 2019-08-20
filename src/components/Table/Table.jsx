@@ -25,7 +25,15 @@ function CustomTable({ ...props }) {
     onClick,
     className,
     onInvoicesClick,
+    editClick = () => {},
+    deleteClick = () => {},
+    showAction = true,
+    showEdit = true,
+    showDelete = true,
+    lastRecord = true,
+    lastRowClass = '',
   } = props;
+  console.log(lastRowClass);
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>
@@ -55,7 +63,11 @@ function CustomTable({ ...props }) {
                       return (
                         <TableCell
                           onClick={(e) => onClick(e, props, key)}
-                          className={`${classes.tableCell} ${className}`}
+                          className={`${classes.tableCell} ${
+                            !lastRecord && tableData.length - 1 === key
+                              ? null
+                              : className
+                          }`}
                           key={`${key} ${k}`}
                         >
                           {prop}
@@ -74,7 +86,13 @@ function CustomTable({ ...props }) {
                     } else {
                       return (
                         <TableCell
-                          className={classes.tableCell}
+                          className={
+                            lastRowClass !== '' &&
+                            !lastRecord &&
+                            tableData.length - 1 === key
+                              ? `${classes.tableCell} ${lastRowClass}`
+                              : `${classes.tableCell}`
+                          }
                           key={`${key} ${k}`}
                         >
                           {prop}
@@ -82,42 +100,78 @@ function CustomTable({ ...props }) {
                       );
                     }
                   })}
-                  <TableCell className={classes.tableActions}>
-                    <Tooltip
-                      id="tooltip-top"
-                      title="Edit Task"
-                      placement="top"
-                      classes={{ tooltip: classes.tooltip }}
-                    >
-                      <IconButton
-                        aria-label="Edit"
-                        className={classes.tableActionButton}
-                      >
-                        <Edit
-                          className={
-                            classes.tableActionButtonIcon + ' ' + classes.edit
-                          }
-                        />
-                      </IconButton>
-                    </Tooltip>
-                    <Tooltip
-                      id="tooltip-top-start"
-                      title="Remove"
-                      placement="top"
-                      classes={{ tooltip: classes.tooltip }}
-                    >
-                      <IconButton
-                        aria-label="Close"
-                        className={classes.tableActionButton}
-                      >
-                        <Close
-                          className={
-                            classes.tableActionButtonIcon + ' ' + classes.close
-                          }
-                        />
-                      </IconButton>
-                    </Tooltip>
-                  </TableCell>
+                  {showAction && (
+                    <TableCell className={classes.tableActions}>
+                      {showEdit && (
+                        <Tooltip
+                          id="tooltip-top"
+                          title="Edit Task"
+                          placement="top"
+                          classes={{ tooltip: classes.tooltip }}
+                        >
+                          <IconButton
+                            aria-label="Edit"
+                            onClick={(e) => editClick(e, props, key)}
+                            className={classes.tableActionButton}
+                          >
+                            <Edit
+                              className={
+                                classes.tableActionButtonIcon +
+                                ' ' +
+                                classes.edit
+                              }
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      {showDelete && lastRecord && (
+                        <Tooltip
+                          id="tooltip-top-start"
+                          title="Remove"
+                          placement="top"
+                          classes={{ tooltip: classes.tooltip }}
+                        >
+                          <IconButton
+                            aria-label="Close"
+                            onClick={(e) => deleteClick(e, props, key)}
+                            className={classes.tableActionButton}
+                          >
+                            <Close
+                              className={
+                                classes.tableActionButtonIcon +
+                                ' ' +
+                                classes.close
+                              }
+                            />
+                          </IconButton>
+                        </Tooltip>
+                      )}
+                      {showDelete &&
+                        !lastRecord &&
+                        tableData.length - 1 !== key && (
+                          <Tooltip
+                            id="tooltip-top-start"
+                            title="Remove"
+                            placement="top"
+                            classes={{ tooltip: classes.tooltip }}
+                          >
+                            <IconButton
+                              aria-label="Close"
+                              onClick={(e) => deleteClick(e, props, key)}
+                              className={classes.tableActionButton}
+                            >
+                              <Close
+                                className={
+                                  classes.tableActionButtonIcon +
+                                  ' ' +
+                                  classes.close
+                                }
+                              />
+                            </IconButton>
+                          </Tooltip>
+                        )}
+                    </TableCell>
+                  )}
                 </React.Fragment>
               </TableRow>
             );

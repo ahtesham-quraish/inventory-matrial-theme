@@ -24,6 +24,8 @@ import Invoice from './containers/invoice/index';
 import InvoiceList from './containers/invoice/invoices';
 import Bank from './containers/bank';
 import BankList from './containers/bank/bankList';
+import UpdateInvoice from './containers/invoice/updateInvoice';
+import Receivable from './containers/invoice/receivable';
 const dashboardRoutes = [
   {
     path: '/dashboard',
@@ -108,13 +110,22 @@ const dashboardRoutes = [
     isSideBarLink: true,
   },
   {
-    path: '/all-invoice/:cust_id',
-    name: 'User Invoices',
+    path: '/update-invoices/:invoice_id',
+    name: 'All Invoices',
     rtlName: 'قائمة الجدول',
     icon: 'content_paste',
-    component: InvoiceList,
+    component: UpdateInvoice,
     layout: '/admin',
     isSideBarLink: false,
+  },
+  {
+    path: '/receivable',
+    name: 'Receivables',
+    rtlName: 'قائمة الجدول',
+    icon: 'content_paste',
+    component: Receivable,
+    layout: '/admin',
+    isSideBarLink: true,
   },
   {
     path: '/bank',

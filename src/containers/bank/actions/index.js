@@ -6,6 +6,8 @@ const actions = {
   GET_CATEGORY_SUCCESS: 'GET_CATEGORY_SUCCESS',
   CRETAE_TRANSACTION_SUCCESS: 'CRETAE_TRANSACTION_SUCCESS',
   GET_TRANSACTION_SUCCESS: 'GET_TRANSACTION_SUCCESS',
+  GET_CUSTOMER_TRANSACTION_SUCCESS: 'GET_CUSTOMER_TRANSACTION_SUCCESS',
+  DELETE_TRANSACTION_SUCCESS: 'DELETE_TRANSACTION_SUCCESS',
   createBank: (payload) => {
     return (dispatch) => {
       return axiosInstance
@@ -59,6 +61,30 @@ const actions = {
         .then((response) =>
           dispatch({
             type: actions.GET_TRANSACTION_SUCCESS,
+            response,
+          }),
+        );
+    };
+  },
+  getCustomerTransaction: (id) => {
+    return (dispatch) => {
+      return axiosInstance
+        .get(`http://localhost:8000/transaction/cusomter/?cust_id=${id}`)
+        .then((response) =>
+          dispatch({
+            type: actions.GET_CUSTOMER_TRANSACTION_SUCCESS,
+            response,
+          }),
+        );
+    };
+  },
+  deleteTransaction: (id) => {
+    return (dispatch) => {
+      return axiosInstance
+        .delete(`http://localhost:8000/transaction/${id}/`)
+        .then((response) =>
+          dispatch({
+            type: actions.DELETE_TRANSACTION_SUCCESS,
             response,
           }),
         );

@@ -22,9 +22,19 @@ import { ToastContainer, toast } from 'react-toastify';
 import getAllCustomers from '../Customers/actions/getCustomers';
 import Loader from 'react-loader-spinner';
 import BankActions from '../bank/actions/index';
+import { getInvoice } from '../invoice/actions/getInvoices';
 
 const { getBanks, getCategory, createTransaction } = BankActions;
-
+const EmptyTransaction = {
+  date: '',
+  bank_account: '',
+  type: '',
+  category: '',
+  description: '',
+  entry_method: '',
+  description: '',
+  isSuperAdmin: false,
+};
 const styles = {
   margin: {
     margin: '10px 10px',
@@ -41,6 +51,8 @@ const typesOptions = [
   { value: 'Money Out', label: 'Money Out' },
   { value: 'Customer Receipt', label: 'Customer Receipt' },
   { value: 'Supplier Payment', label: 'Supplier Payment' },
+  { value: 'Customer Invoice', label: 'Customer Invoice' },
+  { value: 'Supplier Invoice', label: 'Supplier Invoice' },
 ];
 class AddBankModal extends React.Component {
   constructor(props) {
@@ -49,18 +61,12 @@ class AddBankModal extends React.Component {
       loading: false,
       bankMethodOption: null,
       categoryOptions: [],
+      invoicesOptions: [],
+      invoiceOption: null,
       categoryOption: null,
       bankOptions: [],
       bankOption: null,
-      transaction: {
-        date: '',
-        bank_account: '',
-        type: '',
-        category: '',
-        description: '',
-        entry_method: '',
-        description: '',
-      },
+      transaction: { ...EmptyTransaction },
     };
   }
   componentDidMount() {
@@ -111,7 +117,11 @@ class AddBankModal extends React.Component {
     }
     return categoriesOptions;
   };
-
+  onInvoiceChange = (invoiceOption) => {
+    const { transaction } = this.state;
+    transaction.invoiceId = invoiceOption.value;
+    this.setState({ invoiceOption, transaction });
+  };
   createCustomerOptions = (key) => {
     const { customers } = this.props;
 
@@ -130,16 +140,38 @@ class AddBankModal extends React.Component {
     return customersOptions;
   };
   onChangeCategory = (categoryOption) => {
+    const { categories } = this.props;
     const { transaction, typesOption } = this.state;
     if (
       typesOption.value === 'Customer Receipt' ||
-      typesOption.value === 'Supplier Payment'
+      typesOption.value === 'Supplier Payment' ||
+      typesOption.value === 'Customer Invoice' ||
+      typesOption.value === 'Supplier Invoice'
     ) {
+      this.props.getInvoice(categoryOption.value.toString()).then(() => {
+        const { invoices } = this.props;
+        const invoicesOptions = [];
+        if (invoices) {
+          invoices.forEach((invoice) => {
+            invoicesOptions.push({
+              value: invoice.id,
+              label: `${invoice.id} | ${new Date(
+                invoice.dateCreated,
+              ).toLocaleDateString()} | ${
+                invoice.products[0].invoice.grandTotal
+              }`,
+            });
+          });
+        }
+        this.setState({ invoicesOptions });
+      });
       const customerLabelArray = categoryOption.label.split('|');
-      transaction.customer = categoryOption.value;
-      transaction.category = customerLabelArray[0].trim();
+      transaction.customer = categoryOption.value.toString();
+      transaction.isSuperAdmin = false;
+      transaction.category = parseInt(customerLabelArray[0].trim());
     } else {
-      transaction.category = categoryOption.value;
+      transaction.isSuperAdmin = true;
+      transaction.category = parseInt(categoryOption.value);
     }
 
     this.setState({ categoryOption, transaction });
@@ -151,12 +183,18 @@ class AddBankModal extends React.Component {
   };
   onTypesChange = (typesOption) => {
     const { transaction } = this.state;
-    if (typesOption.value === 'Customer Receipt') {
+    if (
+      typesOption.value === 'Customer Receipt' ||
+      typesOption.value === 'Customer Invoice'
+    ) {
       this.setState({
         categoryOptions: this.createCustomerOptions('Buyer'),
         categoryOption: null,
       });
-    } else if (typesOption.value === 'Supplier Payment') {
+    } else if (
+      typesOption.value === 'Supplier Payment' ||
+      typesOption.value === 'Supplier Invoice'
+    ) {
       this.setState({
         categoryOptions: this.createCustomerOptions('Supplier'),
         categoryOption: null,
@@ -181,19 +219,19 @@ class AddBankModal extends React.Component {
   };
   onBankChange = (bankOption) => {
     const { transaction } = this.state;
-    transaction.bank_account = bankOption.value;
+    transaction.bank_account = bankOption.value.toString();
     this.setState({ bankOption, transaction });
   };
   createTransaction = () => {
     const { transaction } = this.state;
     this.setState({ loading: true });
     this.props.createTransaction(transaction).then(() => {
-      this.setState({ loading: false });
+      this.setState({ loading: false, transaction: { ...EmptyTransaction } });
+      this.props.handleCancelClick();
     });
   };
   render() {
     const { classes } = this.props;
-    console.log(this.state.transaction);
     return (
       <Dialog
         open={this.props.transModelOpenState}
@@ -278,6 +316,19 @@ class AddBankModal extends React.Component {
                     </GridItem>
                   </GridContainer>
                   <GridContainer>
+                    <GridItem xs={12} sm={12} md={12}>
+                      <Select
+                        placeholder="Select Category "
+                        style={{ marginTop: '40px' }}
+                        className={classes.unitSelect}
+                        value={this.state.invoiceOption}
+                        options={this.state.invoicesOptions}
+                        onChange={this.onInvoiceChange}
+                        isMulti={false}
+                      />
+                    </GridItem>
+                  </GridContainer>
+                  <GridContainer>
                     <GridItem xs={24} sm={24} md={12}>
                       <CustomInput
                         labelText="Product Description"
@@ -343,6 +394,7 @@ const mapStateToProps = (state) => {
     categories: state.BankState.categories,
     banks: state.BankState.banks,
     customers: state.CustomerState.customers,
+    invoices: state.InvoiceReducer.invoices,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -351,6 +403,7 @@ const mapDispatchToProps = (dispatch) => {
     getBanks: () => dispatch(getBanks()),
     getCategory: () => dispatch(getCategory()),
     createTransaction: (body) => dispatch(createTransaction(body)),
+    getInvoice: (id) => dispatch(getInvoice(id)),
   };
 };
 export default connect(

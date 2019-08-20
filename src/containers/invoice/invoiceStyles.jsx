@@ -292,6 +292,10 @@ const styles = {
   paddingTop: {
     paddingTop: '20px',
   },
+  noBorder: {
+    border: 'none',
+    background: 'none',
+  },
   //.common-logo
   commonLogoClass: {
     width: '100px',

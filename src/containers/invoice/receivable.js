@@ -48,7 +48,7 @@ const styles = {
   },
 };
 
-class InvoiceList extends React.Component {
+class Receivable extends React.Component {
   componentDidMount = () => {
     const { selectedCustomerId } = this.props;
     if (selectedCustomerId) {
@@ -67,37 +67,38 @@ class InvoiceList extends React.Component {
     let formattedDueDatetime = '';
     let temp_invoice = {};
     products.forEach((element) => {
-      temp.push(element.customer);
+      if (
+        element.products &&
+        element.products[0] &&
+        element.products[0].invoice.customer.customer_type === 'Buyer'
+      ) {
+        temp.push(element.customer);
+        temp.push(element.products.length);
 
-      if (element.products.length > 0) {
-        temp.push(element.products[0].invoice.customer.customer_type);
-        temp.push(element.products.length);
-        temp.push(element.products[0].invoice.residualPayment);
-        temp.push(element.products[0].invoice.grandTotal);
-      } else {
-        temp.push(element.products.length);
-        temp.push('N/A');
-        temp.push('N/A');
+        if (element.products.length > 0) {
+          temp.push(element.products[0].invoice.residualPayment);
+          temp.push(element.products[0].invoice.grandTotal);
+        } else {
+          temp.push('N/A');
+          temp.push('N/A');
+        }
+
+        dueDatetime = new Date(element.dateCreated);
+        formattedDueDatetime =
+          dueDatetime.getMonth() +
+          1 +
+          '/' +
+          dueDatetime.getDate() +
+          '/' +
+          dueDatetime.getFullYear();
+        temp.push(formattedDueDatetime);
+        data.push(temp);
+        temp = [];
       }
-
-      dueDatetime = new Date(element.dateCreated);
-      formattedDueDatetime =
-        dueDatetime.getMonth() +
-        1 +
-        '/' +
-        dueDatetime.getDate() +
-        '/' +
-        dueDatetime.getFullYear();
-      temp.push(formattedDueDatetime);
-      data.push(temp);
-      temp = [];
     });
     return data;
   };
   rowClickhandler = (e, value, key) => {
-    // const { cusotmersRawData } = this.props;
-    // this.props.setCustomerId(cusotmersRawData[key].id);
-    // this.props.history.push(`/admin/user?id=${cusotmersRawData[key].id}`);
     let id = this.props.invoices[key].id;
     this.props.history.push('/admin/update-invoices/' + id);
   };
@@ -117,7 +118,6 @@ class InvoiceList extends React.Component {
                   tableHeaderColor="primary"
                   tableHead={[
                     'Customer',
-                    'Customer Type',
                     'No. of Products',
                     'Residual Amount',
                     'Total Amount',
@@ -149,7 +149,7 @@ const mapDispatchToProps = (dispatch) => {
     getInvoices: () => dispatch(getInvoices()),
   };
 };
-const InvoicesListWithStyles = withStyles(styles)(InvoiceList);
+const InvoicesListWithStyles = withStyles(styles)(Receivable);
 export default connect(
   mapStateToProps,
   mapDispatchToProps,

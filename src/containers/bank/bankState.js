@@ -3,8 +3,9 @@ const initialState = {
   banks: null,
   categories: null,
   transactions: null,
+  custTransaction: null,
 };
-
+let _transaction = null;
 export default function BankState(state = initialState, action) {
   switch (action.type) {
     case actions.GET_BANK_SUCCESS:
@@ -33,7 +34,7 @@ export default function BankState(state = initialState, action) {
       };
 
     case actions.GET_TRANSACTION_SUCCESS:
-      let _transaction = null;
+      _transaction = null;
       action.response.data.forEach((transaction) => {
         _transaction = {
           ..._transaction,
@@ -43,6 +44,18 @@ export default function BankState(state = initialState, action) {
       return {
         ...state,
         transactions: _transaction ? { ..._transaction } : null,
+      };
+    case actions.GET_CUSTOMER_TRANSACTION_SUCCESS:
+      _transaction = null;
+      action.response.data.forEach((transaction) => {
+        _transaction = {
+          ..._transaction,
+          [transaction.id]: transaction,
+        };
+      });
+      return {
+        ...state,
+        custTransaction: _transaction ? { ..._transaction } : null,
       };
     default:
       return state;

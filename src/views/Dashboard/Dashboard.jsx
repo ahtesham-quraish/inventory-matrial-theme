@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 // react plugin for creating charts
 import ChartistGraph from 'react-chartist';
+import { connect } from 'react-redux';
 // @material-ui/core
 import withStyles from '@material-ui/core/styles/withStyles';
 import Icon from '@material-ui/core/Icon';
@@ -12,6 +13,7 @@ import DateRange from '@material-ui/icons/DateRange';
 import LocalOffer from '@material-ui/icons/LocalOffer';
 import Update from '@material-ui/icons/Update';
 import ArrowUpward from '@material-ui/icons/ArrowUpward';
+import ArrowDownward from '@material-ui/icons/ArrowDownward';
 import AccessTime from '@material-ui/icons/AccessTime';
 import Accessibility from '@material-ui/icons/Accessibility';
 import BugReport from '@material-ui/icons/BugReport';
@@ -29,8 +31,14 @@ import CardHeader from 'components/Card/CardHeader.jsx';
 import CardIcon from 'components/Card/CardIcon.jsx';
 import CardBody from 'components/Card/CardBody.jsx';
 import CardFooter from 'components/Card/CardFooter.jsx';
-
+import Transaction from '../../containers/bank/receivable';
 import { bugs, website, server } from 'variables/general.jsx';
+import BankActions from '../../containers/bank/actions/index';
+import PLReport from '../../containers/bank/PLReport';
+import {
+  preparePayableTableData,
+  prepareReceivableTableData,
+} from '../../helpers/util';
 
 import {
   dailySalesChart,
@@ -39,10 +47,41 @@ import {
 } from 'variables/charts.jsx';
 
 import dashboardStyle from 'assets/jss/material-dashboard-react/views/dashboardStyle.jsx';
-
+const { getTransaction } = BankActions;
 class Dashboard extends React.Component {
   state = {
     value: 0,
+    receivable: false,
+    payable: false,
+    totalPayable: 0,
+    totalReceivable: 0,
+    profit: false,
+  };
+  componentDidMount() {
+    this.props.getTransaction().then(() => {
+      const { transactions } = this.props;
+      const payableTableData = preparePayableTableData(transactions, null);
+      const receivableTableData = prepareReceivableTableData(
+        transactions,
+        null,
+      );
+      this.setState({
+        totalPayable: payableTableData.Belence,
+        totalReceivable: receivableTableData.Belence,
+      });
+    });
+  }
+  handleCancelClick = () => {
+    this.setState({ receivable: false, payable: false, profit: false });
+  };
+  onProfitLossReportClick = () => {
+    this.setState({ profit: true });
+  };
+  onPayableClick = () => {
+    this.setState({ payable: true });
+  };
+  onReceivableClick = () => {
+    this.setState({ receivable: true });
   };
   handleChange = (event, value) => {
     this.setState({ value });
@@ -53,6 +92,8 @@ class Dashboard extends React.Component {
   };
   render() {
     const { classes } = this.props;
+    const { totalPayable, totalReceivable } = this.state;
+    console.log(dailySalesChart);
     return (
       <div>
         <GridContainer>
@@ -144,12 +185,19 @@ class Dashboard extends React.Component {
                 />
               </CardHeader>
               <CardBody>
-                <h4 className={classes.cardTitle}>Daily Sales</h4>
+                <h4
+                  style={{ cursor: 'pointer' }}
+                  onClick={this.onReceivableClick}
+                  className={classes.cardTitle}
+                >
+                  Receivable{' '}
+                </h4>
                 <p className={classes.cardCategory}>
                   <span className={classes.successText}>
-                    <ArrowUpward className={classes.upArrowCardCategory} /> 55%
+                    <ArrowUpward className={classes.upArrowCardCategory} />
+                    {totalReceivable}
                   </span>{' '}
-                  increase in today sales.
+                  Receivable Amount
                 </p>
               </CardBody>
               <CardFooter chart>
@@ -160,6 +208,40 @@ class Dashboard extends React.Component {
             </Card>
           </GridItem>
           <GridItem xs={12} sm={12} md={4}>
+            <Card chart>
+              <CardHeader color="success">
+                <ChartistGraph
+                  className="ct-chart"
+                  data={dailySalesChart.data}
+                  type="Line"
+                  options={dailySalesChart.options}
+                  listener={dailySalesChart.animation}
+                />
+              </CardHeader>
+              <CardBody>
+                <h4
+                  style={{ cursor: 'pointer' }}
+                  onClick={this.onPayableClick}
+                  className={classes.cardTitle}
+                >
+                  Payable{' '}
+                </h4>
+                <p className={classes.cardCategory}>
+                  <span className={classes.successText}>
+                    <ArrowDownward className={classes.upArrowCardCategory} />{' '}
+                    {totalPayable}
+                  </span>{' '}
+                  Payable Amount
+                </p>
+              </CardBody>
+              <CardFooter chart>
+                <div className={classes.stats}>
+                  <AccessTime /> updated 4 minutes ago
+                </div>
+              </CardFooter>
+            </Card>
+          </GridItem>
+          {/* <GridItem xs={12} sm={12} md={4}>
             <Card chart>
               <CardHeader color="warning">
                 <ChartistGraph
@@ -183,7 +265,7 @@ class Dashboard extends React.Component {
                 </div>
               </CardFooter>
             </Card>
-          </GridItem>
+          </GridItem> */}
           <GridItem xs={12} sm={12} md={4}>
             <Card chart>
               <CardHeader color="danger">
@@ -196,7 +278,13 @@ class Dashboard extends React.Component {
                 />
               </CardHeader>
               <CardBody>
-                <h4 className={classes.cardTitle}>Completed Tasks</h4>
+                <h4
+                  style={{ cursor: 'pointer' }}
+                  onClick={this.onProfitLossReportClick}
+                  className={classes.cardTitle}
+                >
+                  Profit & Loss
+                </h4>
                 <p className={classes.cardCategory}>
                   Last Campaign Performance
                 </p>
@@ -209,7 +297,7 @@ class Dashboard extends React.Component {
             </Card>
           </GridItem>
         </GridContainer>
-        {/* <GridContainer>
+        <GridContainer>
           <GridItem xs={12} sm={12} md={6}>
             <CustomTabs
               title="Tasks:"
@@ -273,7 +361,21 @@ class Dashboard extends React.Component {
               </CardBody>
             </Card>
           </GridItem>
-        </GridContainer> */}
+          <Transaction
+            bankModelOpenState={this.state.receivable}
+            handleCancelClick={this.handleCancelClick}
+            customerType={'Buyer'}
+          />
+          <Transaction
+            bankModelOpenState={this.state.payable}
+            handleCancelClick={this.handleCancelClick}
+            customerType={'Supplier'}
+          />
+          <PLReport
+            handleCancelClick={this.handleCancelClick}
+            bankModelOpenState={this.state.profit}
+          />
+        </GridContainer>
       </div>
     );
   }
@@ -283,4 +385,20 @@ Dashboard.propTypes = {
   classes: PropTypes.object.isRequired,
 };
 
-export default withStyles(dashboardStyle)(Dashboard);
+const mapStateToProps = (state) => {
+  return {
+    customer: state.QoutationReducer.selectedCustomers,
+    transactions: state.BankState.transactions,
+  };
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getTransaction: () => dispatch(getTransaction()),
+  };
+};
+const styledCompoenet = withStyles(dashboardStyle)(Dashboard);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps,
+)(styledCompoenet);
