@@ -88,6 +88,7 @@ class Quotation extends React.Component {
       productOptions: [],
       pastProductsOptions: [],
       addProductModelOpen: false,
+      selectionModelOpen:false,
       addProcductInputs: {
         requiredQuantity: '',
         requiredQuantityError: false,
@@ -201,6 +202,7 @@ class Quotation extends React.Component {
           temp = element;
         }
       });
+      debugger
       this.setState({
         selectedProducts: selectedOption,
         addProductModelOpen: true,
@@ -230,6 +232,7 @@ class Quotation extends React.Component {
           ? productToBeAdded.price
           : temp.added_info.qoutedPrice;
       addProcductInputs['custDescription'] = temp.added_info.custDescription;
+      debugger
       this.setState({
         seelctedPastProducts: selectedOption,
         addProductModelOpen: true,
@@ -341,6 +344,13 @@ class Quotation extends React.Component {
       addProcductInputs: addProcductInputs,
     });
   };
+
+  toggleSelectionModal = () =>{
+    this.setState({
+      selectionModelOpen : !this.state.selectionModelOpen
+    })
+  }
+
   render() {
     const { classes } = this.props;
 
@@ -389,7 +399,7 @@ class Quotation extends React.Component {
               disabled={true}
               value={
                 this.state.productToBeAdded
-                  ? this.state.productToBeAdded.price
+                  ? this.state.productToBeAdded.price ? this.state.productToBeAdded.price:this.state.productToBeAdded.original_product.price
                   : ''
               }
               onChange={this.handleAddProductsChange}
@@ -429,18 +439,23 @@ class Quotation extends React.Component {
             </Button>
           </DialogActions>
         </Dialog>
-        <GridContainer>
-          <GridItem xs={12} sm={8} md={4}>
-            <Select
-              className={classes.margin}
-              placeholder="Select Customer"
-              value={this.state.selectedCustomer}
-              onChange={this.handleCustomerSelect}
-              options={this.state.options}
-            />
-          </GridItem>
-          <GridItem xs={12} sm={8} md={4}>
-            <Select
+
+        <Dialog
+          open={this.props.selectionModelOpen}
+          onClose={this.props.toggleSelectionModal}
+          aria-labelledby="form-dialog-title"
+        >
+          <DialogTitle id="form-dialog-title">Product Details <br /> Select products to be added to invoice</DialogTitle>
+
+          <DialogContent>
+          <Select
+                className={classes.margin}
+                placeholder="Select Customer"
+                value={this.state.selectedCustomer}
+                onChange={this.handleCustomerSelect}
+                options={this.state.options}
+              />
+         <Select
               className={classes.margin}
               placeholder="Select Product"
               value={this.state.selectedProducts}
@@ -448,11 +463,8 @@ class Quotation extends React.Component {
               options={this.state.productOptions}
               isMulti={true}
             />
-          </GridItem>
-        </GridContainer>
-        <GridContainer>
-          <GridItem xs={12} sm={8} md={4}>
-            <Select
+          
+           <Select
               className={classes.margin}
               placeholder="Products from previous invoices"
               value={this.state.seelctedPastProducts}
@@ -460,18 +472,21 @@ class Quotation extends React.Component {
               options={this.state.pastProductsOptions}
               isMulti={true}
             />
-          </GridItem>
-          <GridItem xs={12} sm={8} md={4}>
-            <Select
+           <Select
               className={classes.margin}
               placeholder="Payment Status"
               value={this.state.selectedStatus}
               onChange={this.handleTypeSelect}
               options={this.state.PaymentStatus}
             />
-          </GridItem>
-        </GridContainer>
-      </div>
+      
+          </DialogContent>
+
+          <Button onClick={this.props.toggleSelectionModal}>Finish</Button>
+
+        </Dialog>
+
+       </div>
     );
   }
 }

@@ -47,7 +47,13 @@ class QuotationContainer extends React.Component {
       isPrintable: true,
       selectedPDF: null,
       sendingEmail: false,
+      selectionModelOpen:false
     };
+  }
+  toggleSelectionModal = () =>{
+    this.setState({
+      selectionModelOpen : !this.state.selectionModelOpen
+    })
   }
 
   handlePDFSelect = () => {
@@ -106,17 +112,25 @@ class QuotationContainer extends React.Component {
           customer={this.props.customer}
         />
         <div style={{ marginTop: '10px' }}>
-          <Qoutation />
+          <Qoutation selectionModelOpen={this.state.selectionModelOpen} toggleSelectionModal={this.toggleSelectionModal}/>
+          <Button  color="primary"
+                size="md" onClick={this.toggleSelectionModal}>
+                    Add Products
+              </Button>
           <ReactToPrint
             copyStyles={true}
             trigger={() => (
-              <Button style={{ margin: '18px 0px' }} color="primary" size="md">
+              <Button style={{ margin: '18px 0px' }} color="primary" size="md"
+              hidden={this.props.customer === null || this.props.qoutationProducts.length === 0}
+              >
                 Print this out
               </Button>
             )}
             content={() => this.componentRef}
           />
-          <Button color="primary" size="md" onClick={this.handlePDFSelect}>
+          <Button color="primary" size="md" onClick={this.handlePDFSelect}
+          hidden={this.props.customer === null || this.props.qoutationProducts.length === 0}
+          >
             {!this.state.sendingEmail ? 'Send Via Email' : 'Sending...'}
           </Button>
           <input

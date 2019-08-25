@@ -19,7 +19,8 @@ class InvoicePDF extends React.Component {
       oldValue = elem.value;
     }
     this.props.qoutationProducts.forEach((element) => {
-      subtotal += element.price * element.requiredQty;
+      // debugger
+      subtotal += Number(element.qoutedPrice) * element.requiredQty;
     });
     if (subtotal !== Number(oldValue)) {
       this.props.handleTotalChanges('subTotal', subtotal);
@@ -34,7 +35,7 @@ class InvoicePDF extends React.Component {
       oldValue = elem.value;
     }
     this.props.qoutationProducts.forEach((element) => {
-      subtotal += element.price * element.requiredQty;
+      subtotal += Number(element.qoutedPrice) * element.requiredQty;
     });
     let factor = (this.props.invoicePDFInputs.discount / 100) * subtotal;
     if (subtotal - factor !== Number(oldValue)) {

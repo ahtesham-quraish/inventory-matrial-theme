@@ -15,17 +15,31 @@ class Invoice extends React.Component {
     this.state = {
       isSaved: false,
       waiting: false,
+      selectionModelOpen:false
     };
+  }
+  toggleSelectionModal = () =>{
+    this.setState({
+      selectionModelOpen : !this.state.selectionModelOpen
+    })
   }
   saveInvoice = () => {
     this.setState({
       waiting: true,
     });
+    if(this.props.customer === null){
+      toast.error("Please add customer to invoice")
+      return
+    }
+    if(this.props.qoutationProducts.length === 0){
+      toast.error("Please add atleast one product to invoice")
+    }
     let payload = {
       customer: this.props.customer,
       products: this.props.qoutationProducts,
       invoiceInputs: this.props.invoicePDFInputs,
     };
+    
     this.props.saveInvoice(payload).then(() => {
       if (this.props.savedInvoice.status === 201) {
         this.setState({
@@ -82,7 +96,7 @@ class Invoice extends React.Component {
           style={{ marginTop: '10px', margin: '0 auto', maxWidth: '1200px' }}
         >
           <div hidden={this.state.isSaved}>
-            <Quotation />
+            <Quotation selectionModelOpen={this.state.selectionModelOpen} toggleSelectionModal={this.toggleSelectionModal}/>
           </div>
 
           <div>
@@ -97,12 +111,18 @@ class Invoice extends React.Component {
                 content={() => this.componentRef}
               />
             </div>
+            
             <div style={{ margin: '10px 10px' }} hidden={this.state.isSaved}>
+            <Button  color="primary"
+                size="md" onClick={this.toggleSelectionModal}>
+                    Add Products
+              </Button>
               <Button
                 color="primary"
                 size="md"
                 onClick={this.saveInvoice}
                 disabled={this.state.waiting}
+                hidden={this.props.customer === null || this.props.qoutationProducts.length === 0}
               >
                 {!this.state.waiting ? (
                   'Save Invoice'
