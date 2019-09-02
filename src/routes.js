@@ -26,6 +26,8 @@ import Bank from './containers/bank';
 import BankList from './containers/bank/bankList';
 import UpdateInvoice from './containers/invoice/updateInvoice';
 import Receivable from './containers/invoice/receivable';
+import PLReport from './containers/bank/PLReport';
+import BelenceSheet from './containers/bank/belenceSheet';
 const dashboardRoutes = [
   {
     path: '/dashboard',
@@ -142,6 +144,24 @@ const dashboardRoutes = [
     rtlName: 'قائمة الجدول',
     icon: 'content_paste',
     component: BankList,
+    layout: '/admin',
+    isSideBarLink: true,
+  },
+  {
+    path: '/profit-report',
+    name: 'Profit&Lose',
+    rtlName: 'قائمة الجدول',
+    icon: 'content_paste',
+    component: PLReport,
+    layout: '/admin',
+    isSideBarLink: true,
+  },
+  {
+    path: '/belence-sheet',
+    name: 'Belence Sheet',
+    rtlName: 'قائمة الجدول',
+    icon: 'content_paste',
+    component: BelenceSheet,
     layout: '/admin',
     isSideBarLink: true,
   },

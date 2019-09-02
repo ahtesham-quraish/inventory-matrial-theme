@@ -33,7 +33,6 @@ function CustomTable({ ...props }) {
     lastRecord = true,
     lastRowClass = '',
   } = props;
-  console.log(lastRowClass);
   return (
     <div className={classes.tableResponsive}>
       <Table className={classes.table}>

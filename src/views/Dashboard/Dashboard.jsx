@@ -55,7 +55,6 @@ class Dashboard extends React.Component {
     payable: false,
     totalPayable: 0,
     totalReceivable: 0,
-    profit: false,
   };
   componentDidMount() {
     this.props.getTransaction().then(() => {
@@ -72,11 +71,9 @@ class Dashboard extends React.Component {
     });
   }
   handleCancelClick = () => {
-    this.setState({ receivable: false, payable: false, profit: false });
+    this.setState({ receivable: false, payable: false });
   };
-  onProfitLossReportClick = () => {
-    this.setState({ profit: true });
-  };
+
   onPayableClick = () => {
     this.setState({ payable: true });
   };
@@ -280,7 +277,9 @@ class Dashboard extends React.Component {
               <CardBody>
                 <h4
                   style={{ cursor: 'pointer' }}
-                  onClick={this.onProfitLossReportClick}
+                  onClick={() =>
+                    this.props.history.push('/admin/profit-report')
+                  }
                   className={classes.cardTitle}
                 >
                   Profit & Loss
@@ -370,10 +369,6 @@ class Dashboard extends React.Component {
             bankModelOpenState={this.state.payable}
             handleCancelClick={this.handleCancelClick}
             customerType={'Supplier'}
-          />
-          <PLReport
-            handleCancelClick={this.handleCancelClick}
-            bankModelOpenState={this.state.profit}
           />
         </GridContainer>
       </div>

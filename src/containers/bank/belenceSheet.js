@@ -37,6 +37,9 @@ import DirectionsIcon from '@material-ui/icons/Directions';
 import {
   preparePurchaseTableData,
   prepareSaleTableData,
+  preparePayableTableData,
+  prepareReceivableTableData,
+  prepareBankTableData,
   expensesTableDate,
 } from '../../helpers/util';
 import Paper from '@material-ui/core/Paper';
@@ -86,7 +89,7 @@ const styles = {
     marginBottom: '-44px',
   },
 };
-class PLReport extends React.Component {
+class BelenceSheet extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -130,6 +133,80 @@ class PLReport extends React.Component {
       ['', net > 0 ? 'Profit' : net === 0 ? 'No Gain' : 'Loss', 'Rs' + net],
     ];
   };
+  liabilities = () => {
+    const { bankMethodOption, bank, loading } = this.state;
+    const { transactions, customerType } = this.props;
+    const { dateFilter } = this.state;
+    const assests = this.prepareAssest();
+    const totalPayable = preparePayableTableData(transactions, dateFilter);
+    let totalBelence = 0;
+    let tempData = [];
+    const readyData = [];
+
+    tempData.push('059');
+    tempData.push('Amount Owned to Supplier');
+    tempData.push(totalPayable.Belence);
+    readyData.push(tempData);
+    tempData = [];
+    tempData.push('');
+    tempData.push('Total Liabilities');
+    tempData.push(totalPayable.Belence);
+
+    readyData.push(tempData);
+    tempData = [];
+    totalBelence =
+      parseInt(assests.totalBelence) - parseInt(totalPayable.Belence);
+    tempData = [];
+    tempData.push('');
+    tempData.push('Assets - Liabilities');
+    tempData.push(totalBelence);
+
+    readyData.push(tempData);
+
+    return readyData;
+  };
+  prepareAssest = () => {
+    const { bankMethodOption, bank, loading } = this.state;
+    const { transactions, customerType } = this.props;
+    const { dateFilter } = this.state;
+    let totalBelence = 0;
+    let tempData = [];
+    const readyData = [];
+    const bankTableData = prepareBankTableData(transactions, dateFilter);
+    const receivableTableData = prepareReceivableTableData(transactions, null);
+    let totalSale = prepareSaleTableData(transactions, dateFilter);
+    let totalPurchase = preparePurchaseTableData(transactions, dateFilter);
+
+    tempData.push('058');
+    tempData.push('Stock');
+    tempData.push(totalPurchase.Belence);
+    totalBelence = parseInt(totalBelence) + parseInt(totalPurchase.Belence);
+    readyData.push(tempData);
+    tempData = [];
+    tempData.push('100');
+    tempData.push('Amount Owned From Customer');
+    tempData.push(receivableTableData.Belence);
+    totalBelence =
+      parseInt(totalBelence) + parseInt(receivableTableData.Belence);
+    readyData.push(tempData);
+    tempData = [];
+    for (let bank in bankTableData.banks) {
+      tempData = [];
+      tempData.push(bankTableData.banks[bank].code);
+      tempData.push(bank);
+      tempData.push(bankTableData.banks[bank].Belence);
+      totalBelence =
+        parseInt(totalBelence) + parseInt(bankTableData.banks[bank].Belence);
+      readyData.push(tempData);
+    }
+
+    tempData = [];
+    tempData.push('');
+    tempData.push('Total Assests');
+    tempData.push(totalBelence);
+    readyData.push(tempData);
+    return { readyData, totalBelence };
+  };
   render() {
     const { bankMethodOption, bank, loading } = this.state;
     const { transactions, customerType } = this.props;
@@ -138,10 +215,13 @@ class PLReport extends React.Component {
     let saleTableData = { readyData: [], Belence: 0 };
     let purchaseTableData = { readyData: [], Belence: 0 };
     let expenseTableData = { readyData: [], Belence: 0 };
-
+    const payableTableData = preparePayableTableData(transactions, null);
+    const bankTableData = prepareBankTableData(transactions, dateFilter);
+    const receivableTableData = prepareReceivableTableData(transactions, null);
     saleTableData = prepareSaleTableData(transactions, dateFilter);
     purchaseTableData = preparePurchaseTableData(transactions, dateFilter);
     expenseTableData = expensesTableDate(transactions, dateFilter);
+    this.prepareAssest();
     return (
       <GridContainer>
         <GridItem xs={12} sm={12} md={12}>
@@ -161,7 +241,7 @@ class PLReport extends React.Component {
           </div>
           <Card className={'blue'}>
             <CardHeader color="primary">
-              <h4 className={classes.cardTitleWhite}>Profit & Loss Report</h4>
+              <h4 className={classes.cardTitleWhite}>Belence Sheet</h4>
             </CardHeader>
             <CardBody>
               <Card
@@ -172,13 +252,13 @@ class PLReport extends React.Component {
                 <h6
                   className={`${classes.cardTitleWhite} ${classes.headingtag}`}
                 >
-                  Sale
+                  Assets
                 </h6>
                 <CardBody>
                   <Table
                     tableHeaderColor="primary"
                     tableHead={['CC', 'Sale Category', 'Sale Rs']}
-                    tableData={saleTableData.readyData}
+                    tableData={this.prepareAssest().readyData}
                     onClick={this.handleRowClick}
                     className={classes.link}
                     deleteClick={this.onDeleteClick}
@@ -196,13 +276,13 @@ class PLReport extends React.Component {
                 <h6
                   className={`${classes.cardTitleWhite} ${classes.headingtag}`}
                 >
-                  Purchase
+                  Liabilities
                 </h6>
                 <CardBody>
                   <Table
                     tableHeaderColor="primary"
                     tableHead={['CC', 'Buy Category', 'Sale Rs']}
-                    tableData={purchaseTableData.readyData}
+                    tableData={this.liabilities()}
                     onClick={this.handleRowClick}
                     className={classes.link}
                     deleteClick={this.onDeleteClick}
@@ -284,7 +364,7 @@ const mapDispatchToProps = (dispatch) => {
     getTransaction: () => dispatch(getTransaction()),
   };
 };
-const styledCompoenet = withStyles(styles)(PLReport);
+const styledCompoenet = withStyles(styles)(BelenceSheet);
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
