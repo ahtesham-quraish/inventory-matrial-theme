@@ -10,6 +10,7 @@ import Card from 'components/Card/Card.jsx';
 import CardHeader from 'components/Card/CardHeader.jsx';
 import CardBody from 'components/Card/CardBody.jsx';
 import getAllCustomers from './actions/getCustomers';
+import deleteCustomer from './actions/deleteCustomer';
 import customersDataSelector from './selectors/customersListSelector';
 import setCustomerId from './actions/setCustomerId';
 import RegularButton from '../../components/CustomButtons/Button';
@@ -167,6 +168,11 @@ class CustomerListContainer extends React.Component {
 
     return data;
   };
+  onDeleteClick = (e, props, key) => {
+    this.props.deleteCustomer(props[1]).then(() => {
+      this.props.getAllCustomers();
+    })
+  }
   render() {
     const { classes } = this.props;
     const { supplier, buyer } = this.state;
@@ -238,6 +244,7 @@ class CustomerListContainer extends React.Component {
                 tableData={this.prepareData()}
                 onClick={this.showCustomerTransaction}
                 pointer={classes.pointer}
+                deleteClick={this.onDeleteClick}
                 className={classes.link}
                 onInvoicesClick={this.onInvoicesClick}
                 editClick={this.rowClickhandler}
@@ -266,6 +273,7 @@ const mapStateToProps = (state) => {
 };
 const mapDispatchToProps = (dispatch) => {
   return {
+    deleteCustomer: (id) => dispatch(deleteCustomer(id)),
     getAllCustomers: () => dispatch(getAllCustomers()),
     setCustomerId: (id) => dispatch(setCustomerId(id)),
   };
