@@ -28,6 +28,7 @@ import TextField from '@material-ui/core/TextField';
 import AddBankModal from './addBankModal';
 import BankCreateModel from './bankCreateModel';
 import BankActions from './actions';
+import { customerBelence } from '../../helpers/util';
 const {
   createBank,
   getBanks,
@@ -54,105 +55,9 @@ class BankList extends React.Component {
     }
   }
 
-  prepareTableData = () => {
-    const { transactions, CustomerType } = this.props;
-    const { custTransaction } = this.props;
-    const detailObject = {};
-    let readyData = [];
-    let tempData = [];
-    if (custTransaction) {
-      for (let trans in custTransaction) {
-        if (!detailObject[custTransaction[trans].invoiceId]) {
-          detailObject[custTransaction[trans].invoiceId] = [
-            custTransaction[trans],
-          ];
-        } else {
-          detailObject[custTransaction[trans].invoiceId].push(
-            custTransaction[trans],
-          );
-        }
-      }
-    }
-    let Belence = 0;
-    if (CustomerType === 'Buyer') {
-      for (let detail in detailObject) {
-        const TransactionArray = detailObject[detail];
-        tempData = [];
-        TransactionArray.forEach((element) => {
-          tempData = [];
-          if (element.type === 'Customer Invoice') {
-            Belence = parseInt(Belence) + parseInt(element.amount);
-            tempData.push(element.date);
-            tempData.push(element.id);
-            tempData.push(element.type);
-            tempData.push(element.description);
-            tempData.push('Rs' + element.amount);
-            tempData.push('');
-            tempData.push('Rs' + Belence);
-            readyData.push(tempData);
-          }
-        });
-        TransactionArray.forEach((element) => {
-          tempData = [];
-          if (element.type === 'Customer Receipt') {
-            Belence = parseInt(Belence) - parseInt(element.amount);
-            tempData.push(element.date);
-            tempData.push(element.id);
-            tempData.push(element.type);
-            tempData.push(element.description);
-            tempData.push('');
-            tempData.push('Rs' + element.amount);
-            tempData.push('Rs' + Belence);
-            readyData.push(tempData);
-          }
-        });
-      }
-    } else {
-      for (let detail in detailObject) {
-        const TransactionArray = detailObject[detail];
-        tempData = [];
-        TransactionArray.forEach((element) => {
-          tempData = [];
-          if (element.type === 'Supplier Invoice') {
-            Belence = parseInt(Belence) + parseInt(element.amount);
-            tempData.push(element.date);
-            tempData.push(element.id);
-            tempData.push(element.type);
-            tempData.push(element.description);
-            tempData.push('');
-            tempData.push('Rs' + element.amount);
-            tempData.push('Rs' + Belence);
-            readyData.push(tempData);
-          }
-        });
-        TransactionArray.forEach((element) => {
-          tempData = [];
-          if (element.type === 'Supplier Payment') {
-            Belence = parseInt(Belence) - parseInt(element.amount);
-            tempData.push(element.date);
-            tempData.push(element.id);
-            tempData.push(element.type);
-            tempData.push(element.description);
-            tempData.push('Rs' + element.amount);
-            tempData.push('');
-            tempData.push('Rs' + Belence);
-            readyData.push(tempData);
-          }
-        });
-      }
-    }
 
-    tempData = [];
-    tempData.push('');
-    tempData.push('');
-    tempData.push('');
-    tempData.push('');
-    tempData.push('');
-    tempData.push('Belence');
-    tempData.push('Rs' + Belence);
-    readyData.push(tempData);
-    return { readyData, Belence };
-  };
+
+
   onDeleteClick = (e, props, key) => {
     this.props.deleteTransaction(props[1]).then(() => {
       if (this.props.customerId) {
@@ -162,8 +67,8 @@ class BankList extends React.Component {
   };
   render() {
     const { bankMethodOption, bank, loading } = this.state;
-    const { classes } = this.props;
-    const { readyData, Belence } = this.prepareTableData();
+    const { classes, transactions, CustomerType, custTransaction } = this.props;
+    const { readyData, Belence } = customerBelence(transactions, CustomerType, custTransaction);
     return (
       <Dialog
         open={this.props.bankModelOpenState}

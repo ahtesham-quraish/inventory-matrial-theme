@@ -49,7 +49,7 @@ const styles = {
 };
 
 const unitOptions = [
-  { value: null, label: 'No Unit' },
+  { value: 'No Unit', label: 'No Unit' },
   { value: 'KG', label: 'KG' },
   { value: 'Liter', label: 'Liter' },
   { value: 'Meter', label: 'Meter' },
@@ -62,13 +62,12 @@ class AddProduct extends React.Component {
       product: {
         title: '',
         titleError: false,
-        description: '',
-        descriptionError: false,
+        description: ' ',
         size: '',
         sizeError: false,
         brand: '',
         brandError: false,
-        unit: '',
+        unit: 'No Unit',
         unitError: false,
         quatity: '',
         quantityError: false,
@@ -84,12 +83,11 @@ class AddProduct extends React.Component {
         title: '',
         titleError: false,
         description: '',
-        descriptionError: false,
         size: '',
         sizeError: false,
         brand: '',
         brandError: false,
-        unit: '',
+        unit: 'No Unit',
         unitError: false,
       },
       waiting: false,
@@ -136,6 +134,7 @@ class AddProduct extends React.Component {
   };
 
   handleAddPoductClick = () => {
+
     const { unitOption, product } = this.state;
     if (this.validateProductData() === false) {
       return;
@@ -296,7 +295,6 @@ class AddProduct extends React.Component {
                       labelText="Product Description"
                       id="description"
                       type="textarea"
-                      error={this.state.product.descriptionError}
                       helpText="Description is required"
                       formControlProps={{
                         fullWidth: true,
@@ -320,15 +318,15 @@ class AddProduct extends React.Component {
                       {!this.props.loading ? (
                         'ADD Product'
                       ) : (
-                        <div style={{ width: '75px' }}>
-                          <Loader
-                            type="ThreeDots"
-                            color="white"
-                            height={1000}
-                            width={1000}
-                          />
-                        </div>
-                      )}
+                          <div style={{ width: '75px' }}>
+                            <Loader
+                              type="ThreeDots"
+                              color="white"
+                              height={1000}
+                              width={1000}
+                            />
+                          </div>
+                        )}
                     </Button>
                   </GridItem>
                 </GridContainer>

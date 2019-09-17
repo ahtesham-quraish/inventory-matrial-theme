@@ -30,6 +30,9 @@ import BankCreateModel from './bankCreateModel';
 import CreateCategory from './createCategory';
 import BankActions from './actions';
 import BankList from './bankList';
+import { customerBelence } from '../../helpers/util';
+import updateInvoice from '../invoice/actions/updateInvoice';
+import _ from 'lodash';
 const { createBank, getBanks, getTransaction, deleteTransaction } = BankActions;
 
 const styles = {
@@ -91,13 +94,48 @@ class Bank extends React.Component {
   bankModelOpen = () => {
     this.setState({ bankModelOpenState: true });
   };
-  handleCancelClick = () => {
+  handleCancelClick = (transaction) => {
+
     this.setState({
       transModelOpen: false,
       bankModelOpenState: false,
       categoryModelOpenState: false,
     });
-    this.props.getTransaction();
+    this.props.getTransaction().then(() => {
+      if (transaction && !transaction.isSuperAdmin) {
+        let balanceData = null;
+        const { transactions } = this.props;
+        let customerTrans = {};
+        debugger
+        for (let trans in transactions) {
+          if (transactions[trans].customer.id === parseInt(transaction.customer)) {
+            customerTrans[trans] = transactions[trans];
+          }
+        }
+        if (!_.isEmpty(customerTrans)) {
+          balanceData = customerBelence(transactions, transaction.type.includes('Supplier') ? 'Supplier' : 'Buyer', customerTrans);
+          if (balanceData.Belence !== 0) {
+            let payload = {
+              id: transaction.invoiceId,
+              status: 'UnPaid',
+            };
+            this.props
+              .updateInvoice(payload);
+
+          }
+          else {
+            let payload = {
+              id: transaction.invoiceId,
+              status: 'Paid',
+            };
+            this.props
+              .updateInvoice(payload);
+          }
+        }
+      }
+
+
+    });
   };
   transModelOpen = () => {
     this.setState({ transModelOpen: true });
@@ -115,14 +153,14 @@ class Bank extends React.Component {
       } else {
         temp.push(
           `${transactions[transaction].customer.fName} ${
-            transactions[transaction].customer.lName
+          transactions[transaction].customer.lName
           }`,
         );
       }
 
       temp.push(transactions[transaction].type);
-      temp.push(transactions[transaction].bank_account.entry_method);
-      temp.push(transactions[transaction].description);
+      temp.push(`${transactions[transaction].id} | ${transactions[transaction].bank_account.entry_method}`);
+      temp.push(` ${transactions[transaction].description}`);
       temp.push(transactions[transaction].date);
       temp.push(transactions[transaction].amount);
       data.push(temp);
@@ -131,20 +169,11 @@ class Bank extends React.Component {
     return data;
   };
   onDeleteClick = (e, props, key) => {
-    const { transactions } = this.props;
-    let index = 0;
-    let transaction = null;
-    for (let t in transactions) {
-      if (index === 0) {
-        transaction = transactions[t];
-      }
-      index++;
-    }
-    if (transaction) {
-      this.props.deleteTransaction(transaction.id).then(() => {
-        this.props.getTransaction();
-      });
-    }
+    const id = props[2].split('|');
+    this.props.deleteTransaction(id[0].trim()).then(() => {
+      this.props.getTransaction();
+    });
+
   };
   render() {
     const { classes } = this.props;
@@ -202,12 +231,14 @@ class Bank extends React.Component {
             </CardBody>
           </Card>
         </GridItem>
-        <AddBankModal
-          handleCancelClick={this.handleCancelClick}
-          transModelOpen={this.transModelOpen}
-          transModelOpenState={this.state.transModelOpen}
-          onAddCategory={this.onAddCategoryHandler}
-        />
+        {this.state.transModelOpen && (
+          <AddBankModal
+            handleCancelClick={this.handleCancelClick}
+            transModelOpen={this.transModelOpen}
+            transModelOpenState={this.state.transModelOpen}
+            onAddCategory={this.onAddCategoryHandler}
+          />
+        )}
         <BankCreateModel
           handleCancelClick={this.handleCancelClick}
           bankModelOpenState={this.state.bankModelOpenState}
@@ -235,6 +266,7 @@ const mapDispatchToProps = (dispatch) => {
     getBanks: () => dispatch(getBanks()),
     deleteTransaction: (id) => dispatch(deleteTransaction(id)),
     getTransaction: () => dispatch(getTransaction()),
+    updateInvoice: (payload) => dispatch(updateInvoice(payload)),
   };
 };
 const styledCompoenet = withStyles(styles)(Bank);

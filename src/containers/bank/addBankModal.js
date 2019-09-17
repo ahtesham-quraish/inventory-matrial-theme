@@ -93,7 +93,7 @@ class AddBankModal extends React.Component {
             value: categories[category].id,
             label: `${categories[category].code} | ${
               categories[category].name
-            }`,
+              }`,
           });
         }
         this.setState({ categoryOptions });
@@ -110,7 +110,7 @@ class AddBankModal extends React.Component {
             value: categories[category].id,
             label: `${categories[category].code} | ${
               categories[category].name
-            }`,
+              }`,
           });
         }
       }
@@ -159,7 +159,7 @@ class AddBankModal extends React.Component {
                 invoice.dateCreated,
               ).toLocaleDateString()} | ${
                 invoice.products[0].invoice.grandTotal
-              }`,
+                }`,
             });
           });
         }
@@ -227,7 +227,7 @@ class AddBankModal extends React.Component {
     this.setState({ loading: true });
     this.props.createTransaction(transaction).then(() => {
       this.setState({ loading: false, transaction: { ...EmptyTransaction } });
-      this.props.handleCancelClick();
+      this.props.handleCancelClick(transaction);
     });
   };
   render() {
@@ -372,15 +372,15 @@ class AddBankModal extends React.Component {
             {!this.props.loading ? (
               'Enter Transaction'
             ) : (
-              <div style={{ width: '75px' }}>
-                <Loader
-                  type="ThreeDots"
-                  color="white"
-                  height={1000}
-                  width={1000}
-                />
-              </div>
-            )}
+                <div style={{ width: '75px' }}>
+                  <Loader
+                    type="ThreeDots"
+                    color="white"
+                    height={1000}
+                    width={1000}
+                  />
+                </div>
+              )}
           </Button>
         </DialogActions>
       </Dialog>

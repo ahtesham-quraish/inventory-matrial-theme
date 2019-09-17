@@ -11,6 +11,7 @@ import CardBody from 'components/Card/CardBody.jsx';
 import { connect } from 'react-redux';
 import getInvoices, { getInvoice } from './actions/getInvoices';
 import Loader from 'react-loader-spinner';
+import deleteInvoice from './actions/deleteInvoice'
 import _ from 'lodash';
 
 const styles = {
@@ -25,6 +26,13 @@ const styles = {
     '& a,& a:hover,& a:focus': {
       color: '#FFFFFF',
     },
+  },
+  pointer: {
+    cursor: 'pointer',
+  },
+  link: {
+    cursor: 'pointer',
+    color: '#0000EE',
   },
   cardTitleWhite: {
     color: '#FFFFFF',
@@ -74,8 +82,11 @@ class InvoiceList extends React.Component {
         temp.push(element.products.length);
         temp.push(element.products[0].invoice.residualPayment);
         temp.push(element.products[0].invoice.grandTotal);
+        temp.push(`${element.products[0].invoice.id} | ${element.products[0].invoice.status}`);
+
       } else {
         temp.push(element.products.length);
+        temp.push('N/A');
         temp.push('N/A');
         temp.push('N/A');
       }
@@ -95,12 +106,21 @@ class InvoiceList extends React.Component {
     return data;
   };
   rowClickhandler = (e, value, key) => {
-    // const { cusotmersRawData } = this.props;
-    // this.props.setCustomerId(cusotmersRawData[key].id);
-    // this.props.history.push(`/admin/user?id=${cusotmersRawData[key].id}`);
     let id = this.props.invoices[key].id;
     this.props.history.push('/admin/update-invoices/' + id);
   };
+  onDeleteClick = (e, props, key) => {
+    const id = props[5].split('|');
+    this.props.deleteInvoice(id[0].trim()).then(() => {
+      const { selectedCustomerId } = this.props;
+      if (selectedCustomerId) {
+        this.props.getInvoice(selectedCustomerId);
+        return;
+      }
+
+      this.props.getInvoices();
+    })
+  }
 
   render() {
     const { classes, product } = this.props;
@@ -121,11 +141,14 @@ class InvoiceList extends React.Component {
                     'No. of Products',
                     'Residual Amount',
                     'Total Amount',
+                    'Invoice Status',
                     'Date Created',
                     'Action',
                   ]}
                   tableData={this.prepareTableData()}
                   onClick={this.rowClickhandler}
+                  className={classes.link}
+                  deleteClick={this.onDeleteClick}
                 />
               </CardBody>
             </Card>
@@ -147,6 +170,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getInvoice: (id) => dispatch(getInvoice(id)),
     getInvoices: () => dispatch(getInvoices()),
+    deleteInvoice: (id) => dispatch(deleteInvoice(id)),
   };
 };
 const InvoicesListWithStyles = withStyles(styles)(InvoiceList);

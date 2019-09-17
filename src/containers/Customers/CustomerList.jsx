@@ -16,8 +16,12 @@ import setCustomerId from './actions/setCustomerId';
 import RegularButton from '../../components/CustomButtons/Button';
 import Checkbox from '@material-ui/core/Checkbox';
 import UserTransaction from '../bank/userTransaction';
-
+import { customerBelence } from '../../helpers/util';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import BankActions from '../bank/actions';
+import _ from 'lodash'
+const { getTransaction } = BankActions;
+
 const styles = {
   cardCategoryWhite: {
     '&,& a,& a:hover,& a:focus': {
@@ -68,7 +72,11 @@ class CustomerListContainer extends React.Component {
     this.rowClickhandler = this.rowClickhandler.bind(this);
   }
   componentDidMount() {
-    this.props.getAllCustomers();
+    this.props.getTransaction().then(() => {
+      this.props.getAllCustomers();
+    });
+
+
   }
   handleCancelClick = () => {
     this.setState({ bankModelOpenState: false, customerId: null });
@@ -111,6 +119,8 @@ class CustomerListContainer extends React.Component {
     const { supplier, buyer } = this.state;
     const data = [];
     let phone = null;
+    let balanceData = { Belence: '0' };
+    const { transactions, CustomerType, custTransaction } = this.props;
     if (cusotmersRawData) {
       if (supplier && !buyer) {
         cusotmersRawData.reduce((index, val) => {
@@ -118,12 +128,23 @@ class CustomerListContainer extends React.Component {
             val.customer_type === 'Supplier' &&
             val.customer_type !== 'Owner'
           ) {
+            balanceData = { Belence: '0' };
+            let customerTrans = {};
+            for (let trans in transactions) {
+              if (transactions[trans].customer.id === val.id) {
+                customerTrans[trans] = transactions[trans];
+              }
+            }
+            if (!_.isEmpty(customerTrans)) {
+              balanceData = customerBelence(transactions, val.customer_type, customerTrans);
+            }
             phone = val.Phone;
             phone = phone ? phone.toString() : 'N/A';
+
             return data.push([
               `${val.fName} ${val.lName}`,
               val.id,
-              val.Address1,
+              `Rs${balanceData.Belence}`,
               phone,
               val.email,
               val.company_name,
@@ -133,13 +154,24 @@ class CustomerListContainer extends React.Component {
         }, 0);
       } else if (!supplier && buyer) {
         cusotmersRawData.reduce((index, val) => {
+
           if (val.customer_type === 'Buyer' && val.customer_type !== 'Owner') {
+            balanceData = { Belence: '0' };
+            let customerTrans = {};
+            for (let trans in transactions) {
+              if (transactions[trans].customer.id === val.id) {
+                customerTrans[trans] = transactions[trans];
+              }
+            }
+            if (!_.isEmpty(customerTrans)) {
+              balanceData = customerBelence(transactions, val.customer_type, customerTrans);
+            }
             phone = val.Phone;
             phone = phone ? phone.toString() : 'N/A';
             return data.push([
               `${val.fName} ${val.lName}`,
               val.id,
-              val.Address1,
+              `Rs${balanceData.Belence}`,
               phone,
               val.email,
               val.company_name,
@@ -150,12 +182,23 @@ class CustomerListContainer extends React.Component {
       } else {
         cusotmersRawData.reduce((index, val) => {
           if (val.customer_type !== 'Owner') {
+            balanceData = { Belence: '0' };
+            let customerTrans = {};
+            for (let trans in transactions) {
+              if (transactions[trans].customer.id === val.id) {
+                customerTrans[trans] = transactions[trans];
+              }
+            }
+            if (!_.isEmpty(customerTrans)) {
+              balanceData = customerBelence(transactions, val.customer_type, customerTrans);
+            }
+
             phone = val.Phone;
             phone = phone ? phone.toString() : 'N/A';
             return data.push([
               `${val.fName} ${val.lName}`,
               val.id,
-              val.Address1,
+              `Rs${balanceData.Belence}`,
               phone,
               val.email,
               val.company_name,
@@ -234,7 +277,7 @@ class CustomerListContainer extends React.Component {
                 tableHead={[
                   'Name',
                   'Customer ID',
-                  'Address',
+                  'Amount Due',
                   'Phone#',
                   'Email',
                   'Company Name',
@@ -269,6 +312,7 @@ const mapStateToProps = (state) => {
   return {
     customers: customersDataSelector(state),
     cusotmersRawData: state.CustomerState.customers,
+    transactions: state.BankState.transactions,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -276,6 +320,7 @@ const mapDispatchToProps = (dispatch) => {
     deleteCustomer: (id) => dispatch(deleteCustomer(id)),
     getAllCustomers: () => dispatch(getAllCustomers()),
     setCustomerId: (id) => dispatch(setCustomerId(id)),
+    getTransaction: () => dispatch(getTransaction()),
   };
 };
 CustomerListContainer = withStyles(styles)(CustomerListContainer);

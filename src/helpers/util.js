@@ -46,7 +46,7 @@ export const prepareReceivableTableData = (transactions, dateFilter) => {
     if (parseInt(Belence) !== 0) {
       tempData.push(
         `${detailObject[detail][0].customer.fName} ${
-          detailObject[detail][0].customer.lName
+        detailObject[detail][0].customer.lName
         }`,
       );
       total = parseInt(total) + parseInt(Belence);
@@ -198,7 +198,7 @@ export const preparePayableTableData = (transactions, dateFilter) => {
     if (parseInt(Belence) !== 0) {
       tempData.push(
         `${detailObject[detail][0].customer.fName} ${
-          detailObject[detail][0].customer.lName
+        detailObject[detail][0].customer.lName
         }`,
       );
       total = parseInt(total) + parseInt(Belence);
@@ -357,4 +357,104 @@ export const prepareBankTableData = (transactions, dateFilter) => {
   // readyData.push(tempData);
 
   return { banks, Belence: total };
+};
+
+
+export const customerBelence = (transactions, CustomerType, custTransaction) => {
+  const detailObject = {};
+  let readyData = [];
+  let tempData = [];
+  if (custTransaction) {
+    for (let trans in custTransaction) {
+      if (!detailObject[custTransaction[trans].invoiceId]) {
+        detailObject[custTransaction[trans].invoiceId] = [
+          custTransaction[trans],
+        ];
+      } else {
+        detailObject[custTransaction[trans].invoiceId].push(
+          custTransaction[trans],
+        );
+      }
+    }
+  }
+  let Belence = 0;
+  if (CustomerType === 'Buyer') {
+    for (let detail in detailObject) {
+      const TransactionArray = detailObject[detail];
+      tempData = [];
+      TransactionArray.forEach((element) => {
+        tempData = [];
+        if (element.type === 'Customer Invoice') {
+          Belence = parseInt(Belence) + parseInt(element.amount);
+          tempData.push(element.date);
+          tempData.push(element.id);
+          tempData.push(element.type);
+          tempData.push(element.description);
+          tempData.push('Rs' + element.amount);
+          tempData.push('');
+          tempData.push('Rs' + Belence);
+          readyData.push(tempData);
+        }
+      });
+      TransactionArray.forEach((element) => {
+        tempData = [];
+        if (element.type === 'Customer Receipt') {
+          Belence = parseInt(Belence) - parseInt(element.amount);
+          tempData.push(element.date);
+          tempData.push(element.id);
+          tempData.push(element.type);
+          tempData.push(element.description);
+          tempData.push('');
+          tempData.push('Rs' + element.amount);
+          tempData.push('Rs' + Belence);
+          readyData.push(tempData);
+        }
+      });
+    }
+  } else {
+    for (let detail in detailObject) {
+      const TransactionArray = detailObject[detail];
+      tempData = [];
+      TransactionArray.forEach((element) => {
+        tempData = [];
+        if (element.type === 'Supplier Invoice') {
+          Belence = parseInt(Belence) + parseInt(element.amount);
+          tempData.push(element.date);
+          tempData.push(element.id);
+          tempData.push(element.type);
+          tempData.push(element.description);
+          tempData.push('');
+          tempData.push('Rs' + element.amount);
+          tempData.push('Rs' + Belence);
+          readyData.push(tempData);
+        }
+      });
+      TransactionArray.forEach((element) => {
+        tempData = [];
+        if (element.type === 'Supplier Payment') {
+          Belence = parseInt(Belence) - parseInt(element.amount);
+          tempData.push(element.date);
+          tempData.push(element.id);
+          tempData.push(element.type);
+          tempData.push(element.description);
+          tempData.push('Rs' + element.amount);
+          tempData.push('');
+          tempData.push('Rs' + Belence);
+          readyData.push(tempData);
+        }
+      });
+    }
+  }
+
+  tempData = [];
+  tempData.push('');
+  tempData.push('');
+  tempData.push('');
+  tempData.push('');
+  tempData.push('');
+  tempData.push('Belence');
+  tempData.push('Rs' + Belence);
+  readyData.push(tempData);
+  console.log(custTransaction, CustomerType, Belence, readyData)
+  return { readyData, Belence };
 };

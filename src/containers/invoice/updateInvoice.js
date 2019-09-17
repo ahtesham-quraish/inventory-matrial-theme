@@ -62,11 +62,6 @@ class UpdateInvoice extends React.Component {
   componentDidMount = () => {
     let id = this.props.match.params.invoice_id;
     this.props.getInvoiceByID(id).then(() => {
-      console.log(
-        'received invoice is ',
-        this.props.invoiceByID.invoice.status,
-      );
-
       let types = [
         { label: 'Unpaid', value: 'Unpaid' },
         { label: 'Paid', value: 'Paid' },
@@ -91,7 +86,6 @@ class UpdateInvoice extends React.Component {
       products: this.props.qoutationProducts,
       invoiceInputs: this.props.invoicePDFInputs,
     };
-    console.log('saved', payload);
     this.props.saveInvoice(payload).then(() => {
       if (this.props.savedInvoice.status === 201) {
         this.setState({
@@ -220,15 +214,15 @@ class UpdateInvoice extends React.Component {
                 {!this.state.waiting ? (
                   'Update Invoice'
                 ) : (
-                  <div style={{ width: '75px' }}>
-                    <Loader
-                      type="ThreeDots"
-                      color="white"
-                      height={1000}
-                      width={1000}
-                    />
-                  </div>
-                )}
+                    <div style={{ width: '75px' }}>
+                      <Loader
+                        type="ThreeDots"
+                        color="white"
+                        height={1000}
+                        width={1000}
+                      />
+                    </div>
+                  )}
               </Button>
             </div>
           </div>
