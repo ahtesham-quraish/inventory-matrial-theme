@@ -106,9 +106,9 @@ class Bank extends React.Component {
         let balanceData = null;
         const { transactions } = this.props;
         let customerTrans = {};
-        debugger
         for (let trans in transactions) {
-          if (transactions[trans].customer.id === parseInt(transaction.customer)) {
+          if (transactions[trans].customer.id === parseInt(transaction.customer) &&
+            parseInt(transaction.invoiceId) === parseInt(transactions[trans].invoiceId)) {
             customerTrans[trans] = transactions[trans];
           }
         }

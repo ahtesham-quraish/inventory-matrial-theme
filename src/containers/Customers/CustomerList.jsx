@@ -142,7 +142,7 @@ class CustomerListContainer extends React.Component {
             phone = phone ? phone.toString() : 'N/A';
 
             return data.push([
-              `${val.fName} ${val.lName}`,
+              `${val.customer_type} `,
               val.id,
               `Rs${balanceData.Belence}`,
               phone,
@@ -169,7 +169,7 @@ class CustomerListContainer extends React.Component {
             phone = val.Phone;
             phone = phone ? phone.toString() : 'N/A';
             return data.push([
-              `${val.fName} ${val.lName}`,
+              `${val.customer_type} `,
               val.id,
               `Rs${balanceData.Belence}`,
               phone,
@@ -196,7 +196,7 @@ class CustomerListContainer extends React.Component {
             phone = val.Phone;
             phone = phone ? phone.toString() : 'N/A';
             return data.push([
-              `${val.fName} ${val.lName}`,
+              `${val.customer_type} `,
               val.id,
               `Rs${balanceData.Belence}`,
               phone,
