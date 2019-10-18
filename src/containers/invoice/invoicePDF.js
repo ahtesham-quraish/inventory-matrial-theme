@@ -190,34 +190,6 @@ class InvoicePDF extends React.Component {
                       />
                     </td>
                   </tr>
-                  <tr>
-                    <th className={classes.tdElement}>DIVLIVERY/CHALLAN NO</th>
-                    <th className={classes.tdElement}>DATE</th>
-                  </tr>
-                  <tr>
-                    <td className={classes.tdElement}>
-                      {' '}
-                      <input
-                        className={classes.customInput}
-                        value={this.props.invoicePDFInputs.deliverNumber}
-                        id={'deliverNumber'}
-                        onChange={this.props.handleInvoiceChange}
-                      />
-                    </td>
-                    <td className={classes.tdElement}>
-                      <TextField
-                        id="deliverNumberDate"
-                        label=""
-                        type="date"
-                        defaultValue="2017-05-24"
-                        className={classes.textField}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        onChange={this.props.handleInvoiceChange}
-                      />
-                    </td>
-                  </tr>
                 </table>
               </div>
               <div className={classes.twoColumnsColumnClass}>
@@ -255,34 +227,7 @@ class InvoicePDF extends React.Component {
                       />
                     </td>
                   </tr>
-                  <tr>
-                    <th className={classes.tdElement}>OUR ORD.ACK./QOUT.NO</th>
-                    <th className={classes.tdElement}>DATE</th>
-                  </tr>
-                  <tr>
-                    <td className={classes.tdElement}>
-                      {' '}
-                      <input
-                        className={classes.customInput}
-                        value={this.props.invoicePDFInputs.qoutNumber}
-                        id={'qoutNumber'}
-                        onChange={this.props.handleInvoiceChange}
-                      />
-                    </td>
-                    <td className={classes.tdElement}>
-                      <TextField
-                        id="qoutNumberDate"
-                        label=""
-                        type="date"
-                        defaultValue="2017-05-24"
-                        className={classes.textField}
-                        InputLabelProps={{
-                          shrink: true,
-                        }}
-                        onChange={this.props.handleInvoiceChange}
-                      />
-                    </td>
-                  </tr>
+        
                 </table>
               </div>
             </div>

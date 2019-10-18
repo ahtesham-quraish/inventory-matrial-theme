@@ -124,14 +124,13 @@ class AddBankModal extends React.Component {
   };
   createCustomerOptions = (key) => {
     const { customers } = this.props;
-
     const customersOptions = [];
     if (customers) {
       customers.forEach((customer) => {
         if (customer.customer_type === key) {
           customersOptions.push({
             value: customer.id,
-            label: `${customer.category} | ${customer.fName} ${customer.lName}`,
+            label: `${customer.fName} ${customer.lName}`,
           });
         }
       });
@@ -223,6 +222,7 @@ class AddBankModal extends React.Component {
     this.setState({ bankOption, transaction });
   };
   createTransaction = () => {
+    debugger
     const { transaction } = this.state;
     this.setState({ loading: true });
     this.props.createTransaction(transaction).then(() => {
@@ -318,7 +318,7 @@ class AddBankModal extends React.Component {
                   <GridContainer>
                     <GridItem xs={12} sm={12} md={12}>
                       <Select
-                        placeholder="Select Category "
+                        placeholder="Select Invoice  "
                         style={{ marginTop: '40px' }}
                         className={classes.unitSelect}
                         value={this.state.invoiceOption}
