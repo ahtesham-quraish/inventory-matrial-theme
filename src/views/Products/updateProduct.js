@@ -21,6 +21,8 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import RegularButton from '../../components/CustomButtons/Button';
+import UpdateQuantity from './updateQuantity'
 import Select from 'react-select';
 // actions
 
@@ -88,6 +90,7 @@ class UpdateProduct extends React.Component {
       waiting: false,
       editModeDisabled: true,
       deleteModelOpen: false,
+      updateQuantityDialogState  : false
     };
   }
 
@@ -124,12 +127,12 @@ class UpdateProduct extends React.Component {
     this.setState({ product: product });
   };
 
-  handleUpdateClick = () => {
+  handleUpdateClick = (product) => {
     this.setState({
       waiting: true,
     });
     this.props
-      .updateProduct(this.state.product, this.props.match.params.product_id)
+      .updateProduct(product, this.props.match.params.product_id)
       .then(() => {
         toast.success('Product updated successfully');
         this.setState({
@@ -146,6 +149,7 @@ class UpdateProduct extends React.Component {
         });
       });
   };
+
   handleUnitSelect = (unitOption) => {
     const { product } = this.state;
     product.unit = unitOption.value;
@@ -169,7 +173,12 @@ class UpdateProduct extends React.Component {
         });
       });
   };
-
+  onUpdateQuantityDialog = () => {
+    this.setState({updateQuantityDialogState : !this.state.updateQuantityDialogState})
+  }
+  handleCancelClick = () => {
+    this.setState({updateQuantityDialogState : false})
+  }
   render() {
     const { classes } = this.props;
     const { product, unitOption } = this.state;
@@ -180,6 +189,16 @@ class UpdateProduct extends React.Component {
         <ToastContainer position={toast.POSITION.TOP_RIGHT} autoClose={4000} />
         <GridContainer>
           <GridItem xs={16} sm={16} md={12}>
+          <div style={{ float: 'right', marginBottom: '5%' }}>
+              <RegularButton
+                classes={classes}
+                color="primary"
+                size="sm"
+                onClick={this.onUpdateQuantityDialog}
+              >
+                Update Product Inventory {' '}
+            </RegularButton>
+          </div>
             <Dialog
               open={this.state.deleteModelOpen}
               onClose={this.toggleDeleteModel}
@@ -400,7 +419,7 @@ class UpdateProduct extends React.Component {
                   <GridItem xs={12} sm={12} md={6}>
                     {!this.state.editModeDisabled ? (
                       <Button
-                        onClick={this.handleUpdateClick}
+                        onClick={() => this.handleUpdateClick(this.state.product)}
                         color="primary"
                         size="sm"
                       >
@@ -422,6 +441,9 @@ class UpdateProduct extends React.Component {
                 </GridContainer>
               </CardFooter>
             </Card>
+           {this.state.updateQuantityDialogState && (
+            <UpdateQuantity handleCancelClick={this.handleCancelClick} updateInventory={this.handleUpdateClick} product={product} updateQuantityDialogState={this.state.updateQuantityDialogState} />
+           )}  
           </GridItem>
         </GridContainer>
       </div>

@@ -428,7 +428,7 @@ class InvoicePDF extends React.Component {
             <div className={classes.commanRightClass}>
               {' '}
               <span className={classes.commanRightSpanClass}>
-                Abaco Techinal Provate Limited
+                ITech Private Limited
               </span>
               <div className={classes.authDivClass}>
                 {' '}

@@ -9,6 +9,9 @@ import invoicePDFChangeHandler from './actions/invoicePDFChangeHandle';
 import Loader from 'react-loader-spinner';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import {
+  updateProduct,
+} from '../../views/Products/actions/actions';
 class Invoice extends React.Component {
   constructor(props) {
     super(props);
@@ -39,9 +42,14 @@ class Invoice extends React.Component {
       products: this.props.qoutationProducts,
       invoiceInputs: this.props.invoicePDFInputs,
     };
-    
     this.props.saveInvoice(payload).then(() => {
       if (this.props.savedInvoice.status === 201) {
+        if(this.props.customer.customer_type === 'Buyer'){
+          this.props.qoutationProducts.forEach((product) => {
+            product.quatity = parseInt(product.quatity) - parseInt(product.requiredQty)
+            this.props.updateProduct(product, product.id);
+          })
+        }
         this.setState({
           isSaved: true,
           waiting: false,
@@ -158,6 +166,7 @@ const mapDispatchToProps = (dispatch) => {
     saveInvoice: (payload) => dispatch(saveInvoice(payload)),
     invoicePDFChangeHandler: (paylaod) =>
       dispatch(invoicePDFChangeHandler(paylaod)),
+      updateProduct : (product, id) => dispatch(updateProduct(product, id)) 
   };
 };
 

@@ -160,6 +160,8 @@ class AddProduct extends React.Component {
           <GridItem xs={16} sm={16} md={12}>
             <Card>
               <CardHeader color="primary">Add Product</CardHeader>
+              
+
               <CardBody>
                 <GridContainer>
                   <GridItem xs={12} sm={12} md={6}>
