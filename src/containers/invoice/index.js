@@ -50,6 +50,13 @@ class Invoice extends React.Component {
             this.props.updateProduct(product, product.id);
           })
         }
+        if(this.props.customer.customer_type === 'Supplier'){
+          this.props.qoutationProducts.forEach((product) => {
+            product.quatity = parseInt(product.quatity) + parseInt(product.requiredQty)
+            product.price = parseInt( product.qoutedPrice)
+            this.props.updateProduct(product, product.id);
+          })
+        }
         this.setState({
           isSaved: true,
           waiting: false,

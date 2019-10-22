@@ -231,7 +231,6 @@ class Quotation extends React.Component {
           ? productToBeAdded.price
           : temp.added_info.qoutedPrice;
       addProcductInputs['custDescription'] = temp.added_info.custDescription;
-      debugger
       this.setState({
         seelctedPastProducts: selectedOption,
         addProductModelOpen: true,
@@ -296,13 +295,25 @@ class Quotation extends React.Component {
         isValid = false;
       }
     }
-    if (addProcductInputs.requiredQuantity === '' || addProcductInputs.requiredQuantity > this.state.productToBeAdded.quatity
+    if(this.state.customer && this.state.customer.customer_type === 'Supplier'&& addProcductInputs.requiredQuantity !== ''){
+      debugger
+      this.setState({
+        addProcductInputs: addProcductInputs,
+      });
+      return true; 
+    }
+    if ( addProcductInputs.requiredQuantity === '' || parseInt(addProcductInputs.requiredQuantity) > parseInt( this.state.productToBeAdded.quatity)
     ) {
       addProcductInputs['requiredQuantityError'] = true;
       addProcductInputs['requiredQuantityMsg'] = 'Quantity should be given';
       isValid = false;
     }
-
+    if(this.state.productToBeAdded.original_product &&  
+      parseInt( addProcductInputs.requiredQuantity) > parseInt( this.state.productToBeAdded.original_product.quatity) ){
+        addProcductInputs['requiredQuantityError'] = true;
+        addProcductInputs['requiredQuantityMsg'] = 'Quantity should be given';
+        isValid = false;
+    }
     this.setState({
       addProcductInputs: addProcductInputs,
     });
