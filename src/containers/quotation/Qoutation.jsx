@@ -123,11 +123,12 @@ class Quotation extends React.Component {
   };
 
   getCustomerOptions = () => {
+    
     let opts = [];
     this.props.customers.forEach((element) => {
       opts.push({
         value: element.id,
-        label: element.fName + ' ' + element.lName,
+        label: element.company_name,
       });
     });
     this.setState({

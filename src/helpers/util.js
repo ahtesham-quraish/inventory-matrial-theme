@@ -237,6 +237,64 @@ export const expensesTableDate = (transactions, dateFilter) => {
   }
   return { readyData, Belence };
 };
+export const getBankDetail = (transactions, bankId) => {
+  const detailObject = {};
+  let readyData = [];
+  let tempData = [];
+  let Belence = 0
+  if (transactions) {
+    for (let trans in transactions) {
+      let t = transactions[trans];
+      if(t.bank_account.id === bankId){
+        tempData = []
+        tempData.push(new Date(t.date).toDateString())
+        tempData.push(`${t.invoiceId} | ${t.type}`)
+        tempData.push(t.customer ? t.customer.company_name : 'N/A');
+        tempData.push(t.category ? `${t.category.code} | ${t.category.title} |  ${t.category.name}` : 'N/A');
+        tempData.push(t.amount)
+        if (t.type === 'Customer Receipt') {
+          Belence = parseInt(Belence) - parseInt(t.amount);
+          tempData.push("");
+          tempData.push('Rs' + t.amount);
+          tempData.push('Rs' + Belence);
+        }
+        if (t.type === 'Customer Invoice') {
+          Belence = parseInt(Belence) + parseInt(t.amount);
+          tempData.push('Rs' + t.amount);
+          tempData.push('');
+          tempData.push('Rs' + Belence);
+        }
+      
+        if (t.type === 'Supplier Invoice') {
+          Belence = parseInt(Belence) + parseInt(t.amount);
+          tempData.push("");
+          tempData.push('Rs' + t.amount);
+          tempData.push('Rs' + Belence);
+        }
+        if (t.type === 'Supplier Payment') {
+          Belence = parseInt(Belence) - parseInt(t.amount);
+          tempData.push('Rs' + t.amount);
+          tempData.push("");
+          tempData.push('Rs' + Belence);
+        }
+        if (t.type === 'Money Out') {
+          Belence = parseInt(Belence) - parseInt(t.amount);
+          tempData.push('');
+          tempData.push('Rs'+t.amount);
+          tempData.push('Rs' + Belence);
+        }
+        if (t.type === 'Money In') {
+          Belence = parseInt(Belence) + parseInt(t.amount);
+          tempData.push('Rs'+t.amount);
+          tempData.push("");
+          tempData.push('Rs' + Belence);
+        }
+        readyData.push(tempData);
+      }
+    }
+  }
+  return readyData;
+}
 
 export const prepareBankTableData = (transactions, dateFilter) => {
   const DateObject = new Date(dateFilter);
@@ -359,6 +417,28 @@ export const prepareBankTableData = (transactions, dateFilter) => {
   return { banks, Belence: total };
 };
 
+export const getProductDetail = (productId, Invoices) => {
+  const proDetail = [];
+  let tmp = [];
+  Invoices.forEach(invoice => {
+    invoice.products.forEach((product) => {
+      if(product.product.id === productId){
+        tmp = [];
+        tmp.push(`${product.product.api}-${product.product.sae}`);
+        tmp.push(product.invoice.customer.company_name);
+        tmp.push(product.quatityOffered)
+        tmp.push(product.overiddenPrice);
+        tmp.push(product.invoice.grandTotal);
+        tmp.push(product.invoice.status);
+        tmp.push(new Date(invoice.dateCreated).toDateString());
+        proDetail.push(tmp);
+      }
+    })
+});
+console.log(productId, Invoices)
+console.log(proDetail);
+return proDetail
+}
 
 export const customerBelence = (transactions, CustomerType, custTransaction) => {
   const detailObject = {};
@@ -455,6 +535,6 @@ export const customerBelence = (transactions, CustomerType, custTransaction) => 
   tempData.push('Belence');
   tempData.push('Rs' + Belence);
   readyData.push(tempData);
-  console.log(custTransaction, CustomerType, Belence, readyData)
   return { readyData, Belence };
 };
+

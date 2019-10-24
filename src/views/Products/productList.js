@@ -11,6 +11,8 @@ import CardHeader from 'components/Card/CardHeader.jsx';
 import CardBody from 'components/Card/CardBody.jsx';
 import { connect } from 'react-redux';
 import { addProduct } from './actions/actions';
+import getInvoices, { getInvoice } from '../../containers/invoice/actions/getInvoices';
+import ProductLedger from './ProductLedger';
 import Loader from 'react-loader-spinner';
 const name = ['api', 'title', 'sae', 'size'];
 const elementsNotToDisplay = [
@@ -56,8 +58,18 @@ const styles = {
 };
 
 class ProductList extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      productDetailDialog: false,
+      productId : null
+    };
+  }
   componentDidMount = () => {
-    this.props.addProduct();
+    this.props.addProduct().then(() => {
+      this.props.getInvoices()
+    });
+
   };
 
   prepareTableData = () => {
@@ -97,9 +109,16 @@ class ProductList extends React.Component {
   handleAddProductClick = () => {
     this.props.history.push('/admin/add-products');
   };
-
+  showProductDetail = (e, prop, key) => {
+    const {product} = this.props;
+    this.setState({productDetailDialog: true, productId : product[0].id });
+  }
+  handleCancelClick = () => {
+    this.setState({productDetailDialog : false, productId : null})
+  }
   render() {
     const { classes, product } = this.props;
+    const {productDetailDialog, productId} = this.state;
     this.prepareTableData();
     return (
       <GridContainer>
@@ -131,12 +150,18 @@ class ProductList extends React.Component {
                   'Action',
                 ]}
                 tableData={this.prepareTableData()}
-                onClick={this.handleRowClick}
+                onClick={this.showProductDetail}
+                editClick={this.handleRowClick}
+
                 className={classes.link}
               />
             </CardBody>
           </Card>
         </GridItem>
+        {productDetailDialog && (
+          <ProductLedger productId={productId} handleCancelClick={this.handleCancelClick} productDetailDialog={productDetailDialog}/>
+        )}
+        
       </GridContainer>
     );
   }
@@ -148,13 +173,14 @@ const mapStateToProps = (state) => {
     loading: state.productReducer.loading,
     success: state.productReducer.success,
     error: state.productReducer.error,
+    invoices : state.InvoiceReducer.invoices
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     addProduct: (payload) => dispatch(addProduct(payload)),
-    //   postProduct: (payload) => dispatch(postProduct(payload)),
+    getInvoices: () => dispatch(getInvoices()),
     //   togglePostSuccess: () => dispatch(togglePostSuccess()),
     //   togglePostError: () => dispatch(togglePostError()),
   };
