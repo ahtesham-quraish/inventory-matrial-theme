@@ -110,8 +110,9 @@ class ProductList extends React.Component {
     this.props.history.push('/admin/add-products');
   };
   showProductDetail = (e, prop, key) => {
+
     const {product} = this.props;
-    this.setState({productDetailDialog: true, productId : product[0].id });
+    this.setState({productDetailDialog: true, productId : product[key].id });
   }
   handleCancelClick = () => {
     this.setState({productDetailDialog : false, productId : null})
