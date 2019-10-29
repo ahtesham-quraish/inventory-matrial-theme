@@ -131,7 +131,8 @@ class CustomerListContainer extends React.Component {
             balanceData = { Belence: '0' };
             let customerTrans = {};
             for (let trans in transactions) {
-              if (transactions[trans].customer.id === val.id) {
+             
+              if (transactions[trans].customer && val && transactions[trans].customer.id === val.id) {
                 customerTrans[trans] = transactions[trans];
               }
             }
@@ -159,7 +160,7 @@ class CustomerListContainer extends React.Component {
             balanceData = { Belence: '0' };
             let customerTrans = {};
             for (let trans in transactions) {
-              if (transactions[trans].customer.id === val.id) {
+              if (transactions[trans].customer && val &&transactions[trans].customer.id === val.id) {
                 customerTrans[trans] = transactions[trans];
               }
             }
@@ -185,7 +186,7 @@ class CustomerListContainer extends React.Component {
             balanceData = { Belence: '0' };
             let customerTrans = {};
             for (let trans in transactions) {
-              if (transactions[trans].customer.id === val.id) {
+              if (transactions[trans].customer && val && transactions[trans].customer.id === val.id) {
                 customerTrans[trans] = transactions[trans];
               }
             }
