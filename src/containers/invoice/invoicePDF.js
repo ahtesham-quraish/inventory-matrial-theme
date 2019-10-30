@@ -8,7 +8,7 @@ class InvoicePDF extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      discountPercentage: 10,
+      discountPercentage: 0,
     };
   }
   getSubTotal = () => {
@@ -87,7 +87,7 @@ class InvoicePDF extends React.Component {
                         Faisalabad :
                       </dt>
                       <dd>
-                        Street #3, Burhan Center, 98, 2nd Floor, Gulistan
+                        Street #3, Burhan Center, 98, Gulistan
                         Markey, Reilway Road.
                         <span className={`${classes.normalLabelClass}`}>
                           {' '}
@@ -95,7 +95,7 @@ class InvoicePDF extends React.Component {
                         </span>
                         <span className={`${classes.normalLabelClass}`}>
                           {' '}
-                          Email : farooqitech@gmail.com
+                          Email : farooqitech2018@gmail.com
                         </span>
                       </dd>
                     </dl>
@@ -105,10 +105,10 @@ class InvoicePDF extends React.Component {
                   <div className={`${classes.colmd12}`}>
                     <span className={classes.incomeTexClass}>
                       {' '}
-                      Sales Tex Registration No : 042-232-22224212-12{' '}
+                      Sales Tex Registration No : {' N/A'}
                     </span>
                     <span className={classes.incomeTexClass}>
-                      National Tex Number : 12-1243343-124-2
+                      National Tex Number : N/A
                     </span>
                   </div>
                 </div>
@@ -378,6 +378,7 @@ class InvoicePDF extends React.Component {
                     <td>
                       <input
                         id="discount"
+                        type={'number'}
                         onChange={this.props.handleInvoiceChange}
                         className={classes.noBorder}
                         value={this.props.invoicePDFInputs.discount}

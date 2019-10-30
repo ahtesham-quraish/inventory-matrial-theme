@@ -13,7 +13,7 @@ const initialState = {
     qoutNumberDate: new Date(),
     subTotal: '',
     grandTotal: '',
-    discount: 10,
+    discount: 0,
     status: 'Unpaid',
   },
   invoiceByID: {

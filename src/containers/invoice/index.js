@@ -37,6 +37,9 @@ class Invoice extends React.Component {
     if(this.props.qoutationProducts.length === 0){
       toast.error("Please add atleast one product to invoice")
     }
+    if(this.props.invoicePDFInputs.discount === ""){
+      this.props.invoicePDFInputs.discount = 0;
+    }
     let payload = {
       customer: this.props.customer,
       products: this.props.qoutationProducts,
@@ -72,7 +75,6 @@ class Invoice extends React.Component {
   };
 
   handleInvoiceChange = (event) => {
-    console.log('changing ', event.target.id);
     let payload = {
       type: 'INVOICE_INPUTS_CHANGE_HANDLE',
       payload: {

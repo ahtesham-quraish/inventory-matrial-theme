@@ -245,33 +245,33 @@ export const getBankDetail = (transactions, bankId) => {
   if (transactions) {
     for (let trans in transactions) {
       let t = transactions[trans];
-      if(t.bank_account.id === bankId){
+      if(t.bank_account.id === bankId && t.type !== 'Customer Invoice' && t.type !== 'Supplier Invoice'){
         tempData = []
         tempData.push(new Date(t.date).toDateString())
         tempData.push(`${t.invoiceId} | ${t.type}`)
         tempData.push(t.customer ? t.customer.company_name : 'N/A');
         tempData.push(t.category ? `${t.category.code} | ${t.category.title} |  ${t.category.name}` : 'N/A');
         tempData.push(t.amount)
-        if (t.type === 'Customer Receipt') {
+        if (t.type === 'Supplier Payment') {
           Belence = parseInt(Belence) - parseInt(t.amount);
           tempData.push("");
           tempData.push('Rs' + t.amount);
           tempData.push('Rs' + Belence);
         }
-        if (t.type === 'Customer Invoice') {
-          Belence = parseInt(Belence) + parseInt(t.amount);
-          tempData.push('Rs' + t.amount);
-          tempData.push('');
-          tempData.push('Rs' + Belence);
-        }
+        // if (t.type === 'Customer Invoice') {
+        //   Belence = parseInt(Belence) + parseInt(t.amount);
+        //   tempData.push('Rs' + t.amount);
+        //   tempData.push('');
+        //   tempData.push('Rs' + Belence);
+        // }
       
-        if (t.type === 'Supplier Invoice') {
-          Belence = parseInt(Belence) + parseInt(t.amount);
-          tempData.push("");
-          tempData.push('Rs' + t.amount);
-          tempData.push('Rs' + Belence);
-        }
-        if (t.type === 'Supplier Payment') {
+        // if (t.type === 'Supplier Invoice') {
+        //   Belence = parseInt(Belence) + parseInt(t.amount);
+        //   tempData.push("");
+        //   tempData.push('Rs' + t.amount);
+        //   tempData.push('Rs' + Belence);
+        // }
+        if (t.type === 'Customer Receipt' ) {
           Belence = parseInt(Belence) - parseInt(t.amount);
           tempData.push('Rs' + t.amount);
           tempData.push("");

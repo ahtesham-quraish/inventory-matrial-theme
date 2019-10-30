@@ -8,7 +8,7 @@ class QuotationPDF extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      discountPercentage: 10,
+      discountPercentage: 0,
       dueDate: '',
     };
   }
@@ -441,7 +441,7 @@ class QuotationPDF extends React.Component {
                     <input
                       // className={classes.bioBlockFieldinputDisabledClass}
                       style={{ background: 'none', border: 'none' }}
-                      type="text"
+                      type="number"
                       id="date"
                       value={this.state.discountPercentage}
                       onChange={this.changeDiscount}

@@ -297,7 +297,6 @@ class Quotation extends React.Component {
       }
     }
     if(this.state.customer && this.state.customer.customer_type === 'Supplier'&& addProcductInputs.requiredQuantity !== ''){
-      debugger
       this.setState({
         addProcductInputs: addProcductInputs,
       });
