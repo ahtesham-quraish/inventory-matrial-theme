@@ -272,7 +272,7 @@ export const getBankDetail = (transactions, bankId) => {
         //   tempData.push('Rs' + Belence);
         // }
         if (t.type === 'Customer Receipt' ) {
-          Belence = parseInt(Belence) - parseInt(t.amount);
+          Belence = parseInt(Belence) + parseInt(t.amount);
           tempData.push('Rs' + t.amount);
           tempData.push("");
           tempData.push('Rs' + Belence);
