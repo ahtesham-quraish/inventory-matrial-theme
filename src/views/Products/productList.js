@@ -162,7 +162,6 @@ class ProductList extends React.Component {
         {productDetailDialog && (
           <ProductLedger productId={productId} handleCancelClick={this.handleCancelClick} productDetailDialog={productDetailDialog}/>
         )}
-        
       </GridContainer>
     );
   }

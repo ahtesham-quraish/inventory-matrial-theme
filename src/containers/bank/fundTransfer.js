@@ -23,17 +23,19 @@ import getAllCustomers from '../Customers/actions/getCustomers';
 import Loader from 'react-loader-spinner';
 import BankActions from '../bank/actions/index';
 import { getInvoice } from '../invoice/actions/getInvoices';
+import {getBankDetail} from '../../helpers/util';
 
-const { getBanks, getCategory, createTransaction } = BankActions;
+const { getBanks, getCategory, createTransaction, getTransaction } = BankActions;
 const EmptyTransaction = {
   date: '',
-  bank_account: '',
+  bank_account_from: '',
+  bank_account_to: '',
   type: '',
+  customer : null,
   category: '',
   description: '',
   entry_method: '',
   description: '',
-  isSuperAdmin: false,
 };
 const styles = {
   margin: {
@@ -49,12 +51,8 @@ const styles = {
 const typesOptions = [
   { value: 'Money In', label: 'Money In' },
   { value: 'Money Out', label: 'Money Out' },
-  { value: 'Customer Receipt', label: 'Customer Receipt' },
-  { value: 'Supplier Payment', label: 'Supplier Payment' },
-  { value: 'Customer Invoice', label: 'Customer Invoice' },
-  { value: 'Supplier Invoice', label: 'Supplier Invoice' },
 ];
-class AddBankModal extends React.Component {
+class FundTransfer extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -65,13 +63,16 @@ class AddBankModal extends React.Component {
       invoiceOption: null,
       categoryOption: null,
       bankOptions: [],
+      bankOptionTo : [],
+      bankOptionFrom : [],
       bankOption: null,
       transaction: { ...EmptyTransaction },
     };
   }
   componentDidMount() {
-    this.props.getAllCustomers();
+
     this.props.getBanks().then(() => {
+      this.props.getTransaction();
       const bankOptions = [];
       const { banks } = this.props;
       if (banks) {
@@ -117,62 +118,11 @@ class AddBankModal extends React.Component {
     }
     return categoriesOptions;
   };
-  onInvoiceChange = (invoiceOption) => {
-    const { transaction } = this.state;
-    transaction.invoiceId = invoiceOption.value;
-    this.setState({ invoiceOption, transaction });
-  };
-  createCustomerOptions = (key) => {
-    const { customers } = this.props;
-    const customersOptions = [];
-    if (customers) {
-      customers.forEach((customer) => {
-        if (customer.customer_type === key) {
-          customersOptions.push({
-            value: customer.id,
-            label: `${customer.fName} ${customer.lName}`,
-          });
-        }
-      });
-    }
-
-    return customersOptions;
-  };
   onChangeCategory = (categoryOption) => {
     const { categories } = this.props;
     const { transaction, typesOption } = this.state;
-    if (
-      typesOption.value === 'Customer Receipt' ||
-      typesOption.value === 'Supplier Payment' ||
-      typesOption.value === 'Customer Invoice' ||
-      typesOption.value === 'Supplier Invoice'
-    ) {
-      this.props.getInvoice(categoryOption.value.toString()).then(() => {
-        const { invoices } = this.props;
-        const invoicesOptions = [];
-        if (invoices) {
-          invoices.forEach((invoice) => {
-            invoicesOptions.push({
-              value: invoice.id,
-              label: `${invoice.id} | ${new Date(
-                invoice.dateCreated,
-              ).toLocaleDateString()} | ${
-                invoice.products[0].invoice.grandTotal
-                }`,
-            });
-          });
-        }
-        this.setState({ invoicesOptions });
-      });
-      const customerLabelArray = categoryOption.label.split('|');
-      transaction.customer = categoryOption.value.toString();
-      transaction.isSuperAdmin = false;
-      transaction.category = parseInt(customerLabelArray[0].trim());
-    } else {
-      transaction.isSuperAdmin = true;
+          transaction.isSuperAdmin = true;
       transaction.category = parseInt(categoryOption.value);
-    }
-
     this.setState({ categoryOption, transaction });
   };
   onTransactionChange = (e) => {
@@ -180,69 +130,67 @@ class AddBankModal extends React.Component {
     transaction[e.target.id] = e.target.value;
     this.setState({ transaction });
   };
-  onTypesChange = (typesOption) => {
-    const { transaction } = this.state;
-    if (
-      typesOption.value === 'Customer Receipt' ||
-      typesOption.value === 'Customer Invoice'
-    ) {
-      this.setState({
-        categoryOptions: this.createCustomerOptions('Buyer'),
-        categoryOption: null,
-      });
-    } else if (
-      typesOption.value === 'Supplier Payment' ||
-      typesOption.value === 'Supplier Invoice'
-    ) {
-      this.setState({
-        categoryOptions: this.createCustomerOptions('Supplier'),
-        categoryOption: null,
-      });
-    } else if (typesOption.value === 'Money Out') {
-      this.setState({
-        categoryOptions: this.createCategoryOptions(['Liability', 'Expense']),
-        categoryOption: null,
-      });
-    } else if (typesOption.value === 'Money In') {
-      this.setState({
-        categoryOptions: this.createCategoryOptions([
-          'Revenue',
-          'Asset',
-          'Equity',
-        ]),
-        categoryOption: null,
-      });
+  onBankChange = (bankOption, key) => {
+    let readyData = []; 
+    let { transaction, bankOptionFrom, bankOptionTo} = this.state;
+    const {transactions} = this.props
+    transaction[key] = bankOption.value.toString();
+    if(key === 'bank_account_to'){
+      bankOptionTo = bankOption;
+    }else{
+      readyData = getBankDetail(transactions, parseInt (transaction.bank_account_from))
+      bankOptionFrom = bankOption;
     }
-    transaction.type = typesOption.value;
-    this.setState({ typesOption, transaction });
+    if(transaction.bank_account_from === transaction.bank_account_to){
+      bankOptionTo = [];
+    }
+    this.setState({ bankOptionFrom, bankOptionTo, transaction });
   };
-  onBankChange = (bankOption) => {
-    const { transaction } = this.state;
-    transaction.bank_account = bankOption.value.toString();
-    this.setState({ bankOption, transaction });
-  };
+  validate =  (bankOutId) => {
+    if(!bankOutId){
+      return false;
+    }
+    const { transaction} = this.state;
+    const {transactions} = this.props;
+    const readyData = getBankDetail(transactions, parseInt (bankOutId))
+    if(transaction.bank_account_from === ''  || transaction.bank_account_to === '' ||
+     transaction.amount === "" || ( readyData.length > 0 && readyData[readyData.length-1][7].substring(2) > 0  &&
+      readyData[readyData.length-1][7].substring(2) > parseInt( transaction.bank_account_to) )   ){
+      return false;
+    }
+    return true;
+  }
   createTransaction = () => {
+  
     const { transaction } = this.state;
+    const {amount, date, description, category, bank_account_from, bank_account_to } = transaction;
+    const transferOutTrans = {amount, bank_account : bank_account_from, category, description, date, isSuperAdmin : true, entry_method : 'Money Out', customers : null}
+    const transferInTrans = {amount, bank_account : bank_account_to, category, description, date, isSuperAdmin : true, entry_method : 'Money In', customers : null}
+    if(!this.validate(bank_account_to)){
+      return false
+    }
     this.setState({ loading: true });
-    this.props.createTransaction(transaction).then(() => {
+    this.props.createTransaction(transferOutTrans).then(() => {
+      this.props.createTransaction(transferInTrans).then(() => {
       this.setState({ loading: false, transaction: { ...EmptyTransaction } });
       this.props.handleCancelClick(transaction);
+      });
     });
   };
   render() {
     const { classes } = this.props;
     return (
       <Dialog
-        open={this.props.transModelOpenState}
+        open={this.props.fundTransferOpen}
         onClose={this.props.handleClose}
         aria-labelledby="form-dialog-title"
       >
-        <DialogTitle id="form-dialog-title"> Transaction</DialogTitle>
+        <DialogTitle id="form-dialog-title"> Fund Transder</DialogTitle>
         <DialogContent>
           <GridContainer>
             <GridItem xs={16} sm={16} md={12}>
               <Card style={{ width: '500px' }}>
-                <CardHeader color="primary">Enter Transaction</CardHeader>
+                <CardHeader color="primary">Transfer</CardHeader>
                 <CardBody>
                   <GridContainer>
                     <GridItem xs={12} sm={12} md={6}>
@@ -262,30 +210,6 @@ class AddBankModal extends React.Component {
                       />
                     </GridItem>
                     <GridItem xs={12} sm={12} md={6}>
-                      <Select
-                        placeholder="Select Bank "
-                        style={{ marginTop: '40px' }}
-                        className={classes.unitSelect}
-                        onChange={this.onBankChange}
-                        value={this.state.bankOption}
-                        options={this.state.bankOptions}
-                        isMulti={false}
-                      />
-                    </GridItem>
-                  </GridContainer>
-                  <GridContainer>
-                    <GridItem xs={12} sm={12} md={6}>
-                      <Select
-                        placeholder="Cash FLow Type"
-                        style={{ marginTop: '40px' }}
-                        className={classes.unitSelect}
-                        options={typesOptions}
-                        value={this.state.typesOption}
-                        onChange={this.onTypesChange}
-                        isMulti={false}
-                      />
-                    </GridItem>
-                    <GridItem xs={12} sm={12} md={6}>
                       <CustomInput
                         labelText="Amount"
                         id="amount"
@@ -300,6 +224,30 @@ class AddBankModal extends React.Component {
                       />
                     </GridItem>
                   </GridContainer>
+                  <GridContainer>
+                  <GridItem xs={12} sm={12} md={6}>
+                      <Select
+                        placeholder="Select Bank Transfer From "
+                        style={{ marginTop: '40px' }}
+                        className={classes.unitSelect}
+                        onChange={(option) => this.onBankChange(option, 'bank_account_from')}
+                        value={this.state.bankOptionFrom}
+                        options={this.state.bankOptions}
+                        isMulti={false}
+                      />
+                    </GridItem>
+                    <GridItem xs={12} sm={12} md={6}>
+                      <Select
+                        placeholder="Select Bank Transfer To "
+                        style={{ marginTop: '40px' }}
+                        className={classes.unitSelect}
+                        onChange={(option) => this.onBankChange(option, 'bank_account_to')}
+                        value={this.state.bankOptionTo}
+                        options={this.state.bankOptions}
+                        isMulti={false}
+                      />
+                    </GridItem>
+                  </GridContainer>
 
                   <GridContainer>
                     <GridItem xs={12} sm={12} md={12}>
@@ -310,19 +258,6 @@ class AddBankModal extends React.Component {
                         value={this.state.categoryOption}
                         options={this.state.categoryOptions}
                         onChange={this.onChangeCategory}
-                        isMulti={false}
-                      />
-                    </GridItem>
-                  </GridContainer>
-                  <GridContainer>
-                    <GridItem xs={12} sm={12} md={12}>
-                      <Select
-                        placeholder="Select Invoice  "
-                        style={{ marginTop: '40px' }}
-                        className={classes.unitSelect}
-                        value={this.state.invoiceOption}
-                        options={this.state.invoicesOptions}
-                        onChange={this.onInvoiceChange}
                         isMulti={false}
                       />
                     </GridItem>
@@ -345,19 +280,6 @@ class AddBankModal extends React.Component {
                     </GridItem>
                   </GridContainer>
                 </CardBody>
-                <CardFooter>
-                  <GridContainer>
-                    <GridItem xs={12} sm={12} md={6}>
-                      <Button
-                        onClick={this.props.onAddCategory}
-                        color="primary"
-                        size="sm"
-                      >
-                        Invoices
-                      </Button>
-                    </GridItem>
-                  </GridContainer>
-                </CardFooter>
               </Card>
             </GridItem>
           </GridContainer>
@@ -369,7 +291,7 @@ class AddBankModal extends React.Component {
           </Button>
           <Button onClick={this.createTransaction} color="primary">
             {!this.props.loading ? (
-              'Enter Transaction'
+              'Transfer Fund'
             ) : (
                 <div style={{ width: '75px' }}>
                   <Loader
@@ -387,13 +309,14 @@ class AddBankModal extends React.Component {
   }
 }
 
-const styledCompoenet = withStyles(styles)(AddBankModal);
+const styledCompoenet = withStyles(styles)(FundTransfer);
 const mapStateToProps = (state) => {
   return {
     categories: state.BankState.categories,
     banks: state.BankState.banks,
     customers: state.CustomerState.customers,
     invoices: state.InvoiceReducer.invoices,
+    transactions: state.BankState.transactions,
   };
 };
 const mapDispatchToProps = (dispatch) => {
@@ -402,7 +325,7 @@ const mapDispatchToProps = (dispatch) => {
     getBanks: () => dispatch(getBanks()),
     getCategory: () => dispatch(getCategory()),
     createTransaction: (body) => dispatch(createTransaction(body)),
-    getInvoice: (id) => dispatch(getInvoice(id)),
+    getTransaction: () => dispatch(getTransaction()),
   };
 };
 export default connect(

@@ -16,6 +16,7 @@ import Danger from '../../components/Typography/Danger.jsx';
 import Card from '../../components/Card/Card.jsx';
 import BugReport from '@material-ui/icons/BugReport';
 import Code from '@material-ui/icons/Code';
+import FundTransfer from './fundTransfer'
 import Cloud from '@material-ui/icons/Cloud';
 import {
   bugs,
@@ -111,6 +112,7 @@ class Bank extends React.Component {
       transModelOpen: false,
       bankModelOpenState: false,
       categoryModelOpenState: false,
+      fundTransferOpen : false
     };
   }
 
@@ -135,6 +137,7 @@ class Bank extends React.Component {
       transModelOpen: false,
       bankModelOpenState: false,
       categoryModelOpenState: false,
+      fundTransferOpen : false
     });
     this.props.getTransaction().then(() => {
       if (transaction && !transaction.isSuperAdmin) {
@@ -173,6 +176,11 @@ class Bank extends React.Component {
 
     });
   };
+  fundTransferModel = () => {
+    this.setState({
+      fundTransferOpen: true
+    });
+  }
   transModelOpen = () => {
     this.setState({
       transModelOpen: true
@@ -217,144 +225,96 @@ class Bank extends React.Component {
     const {
       classes
     } = this.props;
-    return ( <
-      GridContainer >
-      <
-      GridItem xs = {
-        12
-      }
-      sm = {
-        12
-      }
-      md = {
-        12
-      } >
-      <
-      div style = {
-        {
-          float: 'right',
-          marginBottom: '5%'
-        }
-      } >
-      <
-      RegularButton color = "primary"
-      size = "sm"
-      onClick = {
-        this.bankModelOpen
-      } >
-      Add Bank {
-        ' '
-      } <
-      /RegularButton> < /
-      div > <
-      div style = {
-        {
-          float: 'right',
-          marginBottom: '5%'
-        }
-      } >
-      <
-      RegularButton onClick = {
-        this.transModelOpen
-      }
-      color = "primary"
-      size = "sm" >
-      Add Transaction {
-        ' '
-      } <
-      /RegularButton> < /
-      div > <
-      div style = {
-        {
-          float: 'right',
-          marginBottom: '5%'
-        }
-      } >
-      <
-      RegularButton onClick = {
-        this.categoryModelOpen
-      }
-      color = "primary"
-      size = "sm" >
-      Add Category {
-        ' '
-      } <
-      /RegularButton> < /
-      div > <
-      Card className = {
-        'blue'
-      } >
-      <
-      CardHeader color = "primary" >
-      <
-      h4 className = {
-        classes.cardTitleWhite
-      } > Transactions < /h4> < /
-      CardHeader > <
-      CardBody >
-      <
-      Table tableHeaderColor = "primary"
-      tableHead = {
-        [
-          'Category',
-          'Transaction Type',
-          'Method',
-          'Description',
-          'Date',
-          'Total',
-          'Action',
-        ]
-      }
-      tableData = {
-        this.prepareTableData()
-      }
-      onClick = {
-        this.handleRowClick
-      }
-      className = {
-        classes.link
-      }
-      deleteClick = {
-        this.onDeleteClick
-      }
-      /> < /
-      CardBody > <
-      /Card> < /
-      GridItem > {
-        this.state.transModelOpen && ( <
-          AddBankModal handleCancelClick = {
-            this.handleCancelClick
-          }
-          transModelOpen = {
-            this.transModelOpen
-          }
-          transModelOpenState = {
-            this.state.transModelOpen
-          }
-          onAddCategory = {
-            this.onAddCategoryHandler
-          }
-          />
-        )
-      } <
-      BankCreateModel handleCancelClick = {
-        this.handleCancelClick
-      }
-      bankModelOpenState = {
-        this.state.bankModelOpenState
-      }
-      /> <
-      CreateCategory typesOptions = {
-        typesOptions
-      }
-      categoryModelOpenState = {
-        this.state.categoryModelOpenState
-      }
-      handleCancelClick = {
-        this.handleCancelClick
-      }
-      /> < /
-      GridContainer >
+    return ( <GridContainer>
+      <GridItem xs={12} sm={12} md={12}>
+        <div
+          style={{
+            float: "right",
+            marginBottom: "5%"
+          }}
+        >
+          <RegularButton color="primary" size="sm" onClick={this.bankModelOpen}>
+            Add Bank{" "}
+          </RegularButton>{" "}
+        </div>{" "}
+        <div
+          style={{
+            float: "right",
+            marginBottom: "5%"
+          }}
+        >
+          <RegularButton onClick={this.transModelOpen} color="primary" size="sm">
+            Add Transaction{" "}
+          </RegularButton>{" "}
+        </div>{" "}
+        <div
+          style={{
+            float: "right",
+            marginBottom: "5%"
+          }}
+        >
+          <RegularButton onClick={this.fundTransferModel} color="primary" size="sm">
+            Fund Transfer {" "}
+          </RegularButton>{" "}
+        </div>{" "}
+        <div
+          style={{
+            float: "right",
+            marginBottom: "5%"
+          }}
+        >
+          <RegularButton onClick={this.categoryModelOpen} color="primary" size="sm">
+            Add Category{" "}
+          </RegularButton>{" "}
+        </div>{" "}
+        <Card className={"blue"}>
+          <CardHeader color="primary">
+            <h4 className={classes.cardTitleWhite}> Transactions </h4>{" "}
+          </CardHeader>{" "}
+          <CardBody>
+            <Table
+              tableHeaderColor="primary"
+              tableHead={[
+                "Category",
+                "Transaction Type",
+                "Method",
+                "Description",
+                "Date",
+                "Total",
+                "Action"
+              ]}
+              tableData={this.prepareTableData()}
+              onClick={this.handleRowClick}
+              className={classes.link}
+              deleteClick={this.onDeleteClick}
+            />{" "}
+          </CardBody>{" "}
+        </Card>{" "}
+      </GridItem>{" "}
+      {this.state.transModelOpen && (
+        <AddBankModal
+          handleCancelClick={this.handleCancelClick}
+          transModelOpen={this.transModelOpen}
+          transModelOpenState={this.state.transModelOpen}
+          onAddCategory={this.onAddCategoryHandler}
+        />
+      )}{" "}
+      {this.state.fundTransferOpen && (
+        <FundTransfer
+          handleCancelClick={this.handleCancelClick}
+          fundTransferOpen={this.state.fundTransferOpen}
+        />
+      )}{" "}
+      <BankCreateModel
+        handleCancelClick={this.handleCancelClick}
+        bankModelOpenState={this.state.bankModelOpenState}
+      />{" "}
+      <CreateCategory
+        typesOptions={typesOptions}
+        categoryModelOpenState={this.state.categoryModelOpenState}
+        handleCancelClick={this.handleCancelClick}
+      />{" "}
+    </GridContainer>
     );
   }
 }
