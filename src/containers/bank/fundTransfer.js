@@ -161,11 +161,10 @@ class FundTransfer extends React.Component {
     return true;
   }
   createTransaction = () => {
-  
     const { transaction } = this.state;
     const {amount, date, description, category, bank_account_from, bank_account_to } = transaction;
-    const transferOutTrans = {amount, bank_account : bank_account_from, category, description, date, isSuperAdmin : true, entry_method : 'Money Out', customers : null}
-    const transferInTrans = {amount, bank_account : bank_account_to, category, description, date, isSuperAdmin : true, entry_method : 'Money In', customers : null}
+    const transferOutTrans = {amount, bank_account : bank_account_from, category, description, date, isSuperAdmin : true, type : 'Money Out', customers : null}
+    const transferInTrans = {amount, bank_account : bank_account_to, category, description, date, isSuperAdmin : true, type : 'Money In', customers : null}
     if(!this.validate(bank_account_to)){
       return false
     }
